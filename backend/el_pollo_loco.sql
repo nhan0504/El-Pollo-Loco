@@ -21,3 +21,21 @@ CREATE TABLE Options (
     option_text TEXT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
+
+-- Tags table for storing tags
+    -- tag_id = a unique id for the tag
+    -- tag_name = the name of a tag made by user/provided by us
+CREATE TABLE Tags (
+    tag_id INT,
+    tag_name TEXT
+);
+
+-- Table to identify the tags attached to specific polls
+    -- poll_id = id of the poll that a tag is attached to
+    -- Question - will tags be unique, or will we just pull all duplicate tag/poll 
+    -- pairs when we need to list all polls with a certain tag?
+CREATE TABLE HasTag (
+    tag_id INT AUTO_INCREMENT PRIMARY KEY,
+    poll_id INT,
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
+);
