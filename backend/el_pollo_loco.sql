@@ -57,7 +57,9 @@ CREATE TABLE HasTag (
 
 CREATE TABLE Votes (
     vote_id INT AUTO_INCREMENT PRIMARY KEY,
-    FOREIGN KEY (user_id) REFERENCES Users(poll_id),
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    poll_id INT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
     option_id INT,
     count INT
