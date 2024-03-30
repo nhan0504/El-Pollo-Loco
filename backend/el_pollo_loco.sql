@@ -30,6 +30,13 @@ CREATE TABLE Tags (
     tag_name TEXT
 );
 
+INSERT INTO Tags (tagid, tag_name)
+VALUES
+    (0, 'funny'),
+    (1, 'politics'),
+    (2, 'gaming'),
+    (3, 'movies')
+
 -- Table to identify the tags attached to specific polls
     -- poll_id = id of the poll that a tag is attached to
     -- Question - will tags be unique, or will we just pull all duplicate tag/poll 
