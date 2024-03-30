@@ -15,9 +15,11 @@ CREATE TABLE Polls (
     -- option_id = unique id for option
     -- poll_id = id of poll in which option is associated with
     -- option_text = text for specific option
+    -- count = how many votes this option got
 CREATE TABLE Options (
     option_id INT AUTO_INCREMENT PRIMARY KEY,
     poll_id INT,
+    count INT,
     option_text TEXT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
