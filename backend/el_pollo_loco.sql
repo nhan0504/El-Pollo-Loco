@@ -48,3 +48,18 @@ CREATE TABLE HasTag (
     poll_id INT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
+
+-- Table to keep track of  votes
+    -- vote_id = the primary key of this table
+    -- user_id = the id that corresponds w a user id
+    -- poll_id = the id that corresponds w a user id
+    -- count = not really sure, since option has a count?
+
+CREATE TABLE Votes (
+    vote_id INT AUTO_INCREMENT PRIMARY KEY,
+    FOREIGN KEY (user_id) REFERENCES Users(poll_id),
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
+    option_id INT,
+    count INT
+
+);
