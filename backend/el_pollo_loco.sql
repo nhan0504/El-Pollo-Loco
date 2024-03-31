@@ -24,6 +24,20 @@ CREATE TABLE Options (
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
 
+-- Comments table for storing poll comments
+    -- comment_id = unique id for comment
+    -- user_id = id of user in which option is associated with
+    -- poll_id = id of poll in which option is associated with
+    -- comment = textual content of user comment
+CREATE TABLE Comments (
+    comment_id INT AUTO_INCREMENET PRIMARY KEY,
+    user_id INT,
+    poll_id INT,
+    comment TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
+);
+
 -- Tags table for storing tags
     -- tag_id = a unique id for the tag
     -- tag_name = the name of a tag made by user/provided by us
@@ -43,7 +57,7 @@ VALUES
     -- poll_id = id of the poll that a tag is attached to
     -- Question - will tags be unique, or will we just pull all duplicate tag/poll 
     -- pairs when we need to list all polls with a certain tag?
-CREATE TABLE HasTag (
+CREATE TABLE PollTags (
     tag_id INT AUTO_INCREMENT PRIMARY KEY,
     poll_id INT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
@@ -63,5 +77,4 @@ CREATE TABLE Votes (
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
     option_id INT,
     count INT
-
 );
