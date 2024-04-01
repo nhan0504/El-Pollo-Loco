@@ -78,3 +78,13 @@ CREATE TABLE Votes (
     option_id INT,
     count INT
 );
+
+-- Table to keep track of  users
+    -- user_id = the primary key 
+    -- username = the username set by the user
+    -- password = the password set by the user
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username varchar(255), 
+    password varchar(255)
+);
