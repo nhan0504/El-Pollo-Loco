@@ -15,11 +15,9 @@ CREATE TABLE Polls (
     -- option_id = unique id for option
     -- poll_id = id of poll in which option is associated with
     -- option_text = text for specific option
-    -- count = how many votes this option got
 CREATE TABLE Options (
     option_id INT AUTO_INCREMENT PRIMARY KEY,
     poll_id INT,
-    count INT,
     option_text TEXT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
@@ -28,38 +26,36 @@ CREATE TABLE Options (
     -- comment_id = unique id for comment
     -- user_id = id of user in which option is associated with
     -- poll_id = id of poll in which option is associated with
+    -- parent_id = the comment that this comment is replying to. 
+       -- NULL if this is the first comment in the chain
     -- comment = textual content of user comment
 CREATE TABLE Comments (
     comment_id INT AUTO_INCREMENET PRIMARY KEY,
     user_id INT,
     poll_id INT,
+    parent_id INT,
     comment TEXT,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
+    FOREIGN KEY (parent_id) REFERENCES Comments(comment_id)
 );
 
 -- Tags table for storing tags
     -- tag_id = a unique id for the tag
     -- tag_name = the name of a tag made by user/provided by us
 CREATE TABLE Tags (
-    tag_id INT,
+    tag_id INT AUTO_INCREMENT PRIMARY KEY,
     tag_name TEXT
 );
-
-INSERT INTO Tags (tagid, tag_name)
-VALUES
-    (0, 'funny'),
-    (1, 'politics'),
-    (2, 'gaming'),
-    (3, 'movies')
 
 -- Table to identify the tags attached to specific polls
     -- poll_id = id of the poll that a tag is attached to
     -- Question - will tags be unique, or will we just pull all duplicate tag/poll 
     -- pairs when we need to list all polls with a certain tag?
-CREATE TABLE PollTags (
-    tag_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE PollsTags (
+    tag_id INT,
     poll_id INT,
+    FOREIGN KEY (tag_id) REFERENCES Tags(tag_id),
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
 );
 
@@ -67,24 +63,34 @@ CREATE TABLE PollTags (
     -- vote_id = the primary key of this table
     -- user_id = the id that corresponds w a user id
     -- poll_id = the id that corresponds w a user id
-    -- count = not really sure, since option has a count?
 
 CREATE TABLE Votes (
     vote_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    poll_id INT,
-    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
     option_id INT,
-    count INT
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (option_id) REFERENCES Options(option_id)
 );
 
 -- Table to keep track of  users
     -- user_id = the primary key 
     -- username = the username set by the user
-    -- password = the password set by the user
+    -- pass = the password set by the user
+    -- fname = user first name
+    -- lname = user last name
+    -- email = user email address
 CREATE TABLE Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username varchar(255), 
-    password varchar(255)
+    username VARCHAR(255) NOT NULL,
+    pass VARCHAR(255) NOT NULL,
+    fname VARCHAR(255),
+    lname VARCHAR(255),
+    email VARCHAR(255)
 );
+
+INSERT INTO Tags (tag_id, tag_name)
+VALUES
+    (0, 'funny'),
+    (1, 'politics'),
+    (2, 'gaming'),
+    (3, 'movies')
