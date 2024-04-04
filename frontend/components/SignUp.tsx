@@ -95,6 +95,16 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  id="username"
+                  label="Username"
+                  name="Username"
+                  autoComplete="Username"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
                   name="password"
                   label="Password"
                   type="password"
@@ -103,9 +113,14 @@ export default function SignUp() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
+                <TextField
+                  required
+                  fullWidth
+                  name="Confirm Password"
+                  label="Confirm Password"
+                  type="password"
+                  id="Confirmpassword"
+                  autoComplete="new-password"
                 />
               </Grid>
             </Grid>
