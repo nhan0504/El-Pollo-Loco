@@ -88,9 +88,9 @@ CREATE TABLE Comments (
     FOREIGN KEY (parent_id) REFERENCES Comments(comment_id)
 );
 
-INSERT INTO Tags (tag_id, tag_name)
+INSERT INTO Tags (tag_name)
 VALUES
-    (0, 'funny'),
-    (1, 'politics'),
-    (2, 'gaming'),
-    (3, 'movies')
+    ('funny'),
+    ('politics'),
+    ('gaming'),
+    ('movies')
