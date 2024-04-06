@@ -1,3 +1,19 @@
+-- Table to keep track of  users
+    -- user_id = the primary key 
+    -- username = the username set by the user
+    -- pass = the password set by the user
+    -- fname = user first name
+    -- lname = user last name
+    -- email = user email address
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    pass VARCHAR(255) NOT NULL,
+    fname VARCHAR(255),
+    lname VARCHAR(255),
+    email VARCHAR(255)
+);
+
 -- Polls table for storing polls
     -- poll_id = unique id for poll
     -- user_id = id for user who created the poll
@@ -20,24 +36,6 @@ CREATE TABLE Options (
     poll_id INT,
     option_text TEXT,
     FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
-);
-
--- Comments table for storing poll comments
-    -- comment_id = unique id for comment
-    -- user_id = id of user in which option is associated with
-    -- poll_id = id of poll in which option is associated with
-    -- parent_id = the comment that this comment is replying to. 
-       -- NULL if this is the first comment in the chain
-    -- comment = textual content of user comment
-CREATE TABLE Comments (
-    comment_id INT AUTO_INCREMENET PRIMARY KEY,
-    user_id INT,
-    poll_id INT,
-    parent_id INT,
-    comment TEXT,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
-    FOREIGN KEY (parent_id) REFERENCES Comments(comment_id)
 );
 
 -- Tags table for storing tags
@@ -72,20 +70,22 @@ CREATE TABLE Votes (
     FOREIGN KEY (option_id) REFERENCES Options(option_id)
 );
 
--- Table to keep track of  users
-    -- user_id = the primary key 
-    -- username = the username set by the user
-    -- pass = the password set by the user
-    -- fname = user first name
-    -- lname = user last name
-    -- email = user email address
-CREATE TABLE Users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    pass VARCHAR(255) NOT NULL,
-    fname VARCHAR(255),
-    lname VARCHAR(255),
-    email VARCHAR(255)
+-- Comments table for storing poll comments
+    -- comment_id = unique id for comment
+    -- user_id = id of user in which option is associated with
+    -- poll_id = id of poll in which option is associated with
+    -- parent_id = the comment that this comment is replying to. 
+       -- NULL if this is the first comment in the chain
+    -- comment = textual content of user comment
+CREATE TABLE Comments (
+    comment_id INT AUTO_INCREMENET PRIMARY KEY,
+    user_id INT,
+    poll_id INT,
+    parent_id INT,
+    comment TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
+    FOREIGN KEY (parent_id) REFERENCES Comments(comment_id)
 );
 
 INSERT INTO Tags (tag_id, tag_name)
