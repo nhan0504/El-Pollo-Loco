@@ -78,7 +78,7 @@ CREATE TABLE Votes (
        -- NULL if this is the first comment in the chain
     -- comment = textual content of user comment
 CREATE TABLE Comments (
-    comment_id INT AUTO_INCREMENET PRIMARY KEY,
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     poll_id INT,
     parent_id INT,
