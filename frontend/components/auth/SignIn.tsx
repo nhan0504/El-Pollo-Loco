@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -31,10 +32,16 @@ interface SignInProps {
 }
 
 export default function SignIn({ onSubmit }: SignInProps ) {
+  const [loginError, setLoginError] = useState<boolean>(false);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     onSubmit(data.get("email") as string, data.get("password") as string);
+    //TODO: Update state after submission
+    if (!loginError) {
+      //Go to home
+    }
   };
 
   return ( //TODO THEME
@@ -57,6 +64,7 @@ export default function SignIn({ onSubmit }: SignInProps ) {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
+              error={loginError}
               margin="normal"
               required
               fullWidth
@@ -67,6 +75,7 @@ export default function SignIn({ onSubmit }: SignInProps ) {
               autoFocus
             />
             <TextField
+              error={loginError}
               margin="normal"
               required
               fullWidth
@@ -75,6 +84,7 @@ export default function SignIn({ onSubmit }: SignInProps ) {
               type="password"
               id="password"
               autoComplete="current-password"
+              helperText={loginError ? "Login unsuccessful." : undefined}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

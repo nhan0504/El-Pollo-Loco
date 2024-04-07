@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -29,10 +30,24 @@ interface SignUpProps {
 }
 
 export default function SignUp({ onSubmit }: SignUpProps) {
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    onSubmit(data.get("email") as string, data.get("username") as string, data.get("password") as string);
+
+    const password = data.get("password");
+    const confirm_password = data.get("confirm-password");
+    const username = data.get("username");
+    const email = data.get("email");
+
+    if (password === confirm_password) {
+      setPasswordError(false);
+      onSubmit(email as string, username as string, password as string);
+    }
+    else {
+      setPasswordError(true);
+    }
   };
 
   return (
@@ -91,7 +106,7 @@ export default function SignUp({ onSubmit }: SignUpProps) {
                   fullWidth
                   id="username"
                   label="Username"
-                  name="Username"
+                  name="username"
                   autoComplete="Username"
                 />
               </Grid>
@@ -99,6 +114,7 @@ export default function SignUp({ onSubmit }: SignUpProps) {
                 <TextField
                   required
                   fullWidth
+                  error={passwordError}
                   name="password"
                   label="Password"
                   type="password"
@@ -110,11 +126,13 @@ export default function SignUp({ onSubmit }: SignUpProps) {
                 <TextField
                   required
                   fullWidth
-                  name="Confirm Password"
+                  error={passwordError}
+                  name="confirm-password"
                   label="Confirm Password"
                   type="password"
                   id="Confirmpassword"
                   autoComplete="new-password"
+                  helperText={passwordError ? "Passwords do not match." : undefined}
                 />
               </Grid>
             </Grid>
