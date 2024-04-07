@@ -1,7 +1,9 @@
-import SignIn from "@/components/sign_in";
+'use client';
+import SignIn from "@/components/auth/SignIn";
+import login_handler from "@/utils/handlers/login_handler";
 
 export default function Login() {
     return (
-        <SignIn />
+        <SignIn onSubmit={login_handler} />
     )
 }
