@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -28,10 +29,16 @@ interface ForgotPasswordProps {
 }
 
 export default function ForgotPassword({ onSubmit }: ForgotPasswordProps) {
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    onSubmit(data.get("email") as string);
+    const email = data.get("email");
+    setEmail(email as string);
+    setSubmitted(true);
+    onSubmit(email as string);
   };
 
   return (
@@ -61,6 +68,7 @@ export default function ForgotPassword({ onSubmit }: ForgotPasswordProps) {
               label="Email Address"
               name="email"
               autoComplete="email"
+              helperText={submitted ? `An email has been sent to ${email} if we have an account associated with it.` : undefined}
               autoFocus
             />
             <Button
