@@ -19,6 +19,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -230,7 +232,6 @@ export default function PrimarySearchAppBar() {
       </AppBar>
       {/* Main container for page */}
       <Box component="main" sx={{height: "1000px", p: 5}}>
-
         {/* Buttons to switch feeds */}
         <Box component="section" sx={{display: { xs: 'flex'}, width: "330px", height: "50px", p: 1, border: '2px solid black', borderRadius: "30px" }}>
             <Button 
@@ -315,3 +316,5 @@ export default function PrimarySearchAppBar() {
     </Box>
   );
 }
+
+
