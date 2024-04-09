@@ -5,6 +5,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Grid } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const bull = (
   <Box
@@ -17,25 +19,39 @@ const bull = (
 
 const card = (
   <React.Fragment>
-    <CardContent>
-      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Word of the Day
-      </Typography>
-      <Typography variant="h5" component="div">
-        be{bull}nev{bull}o{bull}lent
-      </Typography>
-      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-        adjective
-      </Typography>
-      <Typography variant="body2">
-        well meaning and kindly.
-        <br />
-        {'"a benevolent smile"'}
-      </Typography>
-    </CardContent>
-    <CardActions>
-      <Button size="small">Learn More</Button>
-    </CardActions>
+    <Grid container alignItems="stretch">
+      <Grid item style={{display: 'flex'}}>
+        <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            Would you rather?
+          </Typography>
+          <br />
+          <Typography variant="h5" component="div">
+            Would you rather have super strength or be invisible?
+          </Typography>
+            <br />
+            </CardContent>
+            <CardActions>
+              <Button size="small">Super Strength!</Button>
+              <Box sx={{ width: 3/4, boxShadow: 1}}>
+                <LinearProgress variant="determinate" value={55} />
+              </Box>
+            </CardActions>
+            <CardActions>
+              <Button size="small">Invisibiliy!</Button>
+              <Box sx={{ width: 3/4, boxShadow: 1}}>
+                <LinearProgress variant="determinate" value={45} />
+              </Box>
+            </CardActions>
+            </Card>
+      </Grid>
+      <Grid item style={{display: 'flex'}}>
+        <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
+          
+        </Card>
+      </Grid>
+    </Grid>
   </React.Fragment>
 );
 
