@@ -19,7 +19,7 @@ const bull = (
 
 const card = (
   <React.Fragment>
-        <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
+        <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             Would you rather?
@@ -31,13 +31,13 @@ const card = (
             <br />
             </CardContent>
             <CardActions>
-              <Button size="small">Super Strength!</Button>
+              <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>Super Strength!</Button>
               <Box sx={{ width: 3/4, boxShadow: 1}}>
                 <LinearProgress variant="determinate" value={55} />
               </Box>
             </CardActions>
             <CardActions>
-              <Button size="small">Invisibility!</Button>
+              <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>Invisibility!</Button>
               <Box sx={{ width: 3/4, boxShadow: 1}}>
                 <LinearProgress variant="determinate" value={45} />
               </Box>
@@ -46,26 +46,31 @@ const card = (
   </React.Fragment>
 );
 
+function FormRow() {
+  return (
+    <React.Fragment>
+      <Grid item xs={4} style={{padding: 50}}>
+        {card}
+      </Grid>
+      <Grid item xs={4} style={{padding: 50}}>
+        {card}
+      </Grid>
+    </React.Fragment>
+  );
+}
+
 const cardsTogether = (
   <React.Fragment>
-        <Grid container spacing={4}>
-
-        <Grid item xs={6}>
-          {card}
+        <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={1}>
+        <Grid container item spacing={3} justifyContent="space-around">
+          <FormRow />
         </Grid>
-        <Grid item xs={6}>
-          {card}
+        <Grid container item spacing={3} justifyContent="space-around">
+          <FormRow />
         </Grid>
-        <Grid item xs={6}>
-          {card}
-        </Grid>
-        <Grid item xs={6}>
-          {card}
-        </Grid>
-
-      
-
-        </Grid>
+      </Grid>
+    </Box>
   </React.Fragment>
 );
 
