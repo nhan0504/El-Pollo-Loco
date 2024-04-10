@@ -54,8 +54,8 @@ CREATE TABLE PollsTags (
     tag_id INT,
     poll_id INT,
     FOREIGN KEY (tag_id) REFERENCES Tags(tag_id),
-    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id)
-    PRIMARY KEY(tag_id, poll_id)
+    FOREIGN KEY (poll_id) REFERENCES Polls(poll_id),
+    PRIMARY KEY (tag_id, poll_id)
 );
 
 -- Table to keep track of  votes
