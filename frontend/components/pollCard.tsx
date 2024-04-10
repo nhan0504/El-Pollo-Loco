@@ -19,8 +19,6 @@ const bull = (
 
 const card = (
   <React.Fragment>
-    <Grid container alignItems="stretch">
-      <Grid item style={{display: 'flex'}}>
         <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
         <CardContent>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -39,26 +37,42 @@ const card = (
               </Box>
             </CardActions>
             <CardActions>
-              <Button size="small">Invisibiliy!</Button>
+              <Button size="small">Invisibility!</Button>
               <Box sx={{ width: 3/4, boxShadow: 1}}>
                 <LinearProgress variant="determinate" value={45} />
               </Box>
             </CardActions>
             </Card>
-      </Grid>
-      <Grid item style={{display: 'flex'}}>
-        <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
-          
-        </Card>
-      </Grid>
-    </Grid>
+  </React.Fragment>
+);
+
+const cardsTogether = (
+  <React.Fragment>
+        <Grid container spacing={4}>
+
+        <Grid item xs={6}>
+          {card}
+        </Grid>
+        <Grid item xs={6}>
+          {card}
+        </Grid>
+        <Grid item xs={6}>
+          {card}
+        </Grid>
+        <Grid item xs={6}>
+          {card}
+        </Grid>
+
+      
+
+        </Grid>
   </React.Fragment>
 );
 
 export default function OutlinedCard() {
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{card}</Card>
+      <Card variant="outlined">{cardsTogether}</Card>
     </Box>
   );
 }
