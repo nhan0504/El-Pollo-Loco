@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
+import FeedButtons from './feedButtons';
 
 const bull = (
   <Box
@@ -46,6 +47,41 @@ const card = (
   </React.Fragment>
 );
 
+const card2 = (
+  <React.Fragment>
+        <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            Movies!
+          </Typography>
+          <br />
+          <Typography variant="h5" component="div">
+            Which Lord of the Rings movie is the best?
+          </Typography>
+            <br />
+            </CardContent>
+            <CardActions>
+              <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>Fellowship of the Ring</Button>
+              <Box sx={{ width: 3/4, boxShadow: 1}}>
+                <LinearProgress variant="determinate" value={40} />
+              </Box>
+            </CardActions>
+            <CardActions>
+              <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>The Two Towers</Button>
+              <Box sx={{ width: 3/4, boxShadow: 1}}>
+                <LinearProgress variant="determinate" value={30} />
+              </Box>
+            </CardActions>
+            <CardActions>
+              <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>Return of the King</Button>
+              <Box sx={{ width: 3/4, boxShadow: 1}}>
+                <LinearProgress variant="determinate" value={30} />
+              </Box>
+            </CardActions>
+            </Card>
+  </React.Fragment>
+);
+
 function FormRow() {
   return (
     <React.Fragment>
@@ -53,7 +89,7 @@ function FormRow() {
         {card}
       </Grid>
       <Grid item xs={4} style={{padding: 50}}>
-        {card}
+        {card2}
       </Grid>
     </React.Fragment>
   );
@@ -62,6 +98,7 @@ function FormRow() {
 const cardsTogether = (
   <React.Fragment>
         <Box sx={{ flexGrow: 1 }}>
+          <FeedButtons/>
       <Grid container spacing={1}>
         <Grid container item spacing={3} justifyContent="space-around">
           <FormRow />

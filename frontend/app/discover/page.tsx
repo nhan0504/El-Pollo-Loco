@@ -6,7 +6,6 @@ export default function Navigation() {
     return (
         <div>
         <PrimarySearchAppBar />
-		<FeedButtons />
         <OutlinedCard />
         </div>
         
