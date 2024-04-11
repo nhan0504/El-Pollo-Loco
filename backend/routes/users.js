@@ -1,12 +1,11 @@
 var express = require("express");
 var router = express.Router();
 
-const connection = require("../app");
-const { use } = require(".");
+const pool = require("../db.js");
 
-router.get("/users/:userId", function (req, res) {
+router.get("/:userId", function (req, res) {
   const userId = req.params.userId;
-  connection.query(
+  pool.query(
     "SELECT * FROM Users WHERE user_id = ?",
     [userId],
     (error, results) => {
@@ -20,10 +19,10 @@ router.get("/users/:userId", function (req, res) {
   );
 });
 
-router.post("/users", function (req, res) {
+router.post("/", function (req, res) {
   const userData = req.body;
-  connection.query(
-    "INSERT INTO Users VALUES (?,?,?,?,?)",
+  pool.query(
+    "INSERT INTO Users(username, pass, fname, lname, email) VALUES (?,?,?,?,?)",
     [
       userData.username,
       userData.pass,
@@ -37,18 +36,14 @@ router.post("/users", function (req, res) {
         res.status(500).send("Error creating new user");
         return;
       }
-      if (result.affectedRows === 0) {
-        res.status(404).send('User not found'); 
-      } else {
-        res.send(`User with ID ${userId} has been deleted successfully`);
-      }
+      res.send(`User created successfully`);
     }
   );
 });
 
-router.delete("/users/:userId", function (req, res) {
+router.delete("/:userId", function (req, res) {
   const userId = req.params.userId;
-  connection.query(
+  pool.query(
     "DELETE FROM Users WHERE user_id = ?",
     [userId],
     (error, results) => {
@@ -57,7 +52,11 @@ router.delete("/users/:userId", function (req, res) {
         res.status(500).send("Error deleting user");
         return;
       }
-      res.json(results);
+      if (results.affectedRows === 0) {
+        res.status(404).send('User not found'); 
+      } else {
+        res.send(`User ${userId} deleted successfully`);
+      }
     }
   );
 });

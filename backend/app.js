@@ -7,25 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-require('dotenv').config();
-const mysql = require('mysql')
-
 var app = express();
-
-const dbHost = process.env.DB_HOST;
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbName = process.env.DB_NAME;
-
-const connection = mysql.createConnection({
-  host: dbHost,
-  user: dbUser,
-  password: dbPassword,
-  database: dbName
-})
-
-connection.connect()
-module.exports = connection;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
