@@ -5,42 +5,54 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
+import { Grid, grid2Classes } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import PollCard from './pollCard';
 
 
 
 function FormRow() {
+    const cols = 2
+    let row = []
+    for (let i = 0; i<cols; i++){
+        row.push(<Grid item xs={4} style={{padding: 50}}>
+            {PollCard(["Movies", "Lord of the rings"], "Which Lord of The rings?", ["The first", "The second", "The third"], [30, 20, 50])}
+          </Grid>)
+
+    }
+
+
   return (
     <React.Fragment>
-      <Grid item xs={4} style={{padding: 50}}>
-        {PollCard(["Movies", "Lord of the rings"], "Which Lord of The rings?", ["The first", "The second", "The third"], [30, 20, 50])}
-      </Grid>
-      <Grid item xs={4} style={{padding: 50}}>
-        {PollCard(["Movies", "Lord of the rings"], "Which Lord of The rings?", ["The first", "The second", "The third"], [30, 20, 50])}
-      </Grid>
+        {row}
     </React.Fragment>
   );
 }
 
-const cardsTogether = (
-  <React.Fragment>
-      <Grid container spacing={1}>
-        <Grid container item spacing={3} justifyContent="space-around">
-          <FormRow />
-        </Grid>
-        <Grid container item spacing={3} justifyContent="space-around">
-          <FormRow />
-        </Grid>
-      </Grid>
-  </React.Fragment>
-);
+function cardsTogether() {
+    const rows = 2
+    let grid = []
+    for (let i = 0; i<rows; i++){
+        grid.push(<Grid container item spacing={3} justifyContent="space-around">
+                    <FormRow />
+                </Grid>)
+    }
+
+    return (
+
+        <React.Fragment>
+            <Grid container spacing={1}>
+              {grid}
+            </Grid>
+        </React.Fragment>
+      );
+}
+
 
 export default function PollCards() {
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{cardsTogether}</Card>
+      <Card variant="outlined">{cardsTogether()}</Card>
     </Box>
   );
 }
