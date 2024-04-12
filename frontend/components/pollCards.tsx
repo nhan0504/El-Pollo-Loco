@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Grid, grid2Classes } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import PollCard from './pollCard';
+import FeedButtons from './feedButtons';
 
 
 
@@ -41,6 +42,7 @@ function cardsTogether() {
     return (
 
         <React.Fragment>
+            <FeedButtons/>
             <Grid container spacing={1}>
               {grid}
             </Grid>
@@ -52,7 +54,7 @@ function cardsTogether() {
 export default function PollCards() {
   return (
     <Box sx={{ minWidth: 275 }}>
-      <Card variant="outlined">{cardsTogether()}</Card>
+      {cardsTogether()}
     </Box>
   );
 }

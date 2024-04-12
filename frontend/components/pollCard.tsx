@@ -37,7 +37,7 @@ const makeCard = (tags:Array<string>, question: string, opts: Array<string>, opt
 
 export default function PollCard(tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>) {
   return (
-    <Box sx={{ minWidth: 275 }}>
+    <Box sx={{ minWidth: 375 }}>
       <Card variant="outlined">{makeCard(tags, question, opts, optValues)}</Card>
     </Box>
   );

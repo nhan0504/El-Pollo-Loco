@@ -7,9 +7,8 @@ export default function Navigation() {
     return (
         <div>
         <PrimarySearchAppBar />
-        <Box sx={{ flexGrow: 1 }}/>
-          <FeedButtons/>
-        <PollCards />
+        <Box sx={{ flexGrow: 1 }}/>    
+            <PollCards />
         </div>
         
     )
