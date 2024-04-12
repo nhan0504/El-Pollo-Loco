@@ -51,7 +51,7 @@ function cardsTogether() {
 }
 
 
-export default function PollCards() {
+export default function Feed() {
   return (
     <Box sx={{ minWidth: 275 }}>
       {cardsTogether()}
