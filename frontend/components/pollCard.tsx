@@ -10,7 +10,7 @@ import { ButtonGroup } from '@mui/material';
 
 const makeCard = (tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>) => (
   <React.Fragment>
-        <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
+        <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column', border: '1px', borderRadius: 15}}  variant="outlined" >
         <CardContent>
           
               <ButtonGroup variant="contained" aria-label="Basic button group">
@@ -38,7 +38,7 @@ const makeCard = (tags:Array<string>, question: string, opts: Array<string>, opt
 export default function PollCard(tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>) {
   return (
     <Box sx={{ minWidth: 375 }}>
-      <Card variant="outlined">{makeCard(tags, question, opts, optValues)}</Card>
+      {makeCard(tags, question, opts, optValues)}
     </Box>
   );
 }

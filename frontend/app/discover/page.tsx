@@ -1,5 +1,5 @@
 import PrimarySearchAppBar from "@/components/navigation";
-import PollCards from "@/components/pollCards";   
+import Feed from "@/components/feed";   
 import FeedButtons from "@/components/feedButtons";
 import { Box } from "@mui/material";
 
@@ -8,7 +8,7 @@ export default function Navigation() {
         <div>
         <PrimarySearchAppBar />
         <Box sx={{ flexGrow: 1 }}/>    
-            <PollCards />
+            <Feed />
         </div>
         
     )
