@@ -21,7 +21,7 @@ export default function FeedButtons(){
             size="medium"
             style={{ fontSize: '16px', fontWeight: 'bold'}}
             sx={{mr: 3, textTransform:"capitalize",  color:"black"}}
-            onClick={switchFeed}
+            //onClick={switchFeed}
         >
                 Discover
         </Button>
@@ -30,7 +30,7 @@ export default function FeedButtons(){
             size="medium"
             style={{ fontSize: '16px'}}
             sx={{mr: 3, textTransform:"capitalize", color:"black"}}
-            onClick={switchFeed}
+            //onClick={switchFeed}
         >
                 Friends
         </Button>
@@ -39,7 +39,7 @@ export default function FeedButtons(){
             size="medium"
             style={{ fontSize: '16px' }}
             sx={{textTransform:"capitalize", color:"black"}}
-            onClick={switchFeed}
+            //onClick={switchFeed}
         >
                 Following
         </Button>
