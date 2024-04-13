@@ -21,6 +21,7 @@ import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CreatePoll from './pollForm';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -178,7 +179,7 @@ export default function PrimarySearchAppBar() {
           <Button 
             variant="contained"
             size="medium"
-            //onClick={createPoll}
+            onClick={CreatePoll}
           >
                 Create Poll&nbsp;
                 <AddIcon fontSize="small"/>

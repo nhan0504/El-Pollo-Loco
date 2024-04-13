@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
@@ -9,35 +10,67 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import TextField from '@mui/material/TextField';
+import FormLabel from '@mui/material';
+import PollCard from './pollCard';
 
+function PollForm() {
 
-function pollForm() {
+    let index = 0
 
     const [pollData, setPollData] = useState({
         // Need to get current logged in user
         userID:123,
         title: "",
+        // Give each one its ID as a key, improve performance on updates
+        // [("option" + index++)]: 
+        // {
+        //     optionID:0,
+        //     optionText:"",
+        //     index:0
+        // },
+        // [("option" + index++)]: 
+        // {
+        //     optionID:0,
+        //     optionText:"",
+        //     index:0
+        // },
         options: [
             {
-                optionID:"",
-                optionText:""
+                optionID:0,
+                optionText:"",
+                index:0
             },
             {
-                optionID:"",
-                optionText:""
+                optionID:0,
+                optionText:"",
+                index:1
             }
         ],        
     })
 
-    const handleChange = (event: any) => {
+    const handleChange = (event: any, fieldName: string, id:number=0) => {
         const title = event.title;
-        const options = event.options;
-        setPollData(pollData => ({...pollData, title: title, options: options}))
+        if (fieldName === "title") {
+            setPollData(pollData => ({...pollData, title: title}))
+        }
+        else if (fieldName === "options") {
+
+            const newText = event.optionText;
+            setPollData(pollData => ({...pollData, options: (pollData.options).map((option) => {
+                if(option.index === id){
+
+                    pollData.options[id].optionText = newText;
+
+                }
+                return option;
+            })}))
+        }
     }
-
+    
     const handleSubmit = (event: any) => {
-
-        event.preventDefault();
+        //event.preventDefault();
     }
 
     const addOption = () => {
@@ -45,62 +78,82 @@ function pollForm() {
             ...pollData,
             userID: pollData.userID,
             title: pollData.title,
-            options: [...pollData.options, {optionID: "", optionText: ""}]
+            options: [...pollData.options, {optionID: 0, optionText: "", index: pollData.options.length}]
         }))
     }
 
-    const optionList = pollData.options.map((option) =>
+    const optionList = pollData.options?.map((option) =>
 
-        <label>
+        <Typography variant="h7" component="div" align="left">
             Option
-            <input type="text" value={option.optionText} name={option.optionID} onChange={handleChange}/>
-        </label>
+            <TextField 
+                type="text" 
+                name="option"
+                variant="outlined"
+                size="small"
+                sx={{m:1}}
+                value={option.optionText} 
+                onChange={(event) => handleChange(event, "options", option.index)}
+            />
+        </Typography>
 
     )
 
     return(
-        <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
-            <CardContent>
+        <Card style={{width: 300, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
+            <CardContent style={{margin: 2}}>
                 <form action={handleSubmit} method="POST">
                     
-                    <label> 
-                        this.state.title
-                        <input 
-                            type="text" 
+                    <FormControl>
+                        <Typography variant="h5" component="div" align="center" sx={{p:3}}>
+                        Poll Title
+                        <TextField
+                            type="text"
+                            variant="outlined"
+                            size="small"
                             name="title"
-                            value={pollData.title || ""}
-                            onChange={handleChange}
+                            value={pollData.title}
+                            sx={{}}
+                            onChange={(event) => handleChange(event, "title")}
                         />
-                    </label>
-
-                    {optionList}
+                        </Typography>
                     
                     <Button 
                         onClick={addOption}
                     >
                         Add poll option
                     </Button>
+                    
+                    <FormGroup>
+                    {optionList}
+                    </FormGroup>
 
-                    <Button type="submit">Create</Button>
-
+                    <Button 
+                        variant="contained"
+                        type="submit"
+                        sx={{m:2}}
+                    >
+                        Create
+                    </Button>
+                    </FormControl>
                 </form>
             </CardContent>
         </Card>
     )
 }
 
+// const makePoll = (tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>) => {
+//     // POST call to put poll info in database
+    
+//     {PollCard(tags, question, opts, optValues)}
+    
+// }
 
-
-const makePoll = () => {
-    // POST call to put poll info in database
-}
-
-export default function createPoll (userID: number, userName: string){
+export default function CreatePoll (){
 
     return(
-
        <Box sx={{ minWidth: 375 }}>
-            pollForm()
+            <PollForm/>
         </Box>
     );
 }
