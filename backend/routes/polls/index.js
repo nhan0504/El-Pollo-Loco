@@ -3,29 +3,50 @@ var router = express.Router();
 
 const pool = require("../../db.js");
 
-router.get("/:pollID", function (req, res) {
-  const pollID = req.params.pollID;
+router.get("/:pollId/details", function (req, res) {
+  const pollId = req.params.pollId;
   pool.query(
     "SELECT * FROM Polls WHERE poll_id = ?",
-    [pollID],
-    (error, results) => {
+    [pollId],
+    (error, pollResults) => {
       if (error) {
-        console.error(`Error getting poll ${pollID} data`, error);
-        res.status(500).send("Error fetching poll data");
+        console.error(`Error fetching poll ${pollId} details`, error);
+        res.status(500).send("Error fetching poll details");
         return;
       }
-      res.json(results);
+      if (pollResults.length === 0) {
+        res.status(404).send('Poll not found');
+        return;
+      }
+
+      pool.query(
+        "SELECT * FROM Options WHERE poll_id = ?",
+        [pollId],
+        (error, optionsResults) => {
+          if (error) {
+            console.error(`Error fetching options for poll ${pollId}`, error);
+            res.status(500).send("Error fetching poll options");
+            return;
+          }
+
+          const pollWithStats = {
+            ...pollResults[0],
+            options: optionsResults
+          };
+          res.json(pollWithStats);
+        }
+      );
     }
   );
 });
 
 router.post("/", function (req, res) {
-  const pollData = req.body;
+  const {user_id, title, options} = req.body;
   pool.query(
     "INSERT INTO Polls(user_id, title, created_at) VALUES (?,?,NOW())",
     [
-      pollData.user_id,
-      pollData.title,
+      user_id,
+      title,
     ],
     (error, results) => {
       if (error) {
@@ -33,26 +54,39 @@ router.post("/", function (req, res) {
         res.status(500).send("Error creating poll");
         return;
       }
-      res.send(`Poll created successfully`);
+      const pollId = results.insertId;
+      const optionsData = options.map(option => [pollId, option]);
+
+      pool.query(
+        "INSERT INTO Options(poll_id, option_text) VALUES ?",
+        [optionsData],
+        (error, results) => {
+          if (error) {
+            console.error(`Error adding options to poll ${pollId}`, error);
+            res.status(500).send("Error adding options to the poll");
+            return;
+          }
+          res.status(201).send(`Poll created successfully with ID ${pollId}`);
+      });
     }
   );
 });
 
-router.delete("/:pollID", function (req, res) {
-  const pollID = req.params.pollID;
+router.delete("/:pollId", function (req, res) {
+  const pollId = req.params.pollId;
   pool.query(
     "DELETE FROM Polls WHERE poll_id = ?",
-    [pollID],
+    [pollId],
     (error, results) => {
       if (error) {
-        console.error(`Error deleting poll ${pollID}`, error);
+        console.error(`Error deleting poll ${pollId}`, error);
         res.status(500).send("Error deleting poll");
         return;
       }
       if (results.affectedRows === 0) {
         res.status(404).send('Poll not found'); 
       } else {
-        res.send(`Poll ${pollID} deleted successfully`);
+        res.send(`Poll ${pollId} deleted successfully`);
       }
     }
   );
