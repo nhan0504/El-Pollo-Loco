@@ -62,6 +62,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const CreatePoll = () => {
+
+  window.open('http://localhost:3000/poll_form', '_blank');
+
+
+}
+
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -178,7 +185,7 @@ export default function PrimarySearchAppBar() {
           <Button 
             variant="contained"
             size="medium"
-            //onClick={CreatePoll}
+            onClick={CreatePoll}
           >
                 Create Poll&nbsp;
                 <AddIcon fontSize="small"/>

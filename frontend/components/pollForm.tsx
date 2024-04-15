@@ -13,7 +13,7 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material';
-import PollCard from './pollCard';
+import { MuiChipsInput } from 'mui-chips-input'
 
 function PollForm() {
 
@@ -23,19 +23,6 @@ function PollForm() {
         // Need to get current logged in user
         userID:123,
         title: "",
-        // Give each one its ID as a key, improve performance on updates
-        // [("option" + index++)]: 
-        // {
-        //     optionID:0,
-        //     optionText:"",
-        //     index:0
-        // },
-        // [("option" + index++)]: 
-        // {
-        //     optionID:0,
-        //     optionText:"",
-        //     index:0
-        // },
         options: [
             {
                 optionID:0,
@@ -49,6 +36,8 @@ function PollForm() {
             }
         ],        
     })
+
+    const [tags, setTags] = useState([])
 
     const handleChange = (event: any, fieldName: string, id:number=0) => {
         const title = event.title;
@@ -84,7 +73,7 @@ function PollForm() {
 
     const optionList = pollData.options?.map((option) =>
 
-        <Typography variant="h7" component="div" align="left">
+        <Typography component="div" align="left">
             Option
             <TextField 
                 type="text" 
@@ -99,8 +88,19 @@ function PollForm() {
 
     )
 
+    const InputTags = () => {
+      
+        const handleChange = (newTags) => {
+          setTags(newTags)
+        }
+      
+        return (
+          <MuiChipsInput value={tags} onChange={handleChange} />
+        )
+    }
+
     return(
-        <Card style={{width: 300, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
+        <Card style={{width: 350, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
             <CardContent style={{margin: 2}}>
                 <form action={handleSubmit} method="POST">
                     
@@ -118,36 +118,34 @@ function PollForm() {
                         />
                         </Typography>
                     
-                    <Button 
-                        onClick={addOption}
-                    >
-                        Add poll option
-                    </Button>
-                    
-                    <FormGroup>
-                    {optionList}
-                    </FormGroup>
+                        <Button 
+                            onClick={addOption}
+                        >
+                            Add poll option
+                        </Button>
+                        
+                        <FormGroup>
+                        {optionList}
+                        </FormGroup>
 
-                    <Button 
-                        variant="contained"
-                        type="submit"
-                        sx={{m:2}}
-                    >
-                        Create
-                    </Button>
+                        <Typography component="div" sx={{p:3}}>
+                            Tags
+                            <InputTags/>
+                        </Typography>
+
+                        <Button 
+                            variant="contained"
+                            type="submit"
+                            sx={{m:2}}
+                        >
+                            Create
+                        </Button>
                     </FormControl>
                 </form>
             </CardContent>
         </Card>
     )
 }
-
-// const makePoll = (tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>) => {
-//     // POST call to put poll info in database
-    
-//     {PollCard(tags, question, opts, optValues)}
-    
-// }
 
 export default function CreatePoll (){
 
