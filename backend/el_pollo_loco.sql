@@ -88,3 +88,11 @@ CREATE TABLE Users (
     username varchar(255), 
     password varchar(255)
 );
+
+-- Table to identify the tags subscribed to by specific users
+     -- user_id = id of the user that subscribed to the tag
+     -- tag_id = id of the tag the user is subscribed to
+CREATE TABLE UserTag (
+    user_id INT,
+    tag_id INT
+);
