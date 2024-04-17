@@ -3,7 +3,9 @@ var router = express.Router();
 
 const pool = require("../../db.js");
 
-router.get("/:pollId/details", function (req, res) {
+const voteRouter = require('./vote');
+
+router.get("/:pollId", function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
     "SELECT * FROM Polls WHERE poll_id = ?",
@@ -91,5 +93,7 @@ router.delete("/:pollId", function (req, res) {
     }
   );
 });
+
+router.use('/vote', voteRouter);
 
 module.exports = router;
