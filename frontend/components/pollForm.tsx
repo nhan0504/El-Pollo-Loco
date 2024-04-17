@@ -43,7 +43,7 @@ function PollForm() {
 
     const handleChange = (event: any, fieldName: string, id:number=0) => {
         const title = event.target.value;
-        alert(title)
+        //alert(title)
         if (fieldName === "title") {
             setPollData(pollData => ({...pollData, title: title}))
         }
@@ -63,7 +63,7 @@ function PollForm() {
     
     const handleSubmit = (event: any) => {
 
-        alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
+        //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
         //POST
 
 
@@ -80,19 +80,24 @@ function PollForm() {
     }
 
     const optionList = pollData.options?.map((option) =>
+        <React.Fragment>
+            <Box flexDirection="row" alignItems="center" sx={{display:'flex'}}>
+                <Typography variant="body1"sx={{}}>
+                    Option
+                </Typography>
 
-        <Typography component="div" align="left" key={1}>
-            Option
-            <TextField 
-                type="text" 
-                name="option"
-                variant="outlined"
-                size="small"
-                sx={{m:1}}
-                value={option.optionText} 
-                onChange={(event) => handleChange(event, "options", option.index)}
-            />
-        </Typography>
+                <TextField 
+                    type="text" 
+                    name="option"
+                    variant="outlined"
+                    size="small"
+                    multiline
+                    rows=""
+                    sx={{m:1, width: 250}}
+                    onChange={(event) => handleChange(event, "options", option.index)}
+                />
+            </Box>
+        </React.Fragment>
 
     )
 
@@ -108,14 +113,14 @@ function PollForm() {
                 <form action={handleSubmit} method="POST">
                     
                     <FormControl>
-                        <Typography variant="h5" component="div" align="center" sx={{p:3}}>
+                        <Typography variant="h6" component="div" align="center" sx={{p:1}}>
                         Poll Title
                         <TextField
                             type="text"
                             variant="outlined"
                             size="small"
                             name="title"
-                            sx={{}}
+                            sx={{m:1}}
                             onChange={(event) => handleChange(event, "title")}
                         />
                         </Typography>
@@ -129,9 +134,10 @@ function PollForm() {
                         <FormGroup>
                         {optionList}
                         </FormGroup>
-
-                        <Typography variant="h5" component="div" align="center" sx={{p:3}}>
+                        <br/>
+                        <Typography variant="body2" color='textSecondary' sx={{}}>
                         Tags
+                        </Typography>
                         <TextField
                             type="text"
                             variant="outlined"
@@ -140,7 +146,7 @@ function PollForm() {
                             sx={{}}
                             onChange={(event) => handleTagChange(event.target.value)}
                         />
-                        </Typography>
+                        <br/>
 
                         <Button 
                             variant="contained"
