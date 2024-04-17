@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "material-ui-chip-input": "^2.0.0-beta.2",
+    "mui-chips-input": "^2.1.4"
   }
 }
