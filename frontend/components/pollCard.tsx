@@ -26,8 +26,14 @@ const makeCard = (tags:Array<string>, question: string, opts: Array<string>, opt
             {opts.map((option, index) => 
                 <CardActions key={option}>
                     <Button variant="contained" style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option}</Button>
+
                     <Box sx={{ width: 3/4, boxShadow: 1}}>
-                        <LinearProgress variant="determinate" value={optValues[index]} />
+                      <LinearProgress variant="determinate" value={optValues[index]} />
+                    </Box>
+                    <Box sx={{ minWidth: 35}}>
+                      <Typography variant="body2" color="textSecondary">
+                        {optValues[index]}%
+                      </Typography>
                     </Box>
                 </CardActions>
             )}
