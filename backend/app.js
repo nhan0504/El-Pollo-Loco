@@ -4,23 +4,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('express-session');
+var session = require('cookie-session');
 var passport = require('passport')
-var MySqlStore = require('express-mysql-session')(session);
-//--------------------------------------
-
-//Constants
-const dbHost = process.env.DB_HOST;
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
-const dbName = process.env.DB_NAME;
-const store_options = {
-	host: dbHost,
-	port: 3306,
-	user: dbUser,
-	password: dbPassword,
-	database: dbName
-};
 //--------------------------------------
 
 //Routes
@@ -43,12 +28,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const sessionStore = new MySQLStore(options);
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  store: sessionStore
+  maxAge: 1000 * 60 * 60 * 24, //One day
 }));
 
 //Routes

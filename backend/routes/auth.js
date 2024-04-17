@@ -17,7 +17,7 @@ passport.use(new LocalStrategy(function verify(username, password, cb) {
 
     crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
       if (err) { return cb(err); }
-      if (!crypto.timingSafeEqual(row.hashed_password, hashedPassword)) {
+      if (!crypto.timingSafeEqual(row.pass, hashedPassword.toString('hex'))) {
         return cb(null, false, { message: 'Incorrect username or password.' });
       }
       return cb(null, row);
@@ -27,6 +27,7 @@ passport.use(new LocalStrategy(function verify(username, password, cb) {
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
+      console.log("serializing user...");
       return cb(null, {
         username: user.username,
         email: user.email
@@ -35,6 +36,7 @@ passport.serializeUser(function(user, cb) {
   });
   
 passport.deserializeUser(function(user, cb) {
+    console.log('deserializing user...');
     process.nextTick(function() {
       return cb(null, user);
     });
@@ -46,13 +48,14 @@ router.post("/login", passport.authenticate('local'));
 router.post("/signup", function (req, res) {
     const userData = req.body;
     pool.query(
-        "INSERT INTO Users(username, pass, fname, lname, email) VALUES (?,?,?,?,?)",
+        "INSERT INTO Users(username, pass, fname, lname, email, salt) VALUES (?,?,?,?,?,?)",
         [
-        userData.username,
-        userData.pass,
-        userData.fname,
-        userData.lname,
-        userData.email,
+          userData.username,
+          userData.pass,
+          userData.fname,
+          userData.lname,
+          userData.email,
+          userData.salt,
         ],
         (error, results) => {
         if (error) {
@@ -62,5 +65,7 @@ router.post("/signup", function (req, res) {
         }
         res.send(`User created successfully`);
         }
-    );
+    ); 
 });
+
+module.exports = router;
