@@ -62,8 +62,8 @@ function PollForm() {
             body: JSON.stringify(
                 {
                     user_id: 3,
-                    title: pollData.title,
-                    options: pollData.options
+                    title: "Best poll ever",
+                    options: ["best"]
                 }
             )
         }
@@ -75,12 +75,12 @@ function PollForm() {
 
             }
             else{
-                alert(response.json)
+                return response.text().then(text => {alert(text)})
             }
         })
         .catch(error => alert(error.message));
 
-        alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
+        //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
         //POST
 
 
