@@ -1,3 +1,4 @@
+"use client"
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -9,8 +10,6 @@ import { Grid, grid2Classes } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
 import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
-
-
 
 function FormRow() {
     const cols = 2

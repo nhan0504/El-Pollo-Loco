@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -19,8 +19,6 @@ import { title } from 'process';
 
 function PollForm() {
 
-    let index = 0
-
     const [pollData, setPollData] = useState({
         // Need to get current logged in user
         userID:123,
@@ -29,19 +27,19 @@ function PollForm() {
             {
                 optionID:0,
                 optionText:"",
-                index:0
             },
             {
                 optionID:0,
                 optionText:"",
-                index:1
             }
         ],        
     })
 
+    const pollRef = useRef(pollData);
+
     const [tags, setTags] = useState<string[]>([]);
 
-    const handleChange = (event: any, fieldName: string, id:number=0) => {
+    const handleChange = (event: any, fieldName: string, ind:number=0) => {
         const title = event.target.value;
         //alert(title)
         if (fieldName === "title") {
@@ -50,42 +48,50 @@ function PollForm() {
         else if (fieldName === "options") {
 
             const newText = event.target.value;
-            setPollData(pollData => ({...pollData, options: (pollData.options).map((option) => {
-                if(option.index === id){
+            pollData.options[ind].optionText = newText;
 
-                    pollData.options[id].optionText = newText;
-
-                }
-                return option;
-            })}))
+            setPollData(pollData => ({...pollData, options: pollData.options}));
         }
     }
     
     const handleSubmit = (event: any) => {
 
-        //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
+        alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
         //POST
 
 
     }
-
 
     const addOption = () => {
         setPollData(pollData => ({
             ...pollData,
             userID: pollData.userID,
             title: pollData.title,
-            options: [...pollData.options, {optionID: 0, optionText: "", index: pollData.options.length}]
+            options: [...pollData.options, {optionID: 0, optionText: ""}]
         }))
     }
 
-    const optionList = pollData.options?.map((option) =>
+    function removeOption(ind: number) {
+
+        const newOptions = pollData.options.length > 2 ? pollData.options.filter(function(option, index) {
+            if(ind == index){
+                return false;
+            }
+            return true;
+        }) : pollData.options;
+
+        setPollData(pollData => ({
+            ...pollData, 
+            options: newOptions}))
+
+    }
+
+    const optionList = pollData.options?.map((option, index) =>
         <React.Fragment>
-            <Box flexDirection="row" alignItems="center" sx={{display:'flex'}}>
+            <Box flexDirection="row" alignItems="center" justifyContent='center'sx={{color: "black", display:'flex'}}>
                 <Typography variant="body1"sx={{}}>
                     Option
                 </Typography>
-
                 <TextField 
                     type="text" 
                     name="option"
@@ -93,9 +99,11 @@ function PollForm() {
                     size="small"
                     multiline
                     rows=""
+                    value={option.optionText}
                     sx={{m:1, width: 250}}
-                    onChange={(event) => handleChange(event, "options", option.index)}
+                    onChange={(event) => handleChange(event, "options", index)}
                 />
+                <Button variant="text" onClick={(event) => {removeOption(index)}} sx={{maxWidth:"10px", minWidth:"10px"}}>X</Button>
             </Box>
         </React.Fragment>
 
@@ -108,7 +116,7 @@ function PollForm() {
     }
 
     return(
-        <Card style={{width: 350, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
+        <Card style={{width: 360, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
             <CardContent style={{margin: 2}}>
                 <form action={handleSubmit} method="POST">
                     
@@ -120,6 +128,7 @@ function PollForm() {
                             variant="outlined"
                             size="small"
                             name="title"
+                            value={pollData.title}
                             sx={{m:1}}
                             onChange={(event) => handleChange(event, "title")}
                         />
@@ -138,6 +147,7 @@ function PollForm() {
                         <Typography variant="body2" color='textSecondary' sx={{}}>
                         Tags
                         </Typography>
+                        {/* <MuiChipsInput/> */}
                         <TextField
                             type="text"
                             variant="outlined"
