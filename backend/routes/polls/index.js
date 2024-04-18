@@ -3,6 +3,12 @@ var router = express.Router();
 
 const pool = require("../../db.js");
 
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 router.get("/:pollId/details", function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
@@ -42,6 +48,7 @@ router.get("/:pollId/details", function (req, res) {
 
 router.post("/", function (req, res) {
   const {user_id, title, options} = req.body;
+  const pollData = req.body;
   pool.query(
     "INSERT INTO Polls(user_id, title, created_at) VALUES (?,?,NOW())",
     [

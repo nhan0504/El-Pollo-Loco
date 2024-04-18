@@ -55,6 +55,30 @@ function PollForm() {
     }
     
     const handleSubmit = (event: any) => {
+        //event.preventDefault();
+        const request = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(
+                {
+                    user_id: 3,
+                    title: pollData.title,
+                    options: pollData.options
+                }
+            )
+        }
+
+        fetch('http://localhost:3000/polls/', request).then(response => {
+            if(!response.ok){
+                
+                return response.text().then(text => {throw new Error(text)})
+
+            }
+            else{
+                alert(response.json)
+            }
+        })
+        .catch(error => alert(error.message));
 
         alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
         //POST
