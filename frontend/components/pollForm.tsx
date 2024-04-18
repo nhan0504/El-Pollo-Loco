@@ -62,8 +62,8 @@ function PollForm() {
             body: JSON.stringify(
                 {
                     user_id: 3,
-                    title: "Best poll ever",
-                    options: ["best"]
+                    title: pollData.title,
+                    options: pollData.options.map((option) => option.optionText)
                 }
             )
         }
