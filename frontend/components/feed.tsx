@@ -16,7 +16,7 @@ function FormRow() {
     let row = []
     for (let i = 0; i<cols; i++){
         row.push(<Grid item xs={4} style={{padding: 50}}>
-            {PollCard(["Movies", "Lord of the rings"], "Which Lord of The rings?", ["The first", "The second", "The third"], [30, 20, 50])}
+            {PollCard(["Movies", "Lord of the rings"], "Which Lord of The rings?", ["The first", "The second", "The third"], [30, 20, 50], "superDuperUser")}
           </Grid>)
 
     }
