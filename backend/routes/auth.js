@@ -28,7 +28,6 @@ passport.use(new LocalStrategy(function (username, pass, cb) {
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
-      console.log("serializing user...");
       return cb(null, {
         username: user.username,
         email: user.email
@@ -37,7 +36,6 @@ passport.serializeUser(function(user, cb) {
   });
   
 passport.deserializeUser(function(user, cb) {
-    console.log('deserializing user...');
     process.nextTick(function() {
       return cb(null, user);
     });
@@ -49,17 +47,31 @@ router.post("/login", (req, res) => {
     if (err || !user) {
       res.status(500).send("Unsuccessful login.");
     }
-    res.status(200).send("Logged in successfully.")
+    else {
+      req.logIn(user, (err) => {
+        if (err) {
+          res.status(500).send("Unsuccessful login.")
+        }
+        else {
+          res.status(200).send("Logged in successfully.");
+        }
+      });
+    }
   })(req, res);
 });
 
 router.post("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
-  res.status(200).send("Logged out successfully.")
+  if (!req.user) { res.status(500).send("Not logged in; cannot logout.") }
+  else {
+    req.logout((err) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      else {
+        res.status(200).send("Logged out successfully.");
+      }
+    });
+  }
 })
 
 router.post("/signup", function (req, res) {
@@ -80,7 +92,9 @@ router.post("/signup", function (req, res) {
             res.status(500).send("Error creating new user");
             return;
         }
-        res.send(`User created successfully`);
+        else {
+          res.send(`User created successfully`);
+        }
         }
     ); 
 });
