@@ -10,18 +10,19 @@ var pool = require("../db.js");
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 
-passport.use(new LocalStrategy(function verify(username, password, cb) {
+passport.use(new LocalStrategy(function (username, pass, cb) {
   pool.query('SELECT * FROM Users WHERE username = ?', [ username ], function(err, row) {
     if (err) { return cb(err); }
-    if (!row) { return cb(null, false, { message: 'Incorrect username or password.' }); }
+    if (!row[0]) { return cb(null, false, { message: 'Incorrect username or password.' }); }
 
-    crypto.pbkdf2(password, row.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-      if (err) { return cb(err); }
-      if (!crypto.timingSafeEqual(row.pass, hashedPassword.toString('hex'))) {
-        return cb(null, false, { message: 'Incorrect username or password.' });
+    try {
+      if (crypto.timingSafeEqual(Buffer.from(row[0].pass, "utf-8"), Buffer.from(pass, "utf-8"))) {
+        return cb(null, row[0])
       }
-      return cb(null, row);
-    });
+    }
+    catch (e) {
+      return cb(null, false, { message: "Incorrect username or password." })
+    }    
   });
 }));
 
@@ -43,7 +44,23 @@ passport.deserializeUser(function(user, cb) {
   });  
 //--------------------------------------
 
-router.post("/login", passport.authenticate('local'));
+router.post("/login", (req, res) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err || !user) {
+      res.status(500).send("Unsuccessful login.");
+    }
+    res.status(200).send("Logged in successfully.")
+  })(req, res);
+});
+
+router.post("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
+  res.status(200).send("Logged out successfully.")
+})
 
 router.post("/signup", function (req, res) {
     const userData = req.body;

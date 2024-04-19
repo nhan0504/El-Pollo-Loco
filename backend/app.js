@@ -4,8 +4,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var session = require('cookie-session');
-var passport = require('passport')
+var session = require('express-session');
+var passport = require('passport');
+var uuid = require('uuid');
 //--------------------------------------
 
 //Routes
@@ -19,7 +20,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-//---------------------------------------
+//--------------------------------------
 
 //Middleware
 app.use(logger('dev'));
@@ -30,8 +31,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
-  maxAge: 1000 * 60 * 60 * 24, //One day
+  resave: false,
+  saveUninitialized: true,
+  genid: (req) => uuid.v4(),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }, //One day
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Routes
 app.use('/', index);
