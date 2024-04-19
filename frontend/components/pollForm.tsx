@@ -111,7 +111,7 @@ function PollForm() {
     }
 
     const optionList = pollData.options?.map((option, index) =>
-        <React.Fragment>
+        <React.Fragment key={1}>
             <Box flexDirection="row" alignItems="center" justifyContent='center'sx={{color: "black", display:'flex'}}>
                 <Typography variant="body1"sx={{}}>
                     Option
