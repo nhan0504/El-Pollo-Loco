@@ -13,7 +13,7 @@ import { useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 
-function makeCard(tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>, username: string) {
+function makeCard(tags:Array<string>, question: string, opts: Array<string>, username:string) {
   
   const [cardData, setCardData] = useState({
     //all of this info will actually be fetched from database on page load I think...as parameters I guess along with everything else?
@@ -90,10 +90,10 @@ function makeCard(tags:Array<string>, question: string, opts: Array<string>, opt
 }
 
 
-export default function PollCard(tags:Array<string>, question: string, opts: Array<string>, optValues: Array<number>, username: string) {
+export default function PollCard(tags:Array<string>, question: string, opts: Array<string>, username:string) {
   return (
     <Box sx={{ minWidth: 375 }}>
-      {makeCard(tags, question, opts, optValues, username)}
+      {makeCard(tags, question, opts, username)}
     </Box>
   );
 }
