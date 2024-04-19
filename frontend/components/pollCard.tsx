@@ -18,7 +18,7 @@ function makeCard(tags:Array<string>, question: string, opts: Array<string>, use
   const [cardData, setCardData] = useState({
     //all of this info will actually be fetched from database on page load I think...as parameters I guess along with everything else?
     totalVotes:0,
-    opts: opts.map((opt) => {
+    opts: opts?.map((opt) => {
       return {
         optionText:opt,
         votes:0

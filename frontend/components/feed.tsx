@@ -19,11 +19,16 @@ function FormRow(pollData) {
 
   if(pollData){
     for (let i = 0; i < cols; i++){
-
-      row.push( <Grid item xs={4} style={{padding: 50}}>
-                {PollCard(["tag1", "tag2"], pollData.title, pollData.options.map((option) => option.optionText), "pollMaker")}
-              </Grid>
-      );
+      let currCard = pollData.pop()
+      //alert((currCard.title))
+      currCard ? 
+        row.push( <Grid item xs={4} style={{padding: 50}}>
+                  {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.optionText), "pollMaker")}
+                </Grid>
+        ) : row.push( <Grid item xs={4} style={{padding: 50}}>
+          {PollCard(["tag1", "tag2"], "titletemp", ["tempopt"], "pollMaker")}
+        </Grid>
+) 
     }
  }
  else{
@@ -83,7 +88,7 @@ export default function Feed() {
       let response = await fetch("http://localhost:3000/feed");
       let data = await response.json();
       if(response.ok){
-        alert(JSON.stringify(data));
+        //alert(JSON.stringify(data));
         setPollData(data);
 
       }
