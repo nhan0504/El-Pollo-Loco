@@ -13,15 +13,16 @@ import { useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 
-function makeCard(tags:Array<string>, question: string, opts: Array<string>, username:string) {
+function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
   
   const [cardData, setCardData] = useState({
-    //all of this info will actually be fetched from database on page load I think...as parameters I guess along with everything else?
-    totalVotes:0,
+
+    totalVotes:opts?.map((opt)=>opt.votes).reduce((partialSum, a) => partialSum + a, 0),
     opts: opts?.map((opt) => {
       return {
-        optionText:opt,
-        votes:0
+        optionText:opt.optionText,
+        votes:opt.votes,
+        option_id:opt.option_id
       }
     }),
     comments: 0
@@ -29,9 +30,32 @@ function makeCard(tags:Array<string>, question: string, opts: Array<string>, use
 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const addVote = (ind: number) => {
-    // will be sent to database - can update locally but could  be buggy if they're not synced? could again fetch from database
-    // in the future, instead of adding to totalVotes manually, we can just add all of the current vote amounts together so that
-    // it doesn't get reset on page load
+    
+    const request = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json'},
+      body: JSON.stringify(
+          {
+              user_id: 3,
+              option_id:cardData.opts[ind].option_id
+          }
+      )
+    }
+
+    fetch('http://localhost:3000/polls/vote', request).then(response => {
+            if(!response.ok){
+                
+                return response.text().then(text => {throw new Error(text)})
+
+            }
+            else{
+                return response.text().then(text => {alert(text)})
+            }
+        })
+        .catch(error => alert(error.message));
+
+    // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
+    // Otherwise it might just be slightly out of date, though it will correct on page refresh
     cardData.opts[ind].votes += 1;
     setCardData({...cardData, totalVotes: cardData.totalVotes + 1, opts: cardData.opts})
   }
@@ -47,50 +71,55 @@ function makeCard(tags:Array<string>, question: string, opts: Array<string>, use
   return(
   <React.Fragment>
         <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column', border: '1px', borderRadius: 15}}  variant="outlined" >
-        <CardContent>
-        <Stack alignItems="center" direction="row" gap={0}>
-          <PersonIcon fontSize='large' />
-          <Typography variant="subtitle1">{username}</Typography>
-        </Stack>
-          <Typography variant="h5" component="div" align="center" >
-            {question}
-          </Typography>
-            <br />
-        </CardContent>
+          <CardContent>
+
+            <Stack alignItems="center" direction="row" gap={0}>
+              <PersonIcon fontSize='large' />
+              <Typography variant="subtitle1">{username}</Typography>
+            </Stack>
+
+            <Typography variant="h5" component="div" align="center" >
+              {question}
+            </Typography>
+              <br />
+
+          </CardContent>
         {/* here I'm mapping to the cardData options instead of the opts parameter, so instead of option, it's option.optionText */}
-            {cardData.opts?.map((option, index) => 
-                <CardActions key={option.optionText}>
-                    {/* Added onClick function as addVote */}
-                    <Button variant="contained" value={option.optionText} onClick={(event) => addVote(index)} style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option.optionText}</Button>
-                    {/* using getPercent which just divides the options's votes by total votes */}
-                    <Box sx={{ width: 3/4, boxShadow: 1}}>
-                      <LinearProgress variant="determinate" value={getPercent(option)}/>
-                    </Box>
-                    <Box sx={{ minWidth: 35}}>
-                      <Typography variant="body2" color="textSecondary">
-                        {parseFloat(getPercent(option).toPrecision(3))}%
-                      </Typography>
-                    </Box>
-                </CardActions>
-            )}
-            <CardContent sx={{color:'blue', display:'flex', justifyContent: 'space-evenly'}}>
-              <Stack alignItems="center" direction="row">
-                <CommentIcon fontSize="large" sx={{mr:2}}/> 
-                123
-              </Stack>
-              <ButtonGroup variant="text" aria-label="Basic button group">
-                {tags.map(tag => <Button key={tag}>{tag}</Button>)}
-              </ButtonGroup>
-              <br/>
-            </CardContent>
-        </Card>
+        {cardData.opts?.map((option, index) => 
+          <CardActions key={option.optionText}>
+            {/* Added onClick function as addVote */}
+            <Button variant="contained" value={option.optionText} onClick={(event) => addVote(index)} style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option.optionText}</Button>
+            
+            {/* using getPercent which just divides the options's votes by total votes */}
+            <Box sx={{ width: 3/4, boxShadow: 1}}>
+              <LinearProgress variant="determinate" value={getPercent(option)}/>
+            </Box>
+
+            <Box sx={{ minWidth: 35}}>
+              <Typography variant="body2" color="textSecondary">
+                {parseFloat(getPercent(option).toPrecision(3))}%
+              </Typography>
+            </Box>
+          </CardActions>
+        )}
+        <CardContent sx={{color:'blue', display:'flex', justifyContent: 'space-evenly'}}>
+          <Stack alignItems="center" direction="row">
+            <CommentIcon fontSize="large" sx={{mr:2}}/> 
+            123
+          </Stack>
+
+          <ButtonGroup variant="text" aria-label="Basic button group">
+            {tags.map(tag => <Button key={tag}>{tag}</Button>)}
+          </ButtonGroup>
+          <br/>
+        </CardContent>
+      </Card>
             
   </React.Fragment>
   );
 }
 
-
-export default function PollCard(tags:Array<string>, question: string, opts: Array<string>, username:string) {
+export default function PollCard(tags:Array<string>, question: string, opts, username:string) {
   return (
     <Box sx={{ minWidth: 375 }}>
       {makeCard(tags, question, opts, username)}
