@@ -14,15 +14,23 @@ passport.use(new LocalStrategy(function (username, pass, cb) {
   pool.query('SELECT * FROM Users WHERE username = ?', [ username ], function(err, row) {
     if (err) { return cb(err); }
     if (!row[0]) { return cb(null, false, { message: 'Incorrect username or password.' }); }
-
-    try {
-      if (crypto.timingSafeEqual(Buffer.from(row[0].pass, "utf-8"), Buffer.from(pass, "utf-8"))) {
-        return cb(null, row[0])
+    
+    crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+      if (err) { console.log(err) }
+      try {
+        const hashedPasswordHex = hashedPassword.toString("hex");
+        if (crypto.timingSafeEqual(Buffer.from(row[0].pass, "utf-8"), Buffer.from(hashedPasswordHex, "utf-8"))) {
+          return cb(null, row[0])
+        }
+        else {
+          return cb(null, false, { message: "Incorrect username or password." })
+        }
       }
-    }
-    catch (e) {
-      return cb(null, false, { message: "Incorrect username or password." })
-    }    
+      catch (e) {
+        return cb(null, false, { message: "Incorrect username or password." })
+      } 
+    });
+       
   });
 }));
 
@@ -76,11 +84,12 @@ router.post("/logout", (req, res) => {
 
 router.post("/signup", function (req, res) {
     const userData = req.body;
-    pool.query(
+    crypto.pbkdf2(userData.password, userData.salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+      pool.query(
         "INSERT INTO Users(username, pass, fname, lname, email, salt) VALUES (?,?,?,?,?,?)",
         [
           userData.username,
-          userData.pass,
+          hashedPassword.toString("hex"),
           userData.fname,
           userData.lname,
           userData.email,
@@ -97,6 +106,7 @@ router.post("/signup", function (req, res) {
         }
         }
     ); 
+    });
 });
 
 module.exports = router;
