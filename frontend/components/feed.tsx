@@ -23,7 +23,7 @@ function FormRow(pollData) {
       //alert((currCard.title))
       currCard ? 
         row.push( <Grid item xs={4} style={{padding: 50}}>
-                  {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.optionText), "pollMaker")}
+                  {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.optionText), currCard.user_id)}
                 </Grid>
         ) : row.push( <Grid item xs={4} style={{padding: 50}}>
           {PollCard(["tag1", "tag2"], "titletemp", ["tempopt"], "pollMaker")}
