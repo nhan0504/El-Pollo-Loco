@@ -6,6 +6,16 @@ var crypto = require('crypto');
 var pool = require("../db.js");
 //--------------------------------------
 
+
+//Middleware
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", process.env.REQUEST_ORIGIN_URL);
+  res.header("Access-Control-Allow-Credentials", "true")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+//--------------------------------------
+
 //Passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
