@@ -82,7 +82,7 @@ export default function Feed() {
   return (isLoading?
     <Box sx={{ minWidth: 275, minHeight: 700 }}>
       <FeedButtons/>
-      <div>loading...</div>:
+      <div>loading...</div>
     </Box>:
     <Box sx={{ minWidth: 275 }}>
       <FeedButtons/>

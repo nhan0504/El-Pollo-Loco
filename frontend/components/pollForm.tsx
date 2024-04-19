@@ -200,7 +200,7 @@ function PollForm() {
 export default function CreatePoll (){
     console.log("here!");
     return(
-       <Box sx={{ minWidth: 375 }}>
+       <Box sx={{ minWidth: 375, minHeight:700 }}>
             <PollForm/>
         </Box>
     );

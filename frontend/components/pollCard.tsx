@@ -36,7 +36,7 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(
           {
-              user_id: 3,
+              user_id: 4,
               option_id:cardData.opts[ind].option_id
           }
       )
@@ -46,18 +46,22 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
             if(!response.ok){
                 
                 return response.text().then(text => {throw new Error(text)})
-
             }
             else{
-                return response.text().then(text => {alert(text)})
+
+              cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
+              setCardData({...cardData, totalVotes: cardData.totalVotes + 1, opts: cardData.opts});
+
+              return response.text()
+            
             }
         })
         .catch(error => alert(error.message));
 
+
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
     // Otherwise it might just be slightly out of date, though it will correct on page refresh
-    cardData.opts[ind].votes += 1;
-    setCardData({...cardData, totalVotes: cardData.totalVotes + 1, opts: cardData.opts})
+   // setCardData({...cardData, totalVotes: cardData.totalVotes, opts: cardData.opts})
   }
 
   const getPercent = (option: {optionText: string, votes: number}) => {
