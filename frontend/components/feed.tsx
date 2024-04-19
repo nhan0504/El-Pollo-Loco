@@ -12,69 +12,12 @@ import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
 
-function FormRow(pollData) {
-
-  const cols = 2
-  let row = []
-
-  if(pollData){
-    for (let i = 0; i < cols; i++){
-      let currCard = pollData.pop()
-      //alert((currCard.title))
-      currCard ? 
-        row.push( <Grid item xs={4} style={{padding: 50}}>
-                  {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.optionText), currCard.user_id)}
-                </Grid>
-        ) : row.push( <Grid item xs={4} style={{padding: 50}}>
-          {PollCard(["tag1", "tag2"], "titletemp", ["tempopt"], "pollMaker")}
-        </Grid>
-) 
-    }
- }
- else{
-  for (let i = 0; i < cols; i++){
-
-    row.push( <Grid item xs={4} style={{padding: 50}}>
-      {/* this way, it's running the hooks in pollCard */}
-      {PollCard(["tag"], "poll", ["a", "b"], "pollMaker")}
-    </Grid>
-    );
-  }
-
- }
-
-  return (
-    pollData?<React.Fragment>
-        {row}
-    </React.Fragment>
-    : <div>Loading...</div>
-  );
-}
-
-function cardsTogether(pollData) {
-    const rows = 2
-    let grid = []
-    for (let i = 0; i<rows; i++){
-        grid.push(<Grid container item spacing={3} justifyContent="space-around">
-                    {FormRow(pollData)}
-                </Grid>)
-    }
-
-    return (
-
-        <React.Fragment>
-            <FeedButtons/>
-            <Grid container spacing={1}>
-              {grid}
-            </Grid>
-        </React.Fragment>
-      );
-}
-
 
 export default function Feed() {
 
   const [pollData, setPollData] = useState();
+  const [isLoading, setLoading] = useState(true);
+
   
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
   useEffect(() => {
@@ -90,15 +33,75 @@ export default function Feed() {
       if(response.ok){
         //alert(JSON.stringify(data));
         setPollData(data);
+        setLoading(false)
 
       }
       
     }
   }
 
-  return (
+
+  function FormRow() {
+
+    const cols = 1
+    let row = []
+  
+    if(pollData?.length > 0){
+      for (let i = 0; i < pollData.length; i++){
+        let currCard = pollData[i];
+        //alert((currCard?.options.map((option) => option.optionText)))
+         
+          row.push( <Grid item xs={4} style={{padding: 50}}>
+                    {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.option_text), currCard?.user_id)}
+                  </Grid>
+          ) 
+   
+      }
+   }
+   else{
+    for (let i = 0; i < pollData.length; i++){
+  
+      row.push( <Grid item xs={4} style={{padding: 50}}>
+        {/* this way, it's running the hooks in pollCard. It needs to run the same amount of hooks each render */}
+        {PollCard(["tag"], "poll", ["a", "b"], "pollMaker")}
+      </Grid>
+      );
+    }
+  
+   }
+  
+    return (
+      pollData?.length>0?<React.Fragment>
+          {row}
+      </React.Fragment>
+      : <div>Loading...</div>
+    );
+  }
+
+  function CardsTogether() {
+    const rows = 2
+    let grid = []
+    for (let i = 0; i<rows; i++){
+        grid.push(<Grid container item spacing={3} justifyContent="space-around">
+                    {<FormRow/>}
+                </Grid>)
+    }
+
+    return (
+
+        <React.Fragment>
+            <FeedButtons/>
+            <Grid container spacing={1}>
+              {grid}
+            </Grid>
+        </React.Fragment>
+      );
+}
+
+
+  return (isLoading?<div>loading...</div>:
     <Box sx={{ minWidth: 275 }}>
-      {cardsTogether(pollData)}
+      {<CardsTogether/>}
     </Box>
   );
 }

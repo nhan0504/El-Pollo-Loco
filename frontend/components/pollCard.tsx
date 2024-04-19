@@ -58,7 +58,7 @@ function makeCard(tags:Array<string>, question: string, opts: Array<string>, use
             <br />
         </CardContent>
         {/* here I'm mapping to the cardData options instead of the opts parameter, so instead of option, it's option.optionText */}
-            {cardData.opts.map((option, index) => 
+            {cardData.opts?.map((option, index) => 
                 <CardActions key={option.optionText}>
                     {/* Added onClick function as addVote */}
                     <Button variant="contained" value={option.optionText} onClick={(event) => addVote(index)} style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option.optionText}</Button>

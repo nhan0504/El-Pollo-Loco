@@ -64,7 +64,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const CreatePoll = () => {
 
-  window.open('http://localhost:3000/poll_form', '_blank');
+  window.open('http://localhost:3001/poll_form', '_blank');
 
 
 }
