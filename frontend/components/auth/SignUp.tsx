@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
+import Alert from '@mui/material/Alert'
 
 function Copyright(props: any) {
   return (
@@ -31,6 +31,7 @@ interface SignUpProps {
 
 export default function SignUp({ onSubmit }: SignUpProps) {
   const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -43,7 +44,19 @@ export default function SignUp({ onSubmit }: SignUpProps) {
 
     if (password === confirm_password) {
       setPasswordError(false);
-      onSubmit(email as string, username as string, password as string);
+      try {
+        const status = onSubmit(email as string, username as string, password as string);
+        if (status === 200) {
+          setAlert(false);
+          console.log("SUCESS!!!!");
+        }
+        else {
+          setAlert(true);
+        }
+      }
+      catch(err) {
+        setAlert(true);
+      }
     }
     else {
       setPasswordError(true);
@@ -51,6 +64,8 @@ export default function SignUp({ onSubmit }: SignUpProps) {
   };
 
   return (
+    <div>
+      { alert ? <Alert severity='error' onClose={() => setAlert(false)}>Signup failed. Try again later.</Alert> : <></> }
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -155,5 +170,6 @@ export default function SignUp({ onSubmit }: SignUpProps) {
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
+    </div>
   );
 }

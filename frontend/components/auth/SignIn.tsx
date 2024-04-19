@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
+import Alert from '@mui/material/Alert';
 
 function Copyright(props: any) {
   return (
@@ -28,24 +28,34 @@ function Copyright(props: any) {
 }
 
 interface SignInProps {
-  onSubmit: (email: string, password: string) => any //TODO
+  onSubmit: (username: string, password: string) => any //TODO
 }
 
 export default function SignIn({ onSubmit }: SignInProps ) {
   const [loginError, setLoginError] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    onSubmit(data.get("email") as string, data.get("password") as string);
-    //TODO: Update state after submission
-    if (!loginError) {
-      //Go to home
+    try {
+      const status = onSubmit(data.get("username") as string, data.get("password") as string);
+      if (status === 200) {
+        setAlert(false);
+        console.log("Success!!!!");
+      }
+      else {
+        setAlert(true);
+      }
+    }
+    catch(err) {
+      setAlert(true);
     }
   };
 
   return ( //TODO THEME
-    //<ThemeProvider theme={defaultTheme}>
+    <div>
+      {alert ? <Alert severity='error' onClose={() => setAlert(false)}>Username or password incorrect.</Alert> : <></>} 
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -68,10 +78,10 @@ export default function SignIn({ onSubmit }: SignInProps ) {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
             />
             <TextField
@@ -114,6 +124,6 @@ export default function SignIn({ onSubmit }: SignInProps ) {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    //</ThemeProvider>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import ForgotPassword from "@/components/auth/ForgotPassword";
-import forgot_password_handler from "@/utils/handlers/forgot_password_handler";
+import forgot_password_handler from "@/utils/handlers/auth/forgot_password_handler";
 import PrimarySearchAppBar from "@/components/navigation";
 
 export default function ForgotPasswordForm() {
