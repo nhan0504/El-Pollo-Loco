@@ -80,10 +80,10 @@ export default function Feed() {
 
     if(feedType === "discover"){
   
-      let response = await fetch("http://localhost:3000/polls/57/details");
+      let response = await fetch("http://localhost:3000/feed");
       let data = await response.json();
       if(response.ok){
-        //alert(JSON.stringify(data));
+        alert(JSON.stringify(data));
         setPollData(data);
 
       }
