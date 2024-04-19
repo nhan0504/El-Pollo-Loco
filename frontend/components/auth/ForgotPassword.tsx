@@ -24,11 +24,7 @@ function Copyright(props: any) {
   );
 }
 
-interface ForgotPasswordProps {
-  onSubmit: (email: string) => any
-}
-
-export default function ForgotPassword({ onSubmit }: ForgotPasswordProps) {
+export default function ForgotPassword() {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
 
@@ -36,9 +32,9 @@ export default function ForgotPassword({ onSubmit }: ForgotPasswordProps) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get("email");
-    setEmail(email as string);
-    setSubmitted(true);
-    onSubmit(email as string);
+    //setEmail(email as string);
+    //setSubmitted(true);
+    //onSubmit(email as string);
   };
 
   return (

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { redirect } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,26 +11,11 @@ import Box from '@mui/material/Box';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Alert from '@mui/material/Alert'
+import Alert from '@mui/material/Alert';
+import { randomBytes } from "crypto";
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
-interface SignUpProps {
-  onSubmit: (email: string, username: string, password: string) => any
-}
-
-export default function SignUp({ onSubmit }: SignUpProps) {
+export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
 
@@ -41,22 +27,36 @@ export default function SignUp({ onSubmit }: SignUpProps) {
     const confirm_password = data.get("confirm-password");
     const username = data.get("username");
     const email = data.get("email");
+    const fname = data.get("firstname");
+    const lname = data.get("lastname");
 
     if (password === confirm_password) {
       setPasswordError(false);
-      try {
-        const status = onSubmit(email as string, username as string, password as string);
-        if (status === 200) {
-          setAlert(false);
-          console.log("SUCESS!!!!");
-        }
-        else {
-          setAlert(true);
-        }
-      }
-      catch(err) {
-        setAlert(true);
-      }
+      fetch(`${process.env.BACKEND_URL}/auth/signup`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json'},
+        credentials: "include",
+        body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password,
+            fname: fname,
+            lname: lname,
+            salt: randomBytes(8).toString('hex')
+        }),
+      })
+      .then((res) => {
+          if (res.status === 200) {
+            setAlert(false);
+            redirect("/discover");
+          }
+          else {
+            setAlert(true);
+          }
+      })
+      .catch((err) => {
+          throw err;
+      });
     }
     else {
       setPasswordError(true);
@@ -84,7 +84,7 @@ export default function SignUp({ onSubmit }: SignUpProps) {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              {/* <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
                   name="firstName"
@@ -94,8 +94,8 @@ export default function SignUp({ onSubmit }: SignUpProps) {
                   label="First Name"
                   autoFocus
                 />
-              </Grid> */}
-              {/* <Grid item xs={12} sm={6}>
+              </Grid>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -104,7 +104,7 @@ export default function SignUp({ onSubmit }: SignUpProps) {
                   name="lastName"
                   autoComplete="family-name"
                 />
-              </Grid> */}
+              </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -161,14 +161,13 @@ export default function SignUp({ onSubmit }: SignUpProps) {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/auth/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </div>
   );

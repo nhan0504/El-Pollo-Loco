@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { redirect } from 'next/navigation'
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -27,30 +28,39 @@ function Copyright(props: any) {
   );
 }
 
-interface SignInProps {
-  onSubmit: (username: string, password: string) => any //TODO
-}
 
-export default function SignIn({ onSubmit }: SignInProps ) {
-  const [loginError, setLoginError] = useState<boolean>(false);
+export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    try {
-      const status = onSubmit(data.get("username") as string, data.get("password") as string);
-      if (status === 200) {
+    const username = data.get("username");
+    const password = data.get("password");
+
+    fetch(`${process.env.BACKEND_URL}/auth/login`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      credentials: "include",
+      mode: "cors",
+      body: JSON.stringify({
+          username: username,
+          password: password,
+      })
+    })
+    .then((res) => {
+      console.log(res)
+      if (res.status === 200) {
         setAlert(false);
-        console.log("Success!!!!");
+        redirect("/discover");
       }
       else {
         setAlert(true);
       }
-    }
-    catch(err) {
-      setAlert(true);
-    }
+    })
+    .catch((err) => {
+        setAlert(true);
+    });
   };
 
   return ( //TODO THEME
@@ -74,7 +84,6 @@ export default function SignIn({ onSubmit }: SignInProps ) {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
-              error={loginError}
               margin="normal"
               required
               fullWidth
@@ -85,7 +94,6 @@ export default function SignIn({ onSubmit }: SignInProps ) {
               autoFocus
             />
             <TextField
-              error={loginError}
               margin="normal"
               required
               fullWidth
@@ -94,7 +102,6 @@ export default function SignIn({ onSubmit }: SignInProps ) {
               type="password"
               id="password"
               autoComplete="current-password"
-              helperText={loginError ? "Login unsuccessful." : undefined}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

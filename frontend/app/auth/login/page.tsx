@@ -6,7 +6,7 @@ import PrimarySearchAppBar from "@/components/navigation";
 export default function Login() {
     return (
         <div><PrimarySearchAppBar />
-        <SignIn onSubmit={login_handler} />
+        <SignIn />
         </div>
     )
 }
