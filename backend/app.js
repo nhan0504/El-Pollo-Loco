@@ -10,9 +10,11 @@ var uuid = require('uuid');
 //--------------------------------------
 
 //Routes
-var index = require('./routes/index');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
+var indexRouer = require('./routes/index');
+var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
+var pollsRouter = require('./routes/polls');
+var feedRouter = require('./routes/feed');
 //--------------------------------------
 
 var app = express();
@@ -48,8 +50,10 @@ app.use(passport.session());
 
 //Routes
 app.use('/', index);
-app.use('/users', users);
-app.use('/auth', auth);
+app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+app.use('/polls', pollsRouter);
+app.use('/feed', feedRouter);
 //---------------------------------------
 
 // catch 404 and forward to error handler

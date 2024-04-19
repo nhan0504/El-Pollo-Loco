@@ -22,7 +22,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
-
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -63,6 +62,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const CreatePoll = () => {
+
+  window.open('http://localhost:3001/poll_form', '_blank');
+
+
+}
+
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -87,7 +93,7 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
+  
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -179,6 +185,7 @@ export default function PrimarySearchAppBar() {
           <Button 
             variant="contained"
             size="medium"
+            onClick={CreatePoll}
           >
                 Create Poll&nbsp;
                 <AddIcon fontSize="small"/>
