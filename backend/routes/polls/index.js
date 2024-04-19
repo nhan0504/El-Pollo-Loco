@@ -9,7 +9,15 @@ router.use(function(req, res, next) {
   next();
 });
 
-router.get("/:pollId/details", function (req, res) {
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+const voteRouter = require('./vote');
+
+router.get("/:pollId", function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
     "SELECT * FROM Polls WHERE poll_id = ?",
@@ -98,5 +106,7 @@ router.delete("/:pollId", function (req, res) {
     }
   );
 });
+
+router.use('/vote', voteRouter);
 
 module.exports = router;
