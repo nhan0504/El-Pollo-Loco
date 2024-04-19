@@ -15,8 +15,8 @@ import { useState, useEffect } from 'react';
 
 export default function Feed() {
 
-  const [pollData, setPollData] = useState();
-  const [isLoading, setLoading] = useState(true);
+  const [pollData, setPollData] = useState<any[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
@@ -24,7 +24,7 @@ export default function Feed() {
     getPolls("discover")
   }, [])
 
-  async function getPolls(feedType){
+  async function getPolls(feedType: string){
 
     if(feedType === "discover"){
   
@@ -52,7 +52,7 @@ export default function Feed() {
         //alert((currCard?.options.map((option) => option.optionText)))
          
           row.push( <Grid item xs={4} style={{padding: 50}}>
-                    {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option) => option.option_text), currCard?.user_id)}
+                    {PollCard(["tag1", "tag2"], currCard?.title, currCard?.options?.map((option: any) => option.option_text), currCard?.user_id)}
                   </Grid>
           ) 
    

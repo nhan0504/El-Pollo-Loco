@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -18,6 +18,7 @@ import { randomBytes } from "crypto";
 export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
+  const { push } = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,7 +49,7 @@ export default function SignUp() {
       .then((res) => {
           if (res.status === 200) {
             setAlert(false);
-            redirect("/discover");
+            push("/discover");
           }
           else {
             setAlert(true);

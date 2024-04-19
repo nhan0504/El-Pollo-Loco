@@ -1,12 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,22 +13,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 
-function Copyright(props: any) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
+  const { push } = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,17 +35,18 @@ export default function SignIn() {
       })
     })
     .then((res) => {
-      console.log(res)
       if (res.status === 200) {
         setAlert(false);
-        redirect("/discover");
+        push("/discover");
       }
       else {
         setAlert(true);
       }
     })
     .catch((err) => {
-        setAlert(true);
+        if (err.message != "NEXT_REDIRECT") {
+          setAlert(true);
+        }
     });
   };
 
@@ -103,10 +90,6 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -122,14 +105,13 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/auth/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </div>
   );
