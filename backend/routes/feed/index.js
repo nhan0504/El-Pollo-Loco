@@ -19,7 +19,11 @@ router.get("/", function(req, res) {
       const pollsPromises = results.map(poll => 
         new Promise((resolve, reject) => {
           pool.query(
-            "SELECT * FROM Options WHERE poll_id = ?",
+            "SELECT Options.option_id, Options.option_text, COUNT(Votes.vote_id) AS voteCount " +
+            "FROM Options " +
+            "LEFT JOIN Votes ON Options.option_id = Votes.option_id " +
+            "WHERE Options.poll_id = ? " +
+            "GROUP BY Options.option_id",
             [poll.poll_id],
             (error, optionsResults) => {
               if (error) {
