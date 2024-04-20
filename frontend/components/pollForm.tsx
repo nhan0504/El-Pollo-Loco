@@ -14,45 +14,41 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import FormLabel from '@mui/material';
-import { MuiChipsInput } from 'mui-chips-input'
+import { MuiChipsInput } from 'mui-chips-input';
 import { stringify } from 'querystring';
 import { title } from 'process';
 
 function PollForm() {
+  const [pollData, setPollData] = useState({
+    // Need to get current logged in user
+    userID: 123,
+    title: '',
+    options: [
+      {
+        optionID: 0,
+        optionText: '',
+      },
+      {
+        optionID: 0,
+        optionText: '',
+      },
+    ],
+  });
 
-    const [pollData, setPollData] = useState({
-        // Need to get current logged in user
-        userID:123,
-        title: "",
-        options: [
-            {
-                optionID:0,
-                optionText:"",
-            },
-            {
-                optionID:0,
-                optionText:"",
-            }
-        ],        
-    })
+  const pollRef = useRef(pollData);
 
-    const pollRef = useRef(pollData);
+  const [tags, setTags] = useState<string[]>([]);
 
-    const [tags, setTags] = useState<string[]>([]);
+  const handleChange = (event: any, fieldName: string, ind: number = 0) => {
+    const title = event.target.value;
+    //alert(title)
+    if (fieldName === 'title') {
+      setPollData((pollData) => ({ ...pollData, title: title }));
+    } else if (fieldName === 'options') {
+      const newText = event.target.value;
+      pollData.options[ind].optionText = newText;
 
-    const handleChange = (event: any, fieldName: string, ind:number=0) => {
-        const title = event.target.value;
-        //alert(title)
-        if (fieldName === "title") {
-            setPollData(pollData => ({...pollData, title: title}))
-        }
-        else if (fieldName === "options") {
-
-            const newText = event.target.value;
-            pollData.options[ind].optionText = newText;
-
-            setPollData(pollData => ({...pollData, options: pollData.options}));
-        }
+      setPollData((pollData) => ({ ...pollData, options: pollData.options }));
     }
 
     const { push } = useRouter();
@@ -117,43 +113,57 @@ function PollForm() {
         })): alert("You cannot add more than 6 options.")
     }
 
-    function removeOption(ind: number) {
-
-        const newOptions = pollData.options.length > 2 ? pollData.options.filter(function(option, index) {
-            if(ind == index){
-                return false;
+  function removeOption(ind: number) {
+    const newOptions =
+      pollData.options.length > 2
+        ? pollData.options.filter(function (option, index) {
+            if (ind == index) {
+              return false;
             }
             return true;
-        }) : pollData.options;
+          })
+        : pollData.options;
 
-        setPollData(pollData => ({
-            ...pollData, 
-            options: newOptions}))
+    setPollData((pollData) => ({
+      ...pollData,
+      options: newOptions,
+    }));
+  }
 
-    }
-
-    const optionList = pollData.options?.map((option, index) =>
-        <React.Fragment key={1}>
-            <Box flexDirection="row" alignItems="center" justifyContent='center'sx={{color: "black", display:'flex'}}>
-                <Typography variant="body1"sx={{}}>
-                    Option
-                </Typography>
-                <TextField 
-                    type="text" 
-                    name="option"
-                    variant="outlined"
-                    size="small"
-                    multiline
-                    rows=""
-                    value={option.optionText}
-                    sx={{m:1, width: 250}}
-                    onChange={(event) => handleChange(event, "options", index)}
-                />
-                <Button variant="text" onClick={(event) => {removeOption(index)}} sx={{maxWidth:"10px", minWidth:"10px"}}>X</Button>
-            </Box>
-        </React.Fragment>
-
-    )
+  const optionList = pollData.options?.map((option, index) => (
+    <React.Fragment key={1}>
+      <Box
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ color: 'black', display: 'flex' }}
+      >
+        <Typography variant="body1" sx={{}}>
+          Option
+        </Typography>
+        <TextField
+          type="text"
+          name="option"
+          variant="outlined"
+          size="small"
+          multiline
+          rows=""
+          value={option.optionText}
+          sx={{ m: 1, width: 250 }}
+          onChange={(event) => handleChange(event, 'options', index)}
+        />
+        <Button
+          variant="text"
+          onClick={(event) => {
+            removeOption(index);
+          }}
+          sx={{ maxWidth: '10px', minWidth: '10px' }}
+        >
+          X
+        </Button>
+      </Box>
+    </React.Fragment>
+  ));
 
     const handleTagChange = (newTags: string) => {
         //need this to be split by whitespace for now, should prolly make it more robust?
@@ -204,19 +214,14 @@ function PollForm() {
                         />
                         <br/>
 
-                        <Button 
-                            variant="contained"
-                            type="submit"
-                            sx={{m:2}}
-                            
-                        >
-                            Create
-                        </Button>
-                    </FormControl>
-                </form>
-            </CardContent>
-        </Card>
-    )
+            <Button variant="contained" type="submit" sx={{ m: 2 }}>
+              Create
+            </Button>
+          </FormControl>
+        </form>
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function CreatePoll (){

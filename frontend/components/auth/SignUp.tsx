@@ -12,8 +12,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
-import { randomBytes } from "crypto";
-
+import { randomBytes } from 'crypto';
 
 export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -24,49 +23,53 @@ export default function SignUp() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
-    const password = data.get("password");
-    const confirm_password = data.get("confirm-password");
-    const username = data.get("username");
-    const email = data.get("email");
-    const fname = data.get("firstname");
-    const lname = data.get("lastname");
+    const password = data.get('password');
+    const confirm_password = data.get('confirm-password');
+    const username = data.get('username');
+    const email = data.get('email');
+    const fname = data.get('firstname');
+    const lname = data.get('lastname');
 
     if (password === confirm_password) {
       setPasswordError(false);
       fetch(`${process.env.BACKEND_URL}/auth/signup`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json'},
-        credentials: "include",
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
-            username: username,
-            email: email,
-            password: password,
-            fname: fname,
-            lname: lname,
-            salt: randomBytes(8).toString('hex')
+          username: username,
+          email: email,
+          password: password,
+          fname: fname,
+          lname: lname,
+          salt: randomBytes(8).toString('hex'),
         }),
       })
-      .then((res) => {
+        .then((res) => {
           if (res.status === 200) {
             setAlert(false);
-            push("/discover");
-          }
-          else {
+            push('/auth/login');
+          } else {
             setAlert(true);
           }
-      })
-      .catch((err) => {
+        })
+        .catch((err) => {
           throw err;
-      });
-    }
-    else {
+        });
+    } else {
       setPasswordError(true);
     }
   };
 
   return (
     <div>
-      { alert ? <Alert severity='error' onClose={() => setAlert(false)}>Signup failed. Try again later.</Alert> : <></> }
+      {alert ? (
+        <Alert severity="error" onClose={() => setAlert(false)}>
+          Signup failed. Try again later.
+        </Alert>
+      ) : (
+        <></>
+      )}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -148,16 +151,11 @@ export default function SignUp() {
                   type="password"
                   id="Confirmpassword"
                   autoComplete="new-password"
-                  helperText={passwordError ? "Passwords do not match." : undefined}
+                  helperText={passwordError ? 'Passwords do not match.' : undefined}
                 />
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign Up
             </Button>
             <Grid container justifyContent="flex-end">

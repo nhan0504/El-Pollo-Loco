@@ -20,40 +20,44 @@ export default function SignIn() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const username = data.get("username");
-    const password = data.get("password");
+    const username = data.get('username');
+    const password = data.get('password');
 
     fetch(`${process.env.BACKEND_URL}/auth/login`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      credentials: "include",
-      mode: "cors",
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      mode: 'cors',
       body: JSON.stringify({
-          username: username,
-          password: password,
-      })
+        username: username,
+        password: password,
+      }),
     })
-    .then((res) => {
-      if (res.status === 200) {
-        //successfully  logged in, use context here
-        setAlert(false);
-        push("/discover");
-      }
-      else {
-        setAlert(true);
-      }
-    })
-    .catch((err) => {
-        if (err.message != "NEXT_REDIRECT") {
+      .then((res) => {
+        if (res.status === 200) {
+          setAlert(false);
+          push('/discover');
+        } else {
           setAlert(true);
         }
-    });
+      })
+      .catch((err) => {
+        if (err.message != 'NEXT_REDIRECT') {
+          setAlert(true);
+        }
+      });
   };
-  
 
-  return ( //TODO THEME
+  return (
+    //TODO THEME
     <div>
-      {alert ? <Alert severity='error' onClose={() => setAlert(false)}>Username or password incorrect.</Alert> : <></>} 
+      {alert ? (
+        <Alert severity="error" onClose={() => setAlert(false)}>
+          Username or password incorrect.
+        </Alert>
+      ) : (
+        <></>
+      )}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -91,12 +95,7 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
             <Grid container>

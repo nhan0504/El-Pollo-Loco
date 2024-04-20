@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -29,8 +29,8 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
         option_id:opt.option_id
       }
     }),
-    comments: 0
-  })
+    comments: 0,
+  });
 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const addVote = (ind: number) => {
@@ -68,8 +68,8 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
    // setCardData({...cardData, totalVotes: cardData.totalVotes, opts: cardData.opts})
   }
 
-  const getPercent = (option: {optionText: string, votes: number}) => {
-    if(cardData.totalVotes === 0){
+  const getPercent = (option: { optionText: string; votes: number }) => {
+    if (cardData.totalVotes === 0) {
       return 0;
     }
 
@@ -79,19 +79,16 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
   return(
   <React.Fragment>
         <Card style={{display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column', border: '1px', borderRadius: 15}}  variant="outlined" >
-          <CardContent>
-
-            <Stack alignItems="center" direction="row" gap={0}>
-              <PersonIcon fontSize='large' />
-              <Typography variant="subtitle1">{username}</Typography>
-            </Stack>
-
-            <Typography variant="h5" component="div" align="center" >
-              {question}
-            </Typography>
-              <br />
-
-          </CardContent>
+        <CardContent>
+        <Stack alignItems="center" direction="row" gap={0}>
+          <PersonIcon fontSize='large' />
+          <Typography variant="subtitle1">{username}</Typography>
+        </Stack>
+          <Typography variant="h5" component="div" align="center" >
+            {question}
+          </Typography>
+            <br />
+        </CardContent>
         {/* here I'm mapping to the cardData options instead of the opts parameter, so instead of option, it's option.optionText */}
         {cardData.opts?.map((option, index) => 
           <CardActions key={option.optionText}>

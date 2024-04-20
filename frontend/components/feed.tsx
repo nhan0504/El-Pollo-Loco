@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { Grid, grid2Classes } from '@mui/material';
@@ -18,14 +18,14 @@ export default function Feed() {
   
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
   useEffect(() => {
-    getPolls("discover")
-  }, [])
+    getPolls('discover');
+  }, []);
 
-  async function getPolls(feedType){
-
-    if(feedType === "discover"){
-  
-      let response = await fetch("http://localhost:3000/feed");
+  async function getPolls(feedType: string) {
+    if (feedType === 'discover') {
+      let response = await fetch('http://localhost:3000/feed', {
+        method: 'GET',
+      });
       let data = await response.json();
       if(response.ok && data.length > 0){
         //alert(JSON.stringify(data));
