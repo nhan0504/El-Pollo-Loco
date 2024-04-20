@@ -4,6 +4,7 @@ var router = express.Router();
 const pool = require("../../db.js");
 
 const voteRouter = require('./vote');
+const commentRouter = require('./comment');
 
 router.get("/:pollId", function (req, res) {
   const pollId = req.params.pollId;
@@ -95,5 +96,6 @@ router.delete("/:pollId", function (req, res) {
 });
 
 router.use('/vote', voteRouter);
+router.use('/comment', commentRouter);
 
 module.exports = router;
