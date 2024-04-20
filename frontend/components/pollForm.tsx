@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -53,7 +54,9 @@ function PollForm() {
             setPollData(pollData => ({...pollData, options: pollData.options}));
         }
     }
-    
+
+    const { push } = useRouter();
+
     const handleSubmit = (event: any) => {
         //event.preventDefault();
         const request = {
@@ -78,12 +81,11 @@ function PollForm() {
                 return response.text().then(text => {alert(text)})
             }
         })
-        .catch(error => alert(error.message));
+        .catch(error => (error.message));
 
+        push("/discover");
         //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
         //POST
-
-
     }
 
     function validateForm(){

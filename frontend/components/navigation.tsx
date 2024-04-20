@@ -19,8 +19,6 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -62,12 +60,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const CreatePoll = () => {
-
-  window.open('http://localhost:3001/poll_form', '_blank');
-
-
-}
 
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -159,6 +151,13 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
+
+  const CreatePoll = () => {
+  
+    window.open('/poll_form', '_blank');
+  
+  
+  }
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor:'white'}}>
