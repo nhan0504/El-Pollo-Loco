@@ -1,8 +1,10 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { GlobalContextProvider } from '../contexts/globalContext';
 
 export default function Home() {
   return (
+    <GlobalContextProvider>
     <main className={styles.main}>
       <div className={styles.description}>
         <p>
@@ -91,5 +93,6 @@ export default function Home() {
         </a>
       </div>
     </main>
+    </GlobalContextProvider>
   );
 }
