@@ -63,16 +63,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const CreatePoll = () => {
-
   window.open('http://localhost:3001/poll_form', '_blank');
-
-
-}
+};
 
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
-    React.useState<null | HTMLElement>(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -93,7 +89,7 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-  
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -134,11 +130,7 @@ export default function PrimarySearchAppBar() {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
+        <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
@@ -161,8 +153,8 @@ export default function PrimarySearchAppBar() {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, bgcolor:'white'}}>
-      <AppBar position="static" sx={{ bgcolor: 'white', color: 'blue'}}>
+    <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
+      <AppBar position="static" sx={{ bgcolor: 'white', color: 'blue' }}>
         <Toolbar>
           {/* <IconButton
             size="large"
@@ -177,36 +169,25 @@ export default function PrimarySearchAppBar() {
             //variant="h6"
             noWrap
             component="div"
-            sx={{p: 1, mr: 3, display: {xs: 'none', sm: 'block'}}}
+            sx={{ p: 1, mr: 3, display: { xs: 'none', sm: 'block' } }}
           >
             El Pollo Loco
           </Typography>
-          <HomeIcon fontSize="large" sx={{mr: 4}}/>
-          <Button 
-            variant="contained"
-            size="medium"
-            onClick={CreatePoll}
-          >
-                Create Poll&nbsp;
-                <AddIcon fontSize="small"/>
+          <HomeIcon fontSize="large" sx={{ mr: 4 }} />
+          <Button variant="contained" size="medium" onClick={CreatePoll}>
+            Create Poll&nbsp;
+            <AddIcon fontSize="small" />
           </Button>
-          
+
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
+            <StyledInputBase placeholder="Search…" inputProps={{ 'aria-label': 'search' }} />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
+            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
@@ -242,5 +223,3 @@ export default function PrimarySearchAppBar() {
     </Box>
   );
 }
-
-

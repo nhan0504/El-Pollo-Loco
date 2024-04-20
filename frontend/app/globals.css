@@ -107,6 +107,6 @@ a {
 }
  */
 
- .hidden {
+.hidden {
   visibility: hidden;
- }
+}

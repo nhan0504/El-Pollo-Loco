@@ -25,10 +25,10 @@ app.set('view engine', 'jade');
 //--------------------------------------
 
 //Middleware
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", process.env.REQUEST_ORIGIN_URL);
-  res.header("Access-Control-Allow-Credentials", "true")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', process.env.REQUEST_ORIGIN_URL);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 app.use(logger('dev'));
@@ -37,14 +37,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  name: "poll_cookie",
-  resave: false,
-  saveUninitialized: true,
-  genid: (req) => uuid.v4(),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }, //One day
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    name: 'poll_cookie',
+    resave: false,
+    saveUninitialized: true,
+    genid: (req) => uuid.v4(),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, //One day
+  }),
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -57,12 +59,12 @@ app.use('/feed', feedRouter);
 //---------------------------------------
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

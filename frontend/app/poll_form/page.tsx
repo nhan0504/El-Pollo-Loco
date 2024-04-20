@@ -1,7 +1,5 @@
-import CreatePoll from "@/components/pollForm";
+import CreatePoll from '@/components/pollForm';
 
 export default function Form() {
-    return (
-        <CreatePoll/>
-    )
+  return <CreatePoll />;
 }
