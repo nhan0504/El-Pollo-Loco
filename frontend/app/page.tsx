@@ -1,12 +1,8 @@
 import Image from "next/image";
 import styles from "./page.module.css";
-import { GlobalContextProvider } from '../components/contexts/globalContext';
-import { useGlobalContext } from "@/components/contexts";
-
 export default function Home() {
-  const {user_id, isAuth, setUser, setAuth} = useGlobalContext();
   return (
-    <GlobalContextProvider>
+
     <main className={styles.main}>
       <div className={styles.description}>
         <p>
@@ -95,6 +91,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-    </GlobalContextProvider>
   );
 }

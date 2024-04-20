@@ -12,13 +12,10 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
-import { useGlobalContext } from '../contexts/index';
-import { UNSTABLE_REVALIDATE_RENAME_ERROR } from 'next/dist/lib/constants';
 
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
   const { push } = useRouter();
-  let {user_id, isAuth, setUser, setAuth} = useGlobalContext();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -39,9 +36,6 @@ export default function SignIn() {
     .then((res) => {
       if (res.status === 200) {
         //successfully  logged in, use context here
-        user_id = username //need ot make this user_id
-        console.log(user_id);
-        isAuth = true
         setAlert(false);
         push("/discover");
       }
