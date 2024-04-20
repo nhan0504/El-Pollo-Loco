@@ -86,13 +86,32 @@ function PollForm() {
 
     }
 
+    function validateForm(){
+        if (pollData.title.length === 0){
+            alert("Your title cannot be blank.")
+            return false;
+        }
+
+        let missingOption = false;
+
+        pollData.options.map((option, index) => { 
+            if(option.optionText.length === 0){ 
+                alert("Options cannot be blank.") 
+                missingOption = true;
+            } 
+                
+        })
+
+        return !missingOption;
+    }
+
     const addOption = () => {
-        setPollData(pollData => ({
+        pollData.options.length < 6 ?setPollData(pollData => ({
             ...pollData,
             userID: pollData.userID,
             title: pollData.title,
             options: [...pollData.options, {optionID: 0, optionText: ""}]
-        }))
+        })): alert("You cannot add more than 6 options.")
     }
 
     function removeOption(ind: number) {
@@ -142,7 +161,7 @@ function PollForm() {
     return(
         <Card style={{width: 360, display: 'flex', justifyContent: 'space-evenly', flexDirection: 'column'}}>
             <CardContent style={{margin: 2}}>
-                <form action={handleSubmit} method="POST">
+                <form action={(event) => { if(validateForm()){handleSubmit(event)}}} method="POST">
                     
                     <FormControl>
                         <Typography variant="h6" component="div" align="center" sx={{p:1}}>
@@ -200,7 +219,7 @@ function PollForm() {
 export default function CreatePoll (){
     console.log("here!");
     return(
-       <Box sx={{ minWidth: 375, minHeight:700 }}>
+       <Box sx={{ minWidth: 375, minHeight: 700, m: 3, p:3}}>
             <PollForm/>
         </Box>
     );
