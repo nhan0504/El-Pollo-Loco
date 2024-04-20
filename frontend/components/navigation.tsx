@@ -19,6 +19,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
+import { useRouter } from 'next/navigation';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -152,11 +153,10 @@ export default function PrimarySearchAppBar() {
     </Menu>
   );
 
+  const {push} = useRouter();
   const CreatePoll = () => {
   
     window.open('/poll_form', '_blank');
-  
-  
   }
 
   return (
@@ -180,7 +180,7 @@ export default function PrimarySearchAppBar() {
           >
             El Pollo Loco
           </Typography>
-          <HomeIcon fontSize="large" sx={{mr: 4}}/>
+          <Button onClick={(event) => {push("/discover");}} sx={{mr:3}}><HomeIcon fontSize="large" sx={{}}/></Button>
           <Button 
             variant="contained"
             size="medium"
