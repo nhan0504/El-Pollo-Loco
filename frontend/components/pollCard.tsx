@@ -16,7 +16,7 @@ import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 
 function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
-
+  //comment
   const [cardData, setCardData] = useState({
 
     totalVotes:opts?.map((opt)=>opt.votes).reduce((partialSum, a) => partialSum + a, 0),
