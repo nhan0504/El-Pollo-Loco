@@ -16,8 +16,6 @@ import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 
 function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
-  
-  const {height, width} = useWindowDimensions();
 
   const [cardData, setCardData] = useState({
 
@@ -123,7 +121,6 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
 
 export default function PollCard(tags:Array<string>, question: string, opts, username:string) {
   const {height, width} = useWindowDimensions();
-
   
   return (
     <Box sx={{ minWidth: 375}}>
