@@ -36,7 +36,7 @@ export default function Feed() {
     }
   }
 
-  function FormRow(pollData) {
+  function FormRow(pollData: any) {
     // Not the state pollData, but a parameter that contains 1 or 2 polls
     let row = []
   

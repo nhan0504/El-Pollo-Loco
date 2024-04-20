@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -12,9 +12,12 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
+import { AuthContext } from '@/contexts/authContext';
+
 
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
+  const {isAuth, setAuth} = useContext(AuthContext);
   const { push } = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -35,6 +38,8 @@ export default function SignIn() {
     })
       .then((res) => {
         if (res.status === 200) {
+          //upon succesful login set auth to true
+          setAuth(true);
           setAlert(false);
           push('/discover');
         } else {

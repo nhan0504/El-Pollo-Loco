@@ -1,3 +1,4 @@
+'use client';
 import React, { useState, useEffect } from 'react';
 
 interface IGlobalContextProps {
@@ -6,7 +7,7 @@ interface IGlobalContextProps {
 
 }
 
-export const authContext = React.createContext<IGlobalContextProps>({
+export const AuthContext = React.createContext<IGlobalContextProps>({
   isAuth: false,
   setAuth: () => undefined
 });
@@ -14,15 +15,16 @@ export const authContext = React.createContext<IGlobalContextProps>({
 export default function AuthProvider(props: any){
   const [auth, setAuth] = useState(false);
   useEffect(()=>{}, []); //check for pollCookie
+  //useEffect(()=>console.log(auth), [auth]);
 
   return (
-    <authContext.Provider
+    <AuthContext.Provider
       value={{
         isAuth: auth,
         setAuth: setAuth,
       }}
     >
       {props.children}
-    </authContext.Provider>
+    </AuthContext.Provider>
   );
 };
