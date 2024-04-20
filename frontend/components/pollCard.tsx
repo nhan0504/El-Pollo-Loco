@@ -15,7 +15,7 @@ import Stack from '@mui/material/Stack';
 import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 
-function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
+function MakeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
   //comment
   const [cardData, setCardData] = useState({
 
@@ -124,7 +124,7 @@ export default function PollCard(tags:Array<string>, question: string, opts, use
   
   return (
     <Box sx={{ minWidth: 375}}>
-      {makeCard(tags, question, opts, username)}
+      {MakeCard(tags, question, opts, username)}
     </Box>
   );
 }
