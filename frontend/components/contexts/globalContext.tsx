@@ -1,30 +1,30 @@
 import React, { useState } from 'react';
 
 interface IGlobalContextProps {
-  user: any;
-  loading: boolean;
-  setUser: (user: any) => void;
-  setLoading: (loading: boolean) => void;
+  user_id: any;
+  isAuth: boolean;
+  setUser: (user_id: any) => void;
+  setAuth: (auth: boolean) => void;
 }
 
 export const GlobalContext = React.createContext<IGlobalContextProps>({
-  user: {},
-  loading: true,
+  user_id: {},
+  isAuth: false,
   setUser: () => {},
-  setLoading: () => {},
+  setAuth: () => {},
 });
 
 export const GlobalContextProvider = (props) => {
   const [currentUser, setCurrentUser] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [Auth, setIsAuth] = useState(false);
 
   return (
     <GlobalContext.Provider
       value={{
-        user: currentUser,
-        loading: isLoading,
+        user_id: currentUser,
+        isAuth: Auth,
         setUser: setCurrentUser,
-        setLoading: setIsLoading,
+        setAuth: setIsAuth,
       }}
     >
       {props.children}

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import styles from "./page.module.css";
-import { GlobalContextProvider } from '../contexts/globalContext';
+import { GlobalContextProvider } from '../components/contexts/globalContext';
+import { useGlobalContext } from "@/components/contexts";
 
 export default function Home() {
+  const {user_id, isAuth, setUser, setAuth} = useGlobalContext();
   return (
     <GlobalContextProvider>
     <main className={styles.main}>
