@@ -48,7 +48,7 @@ export default function SignUp() {
         .then((res) => {
           if (res.status === 200) {
             setAlert(false);
-            push('/discover');
+            push('/auth/login');
           } else {
             setAlert(true);
           }
