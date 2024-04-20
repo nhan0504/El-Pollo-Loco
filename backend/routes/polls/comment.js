@@ -3,7 +3,7 @@ var router = express.Router();
 
 const pool = require("../../db.js");
 
-//Get all the comment for poll with poll_id
+//GET all the comment for poll with poll_id
 router.get("/:pollId", function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
@@ -20,7 +20,7 @@ router.get("/:pollId", function (req, res) {
   );
 });
 
-// Create a new comment
+//POST a new comment
 router.post("/", function (req, res) {
   const commentData = req.body;
   pool.query(
@@ -42,7 +42,7 @@ router.post("/", function (req, res) {
   );
 });
 
-//Delete the comment with comment_id
+//DELETE the comment with comment_id
 router.delete("/:commentId", function (req, res) {
   const commentId = req.params.commentId;
   pool.query(
