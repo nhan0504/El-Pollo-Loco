@@ -96,7 +96,8 @@ function PollForm() {
 
         pollData.options.map((option, index) => { 
             if(option.optionText.length === 0){ 
-                alert("Options cannot be blank.") 
+                if(!missingOption)
+                    alert("Options cannot be blank.") 
                 missingOption = true;
             } 
                 

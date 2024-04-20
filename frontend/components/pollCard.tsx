@@ -12,11 +12,13 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
+import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 
 function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
-
   
+  const {height, width} = useWindowDimensions();
+
   const [cardData, setCardData] = useState({
 
     totalVotes:opts?.map((opt)=>opt.votes).reduce((partialSum, a) => partialSum + a, 0),
@@ -58,7 +60,7 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
             
             }
         })
-        .catch(error => alert(error.message));
+        .catch(error => error.message);
 
 
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
@@ -123,8 +125,11 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
 }
 
 export default function PollCard(tags:Array<string>, question: string, opts, username:string) {
+  const {height, width} = useWindowDimensions();
+
+  
   return (
-    <Box sx={{ minWidth: 375 }}>
+    <Box sx={{ minWidth: 375}}>
       {makeCard(tags, question, opts, username)}
     </Box>
   );

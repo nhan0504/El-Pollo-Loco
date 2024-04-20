@@ -5,6 +5,7 @@ import { Grid, grid2Classes } from '@mui/material';
 import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
+import useWindowDimensions from './dimensions';
 import Comments from './comments'
 
 
@@ -37,7 +38,6 @@ export default function Feed() {
 
   function FormRow(pollData) {
     // Not the state pollData, but a parameter that contains 1 or 2 polls
-
     let row = []
   
     for (let i = 0; i < pollData.length; i++){
@@ -62,7 +62,7 @@ export default function Feed() {
     const rows = 3;
     const cols = 2;
     let grid = []
-
+    
     for (let i = 0; i < rows; i++){
         grid.push(<Grid container item spacing={3} justifyContent="space-around">
           {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
@@ -79,12 +79,14 @@ export default function Feed() {
       );
 }
 
+const {height, width} = useWindowDimensions();
+
   return (isLoading?
-    <Box sx={{ minWidth: 275, minHeight: 700 }}>
+    <Box sx={{ minWidth: width, maxWidth: width, minHeight: height }}>
       <FeedButtons/>
       <div>loading...</div>
     </Box>:
-    <Box sx={{ minWidth: 275 }}>
+    <Box sx={{ width: width}}>
       <FeedButtons/>
       {<CardsTogether/>}
     </Box>
