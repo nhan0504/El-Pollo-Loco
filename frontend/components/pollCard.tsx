@@ -12,8 +12,10 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
+import CommentBox from './comments';
 
 function makeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
+
   
   const [cardData, setCardData] = useState({
 
@@ -107,10 +109,7 @@ function makeCard(tags:Array<string>, question: string, opts:{optionText:string,
           </CardActions>
         )}
         <CardContent sx={{color:'blue', display:'flex', justifyContent: 'space-evenly'}}>
-          <Stack alignItems="center" direction="row">
-            <CommentIcon fontSize="large" sx={{mr:2}}/> 
-            123
-          </Stack>
+        {CommentBox()} 
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags.map(tag => <Button key={tag}>{tag}</Button>)}
