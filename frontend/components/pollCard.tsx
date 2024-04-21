@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import { ButtonGroup } from '@mui/material';
+import { ButtonGroup, Modal } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
@@ -15,9 +15,14 @@ import Stack from '@mui/material/Stack';
 import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
+import { useRouter } from 'next/navigation';
+import BasicModal from './errorMessage';
+
+
 
 function MakeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
   //comment
+  const { push } = useRouter();
   const {isAuth, setAuth} = useContext(AuthContext);
   const [cardData, setCardData] = useState({
 
@@ -33,9 +38,10 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
   });
 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
-  const addVote = (ind: number) => {
+  const AddVote = (ind: number) => {
     if (isAuth==false){
-      alert("you haven't logged in!");
+      alert("You cannot vote without logging in. Redirecting to login page.");
+      push("/auth/login");
     }
     else{
     const request = {
@@ -96,8 +102,8 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
         {cardData.opts?.map((option, index) => 
           <CardActions key={option.optionText}>
             {/* Added onClick function as addVote */}
-            <Button variant="contained" value={option.optionText} onClick={(event) => addVote(index)} style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option.optionText}</Button>
-            
+            <Button variant="contained" value={option.optionText} onClick={(event) => AddVote(index)} style={{maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%'}}>{option.optionText}</Button>
+    
             {/* using getPercent which just divides the options's votes by total votes */}
             <Box sx={{ width: 3/4, boxShadow: 1}}>
               <LinearProgress variant="determinate" value={getPercent(option)}/>
