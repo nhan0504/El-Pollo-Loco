@@ -5,12 +5,6 @@ const pool = require('../../db.js');
 
 const checkAuthenticated = require('../../middleware.js');
 
-router.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query(

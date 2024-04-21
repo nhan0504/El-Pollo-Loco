@@ -55,7 +55,7 @@ function PollForm() {
         //event.preventDefault();
         const request = {
             method: 'POST',
-            //credentials: 'include', 
+            credentials: 'include', 
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(
                 {
