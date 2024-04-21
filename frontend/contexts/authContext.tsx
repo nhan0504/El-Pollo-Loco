@@ -4,31 +4,30 @@ import React, { useState, useEffect } from 'react';
 interface IGlobalContextProps {
   isAuth: boolean;
   setAuth: (auth: boolean) => any;
-
 }
 
 export const AuthContext = React.createContext<IGlobalContextProps>({
   isAuth: false,
-  setAuth: () => undefined
+  setAuth: () => undefined,
 });
 
-export default function AuthProvider(props: any){
+export default function AuthProvider(props: any) {
   const [auth, setAuth] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.BACKEND_URL}/auth/is_authenticated`, {
-      method: "GET",
+      method: 'GET',
       credentials: 'include',
     })
-    .then((res) => {
-      if (res.ok) {
-        setAuth(true);
-      }
-      else { //This branch is probably redundant.
-        setAuth(false);
-      }
-    })
-    .catch();
+      .then((res) => {
+        if (res.ok) {
+          setAuth(true);
+        } else {
+          //This branch is probably redundant.
+          setAuth(false);
+        }
+      })
+      .catch();
   }, []);
 
   //useEffect(()=>console.log("AUTH: " + auth ), [auth]); //Debugging.
@@ -43,4 +42,4 @@ export default function AuthProvider(props: any){
       {props.children}
     </AuthContext.Provider>
   );
-};
+}

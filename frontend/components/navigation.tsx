@@ -3,7 +3,6 @@ import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -11,7 +10,6 @@ import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -63,7 +61,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-
 export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -109,53 +106,62 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       {isAuth
-        ? (
-          [
-          <MenuItem onClick={() => {
-            //Redirect to profile.
-            handleMenuClose();
-          }} key={1}>
-            Profile
-          </MenuItem>,
-          <MenuItem onClick={() => {
-            //Redirect to account.
-            handleMenuClose();
-          }} key={2}>
-            My Account
-          </MenuItem>,
-          <MenuItem onClick={() => {
-            fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
-              method: "POST",
-              credentials: "include"
-            })
-            .then((res) => {
-              handleMenuClose();
-              setAuth(false);
-            })
-            .catch();
-          }} key={3}>
-            Logout
-          </MenuItem>
+        ? [
+            <MenuItem
+              onClick={() => {
+                //Redirect to profile.
+                handleMenuClose();
+              }}
+              key={1}
+            >
+              Profile
+            </MenuItem>,
+            <MenuItem
+              onClick={() => {
+                //Redirect to account.
+                handleMenuClose();
+              }}
+              key={2}
+            >
+              My Account
+            </MenuItem>,
+            <MenuItem
+              onClick={() => {
+                fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
+                  method: 'POST',
+                  credentials: 'include',
+                })
+                  .then((res) => {
+                    handleMenuClose();
+                    setAuth(false);
+                  })
+                  .catch();
+              }}
+              key={3}
+            >
+              Logout
+            </MenuItem>,
           ]
-        )
-        : (
-          [
-          <MenuItem onClick={() => {
-            push("/auth/login");
-            handleMenuClose();
-          }} key={1}>
-            Login
-          </MenuItem>,
-          <MenuItem onClick={() => {
-            push("/auth/signup");
-            handleMenuClose();
-          }} key={2}>
-            Sign Up
-          </MenuItem>
-          ]
-        )
-      }
-      
+        : [
+            <MenuItem
+              onClick={() => {
+                push('/auth/login');
+                handleMenuClose();
+              }}
+              key={1}
+            >
+              Login
+            </MenuItem>,
+            <MenuItem
+              onClick={() => {
+                push('/auth/signup');
+                handleMenuClose();
+              }}
+              key={2}
+            >
+              Sign Up
+            </MenuItem>,
+          ]}
     </Menu>
   );
 
@@ -198,15 +204,14 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
-  
+
   const CreatePoll = () => {
-    if (isAuth==false) {
-      alert("You cannot create a poll without logging in.");
+    if (isAuth == false) {
+      alert('You cannot create a poll without logging in.');
+    } else {
+      push('/poll_form');
     }
-    else {
-      push("/poll_form")
-    }
-  }
+  };
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
@@ -229,7 +234,14 @@ export default function PrimarySearchAppBar() {
           >
             El Pollo Loco
           </Typography>
-          <HomeIcon fontSize="large" sx={{ mr: 4 }} />
+          <HomeIcon
+            cursor="pointer"
+            fontSize="large"
+            sx={{ mr: 4 }}
+            onClick={() => {
+              push('/discover');
+            }}
+          />
           <Button variant="contained" size="medium" onClick={CreatePoll}>
             Create Poll&nbsp;
             <AddIcon fontSize="small" />

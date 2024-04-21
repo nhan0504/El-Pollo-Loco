@@ -50,7 +50,7 @@ passport.serializeUser(function (user, cb) {
     return cb(null, {
       username: user.username,
       email: user.email,
-      user_id: user.user_id
+      user_id: user.user_id,
     });
   });
 });
@@ -142,14 +142,13 @@ router.post('/signup', function (req, res) {
 
 router.get('/is_authenticated', (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).send("You are authenticated.");
-  }
-  else {
-    res.status(401).send("You are not authenticated.");
+    res.status(200).send('You are authenticated.');
+  } else {
+    res.status(401).send('You are not authenticated.');
   }
 });
 
-router.get("/profile", checkAuthenticated, (req, res) => {
+router.get('/profile', checkAuthenticated, (req, res) => {
   res.status(200).send({
     username: req.user.username,
     user_id: req.user.user_id,

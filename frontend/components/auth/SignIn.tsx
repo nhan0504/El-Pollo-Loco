@@ -14,16 +14,15 @@ import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import { AuthContext } from '@/contexts/authContext';
 
-
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
-  const {isAuth, setAuth} = useContext(AuthContext);
+  const { isAuth, setAuth } = useContext(AuthContext);
   const { push } = useRouter();
 
   useEffect(() => {
     if (isAuth) {
-      console.log("AUTH")
-      push("/discover");
+      console.log('AUTH');
+      push('/discover');
     }
   }, [isAuth]);
 

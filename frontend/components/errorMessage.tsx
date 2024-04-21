@@ -32,10 +32,10 @@ export default function ErrorModal() {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            You cannot vote on a poll unless you are logged in. 
+            You cannot vote on a poll unless you are logged in.
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Click here to redirect to login page. 
+            Click here to redirect to login page.
           </Typography>
         </Box>
       </Modal>

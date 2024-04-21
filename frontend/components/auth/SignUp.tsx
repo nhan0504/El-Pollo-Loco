@@ -23,7 +23,7 @@ export default function SignUp() {
 
   useEffect(() => {
     if (isAuth) {
-      push("/discover");
+      push('/discover');
     }
   }, [isAuth]);
 
