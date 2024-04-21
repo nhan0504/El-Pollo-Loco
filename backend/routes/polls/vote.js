@@ -32,7 +32,7 @@ router.get('/:pollId', function (req, res) {
 });
 
 router.post('/', checkAuthenticated, function (req, res) {
-  const userId = req.body.user_id;
+  const userId = req.user.user_id;
   const optionId = req.body.option_id;
 
   pool.query(

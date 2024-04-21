@@ -49,6 +49,7 @@ passport.serializeUser(function (user, cb) {
     return cb(null, {
       username: user.username,
       email: user.email,
+      user_id: user.user_id
     });
   });
 });

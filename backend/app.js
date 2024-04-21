@@ -10,7 +10,6 @@ var uuid = require('uuid');
 //--------------------------------------
 
 //Routes
-var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var pollsRouter = require('./routes/polls');
@@ -50,7 +49,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Routes
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/polls', pollsRouter);
