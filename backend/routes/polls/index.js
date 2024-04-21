@@ -11,6 +11,7 @@ router.use(function(req, res, next) {
 });
 
 const voteRouter = require('./vote');
+const commentRouter = require('./comment');
 
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
@@ -89,5 +90,6 @@ router.delete('/:pollId', checkAuthenticated, function (req, res) {
 });
 
 router.use('/vote', voteRouter);
+router.use('/comment', commentRouter);
 
 module.exports = router;

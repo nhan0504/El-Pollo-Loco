@@ -1,26 +1,24 @@
 var express = require('express');
 var router = express.Router();
 
-const pool = require('../../db.js');
-/* router.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-}); */
+const pool = require("../../db.js");
 
-router.get('/', function (req, res) {
-  pool.query('SELECT * FROM Polls ORDER BY created_at DESC LIMIT 6', (error, results) => {
-    if (error) {
-      console.error('Error fetching polls', error);
-      res.status(500).send('Error fetching polls');
-      return;
-    }
-    if (results.length === 0) {
-      res.status(404).send('No polls found');
-      return;
-    }
-    const pollsPromises = results.map(
-      (poll) =>
+router.get("/", function(req, res) {
+  pool.query(
+    "SELECT Polls.*, Users.username FROM Polls " +
+    "JOIN Users ON Polls.user_id = Users.user_id " +
+    "ORDER BY Polls.created_at DESC LIMIT 6",
+    (error, results) => {
+      if (error) {
+        console.error("Error fetching polls", error);
+        res.status(500).send("Error fetching polls");
+        return;
+      }
+      if (results.length === 0) {
+        res.status(404).send("No polls found");
+        return;
+      }
+      const pollsPromises = results.map(poll => 
         new Promise((resolve, reject) => {
           pool.query(
             'SELECT Options.option_id, Options.option_text, COUNT(Votes.vote_id) AS vote_count ' +

@@ -44,7 +44,7 @@ export default function Feed() {
         let currCard = pollData[i];
         
           row.push( <Grid item xs={4} style={{padding: 50}} key={i}>
-                    {PollCard(["tag1", "tag2", "tag3"], currCard?.title, currCard?.options?.map((option: any) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.user_id)}
+                    {PollCard([""], currCard?.title, currCard?.options?.map((option: any) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.username)}
                   </Grid>
           ) 
     }

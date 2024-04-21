@@ -12,7 +12,7 @@ import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 
 function PollForm() {
-
+    
     const [pollData, setPollData] = useState({
         // Need to get current logged in user
         title: "",
@@ -31,6 +31,8 @@ function PollForm() {
     const pollRef = useRef(pollData);
 
     const [tags, setTags] = useState<string[]>([]);
+
+
 
     const handleChange = (event: any, fieldName: string, ind:number=0) => {
         const title = event.target.value;
@@ -53,10 +55,10 @@ function PollForm() {
         //event.preventDefault();
         const request = {
             method: 'POST',
+            //credentials: 'include', 
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(
                 {
-                    user_id: 3,
                     title: pollData.title,
                     options: pollData.options.map((option) => option.optionText)
                 }
