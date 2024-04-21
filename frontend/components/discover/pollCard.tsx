@@ -23,6 +23,7 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
   //comment
   const { push } = useRouter();
   const {isAuth, setAuth} = useContext(AuthContext);
+  const [voted, setVoted] = useState(false);
   const [cardData, setCardData] = useState({
 
     totalVotes:opts?.map((opt)=>opt.votes).reduce((partialSum, a) => partialSum + a, 0),
@@ -44,7 +45,7 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
     }
     else{
     const request = {
-      method: 'POST',
+      method: 'POST', 
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(
           {
@@ -52,7 +53,7 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
           }
       )
     }
-
+    if (voted==false){
     fetch('http://localhost:3000/polls/vote', request).then(response => {
             if(!response.ok){
                 
@@ -62,13 +63,14 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
 
               cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
               setCardData({...cardData, totalVotes: cardData.totalVotes + 1, opts: cardData.opts});
-
+              setVoted(true);
               return response.text()
             
             }
         })
         .catch(error => error.message);
       }
+    }
 
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
     // Otherwise it might just be slightly out of date, though it will correct on page refresh
