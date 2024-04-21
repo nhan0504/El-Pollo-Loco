@@ -22,7 +22,6 @@ function PollForm() {
 
     const [pollData, setPollData] = useState({
         // Need to get current logged in user
-        userID:123,
         title: "",
         options: [
             {

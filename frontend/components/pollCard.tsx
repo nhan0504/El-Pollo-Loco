@@ -49,7 +49,6 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
       headers: { 'Content-Type': 'application/json'},
       body: JSON.stringify(
           {
-              user_id: 4,
               option_id:cardData.opts[ind].option_id
           }
       )
