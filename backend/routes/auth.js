@@ -9,6 +9,7 @@ var pool = require('../db.js');
 //Passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
+const checkAuthenticated = require('../middleware.js');
 
 passport.use(
   new LocalStrategy(function (username, pass, cb) {
@@ -137,6 +138,23 @@ router.post('/signup', function (req, res) {
       }
     },
   );
+});
+
+router.get('/is_authenticated', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.status(200).send("You are authenticated.");
+  }
+  else {
+    res.status(401).send("You are not authenticated.");
+  }
+});
+
+router.get("/profile", checkAuthenticated, (req, res) => {
+  res.status(200).send({
+    username: req.user.username,
+    user_id: req.user.user_id,
+    email: req.user.email,
+  });
 });
 
 module.exports = router;

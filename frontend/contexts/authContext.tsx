@@ -14,8 +14,24 @@ export const AuthContext = React.createContext<IGlobalContextProps>({
 
 export default function AuthProvider(props: any){
   const [auth, setAuth] = useState(false);
-  useEffect(()=>{}, []); //check for pollCookie
-  //useEffect(()=>console.log(auth), [auth]);
+
+  useEffect(() => {
+    fetch(`${process.env.BACKEND_URL}/auth/is_authenticated`, {
+      method: "GET",
+      credentials: 'include',
+    })
+    .then((res) => {
+      if (res.ok) {
+        setAuth(true);
+      }
+      else { //This branch is probably redundant.
+        setAuth(false);
+      }
+    })
+    .catch();
+  }, []);
+
+  useEffect(()=>console.log("AUTH: " + auth ), [auth]); //Debugging.
 
   return (
     <AuthContext.Provider

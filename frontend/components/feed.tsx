@@ -11,8 +11,8 @@ import Comments from './comments'
 
 export default function Feed() {
 
-  const [pollData, setPollData] = useState();
-  const [isLoading, setLoading] = useState(true);
+  const [pollData, setPollData] = useState<any[]>();
+  const [isLoading, setLoading] = useState<boolean>(true);
   // should keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls
   
@@ -45,8 +45,8 @@ export default function Feed() {
         // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
         let currCard = pollData[i];
         
-          row.push( <Grid item xs={4} style={{padding: 50}}>
-                    {PollCard(["tag1", "tag2", "tag3"], currCard?.title, currCard?.options?.map((option) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.user_id)}
+          row.push( <Grid item xs={4} style={{padding: 50}} key={i}>
+                    {PollCard(["tag1", "tag2", "tag3"], currCard?.title, currCard?.options?.map((option: any) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.user_id)}
                   </Grid>
           ) 
     }
@@ -64,7 +64,7 @@ export default function Feed() {
     let grid = []
     
     for (let i = 0; i < rows; i++){
-        grid.push(<Grid container item spacing={3} justifyContent="space-around">
+        grid.push(<Grid container item spacing={3} justifyContent="space-around" key={i}>
           {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
           {FormRow(pollData?.slice(i*cols, i*cols + cols))}
       </Grid>)

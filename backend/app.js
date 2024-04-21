@@ -41,6 +41,7 @@ app.use(
     name: 'poll_cookie',
     resave: false,
     saveUninitialized: true,
+    httpOnly: false,
     genid: (req) => uuid.v4(),
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, //One day
   }),
