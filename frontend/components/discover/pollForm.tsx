@@ -164,11 +164,13 @@ function PollForm() {
 
   return (
     <Card
+      sx={{boxShadow:2}}
       style={{
-        width: 360,
+        width: 380,
         display: 'flex',
         justifyContent: 'space-evenly',
         flexDirection: 'column',
+        borderRadius: 15
       }}
     >
       <CardContent style={{ margin: 2 }}>
@@ -181,19 +183,24 @@ function PollForm() {
           method="POST"
         >
           <FormControl>
+            
             <Typography variant="h6" component="div" align="center" sx={{ p: 1 }}>
               Poll Title
-              <TextField
-                type="text"
-                variant="outlined"
-                size="small"
-                name="title"
-                value={pollData.title}
-                sx={{ m: 1 }}
-                onChange={(event) => handleChange(event, 'title')}
-              />
+            <br/>
+            <TextField
+              type="text"
+              variant="outlined"
+              size="small"
+              name="title"
+              multiline
+              rows=""
+              value={pollData.title}
+              sx={{ m: 1, minWidth:280}}
+              onChange={(event) => handleChange(event, 'title')}
+            />
             </Typography>
 
+            
             <Button onClick={addOption}>Add poll option</Button>
 
             <FormGroup>{optionList}</FormGroup>
@@ -225,7 +232,7 @@ function PollForm() {
 export default function CreatePoll() {
   console.log('here!');
   return (
-    <Box sx={{ minWidth: 375, minHeight: 700, m: 3, p: 3 }}>
+    <Box sx={{ minWidth: 370, minHeight: 700, m: 3, p: 3 }}>
       <PollForm />
     </Box>
   );

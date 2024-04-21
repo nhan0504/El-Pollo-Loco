@@ -69,6 +69,7 @@ function MakeCard(
           }
         })
         .catch((error) => error.message);
+      
     }
 
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
@@ -97,13 +98,15 @@ function MakeCard(
       >
         <CardContent>
           <Stack alignItems="center" direction="row" gap={0}>
-            <PersonIcon fontSize="large" />
-            <Typography variant="subtitle1">{username}</Typography>
+            <PersonIcon fontSize="medium" />
+            <Typography variant="subtitle2">{username}</Typography>
+            <Typography sx={{ml:28}}variant="subtitle2" align="right">{cardData.totalVotes} votes</Typography>
           </Stack>
+          <br/>
           <Typography variant="h5" component="div" align="center">
             {question}
           </Typography>
-          <br />
+          <br/>
         </CardContent>
         {/* here I'm mapping to the cardData options instead of the opts parameter, so instead of option, it's option.optionText */}
         {cardData.opts?.map((option, index) => (
@@ -123,14 +126,14 @@ function MakeCard(
               <LinearProgress variant="determinate" value={getPercent(option)} />
             </Box>
 
-            <Box sx={{ minWidth: 35 }}>
+            <Box sx={{ width: 55 }}>
               <Typography variant="body2" color="textSecondary">
-                {parseFloat(getPercent(option).toPrecision(3))}%
+                {parseFloat(getPercent(option).toPrecision(3))}% 
               </Typography>
             </Box>
           </CardActions>
         ))}
-        <CardContent sx={{ color: 'blue', display: 'flex', justifyContent: 'space-evenly' }}>
+        <CardContent sx={{ color: 'blue', display: 'flex'}}>
           {CommentBox()}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
