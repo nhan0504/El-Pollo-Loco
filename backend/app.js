@@ -13,7 +13,6 @@ var uuid = require('uuid');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var pollsRouter = require('./routes/polls');
-var votesRouter = require('./routes/votes');
 var feedRouter = require('./routes/feed');
 //--------------------------------------
 
@@ -53,7 +52,6 @@ app.use(passport.session());
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/polls', pollsRouter);
-app.use('/votes', votesRouter);
 app.use('/feed', feedRouter);
 //---------------------------------------
 
