@@ -10,8 +10,6 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
-import FormLabel from '@mui/material';
-
 
 function PollForm() {
 

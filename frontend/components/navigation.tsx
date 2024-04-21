@@ -68,6 +68,9 @@ export default function PrimarySearchAppBar() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const { isAuth, setAuth } = useContext(AuthContext);
+  const { push } = useRouter();
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -105,8 +108,54 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {isAuth
+        ? (
+          <>
+          <MenuItem onClick={() => {
+            //Redirect to profile.
+            handleMenuClose();
+          }}>
+            Profile
+          </MenuItem>
+          <MenuItem onClick={() => {
+            //Redirect to account.
+            handleMenuClose();
+          }}>
+            My Account
+          </MenuItem>
+          <MenuItem onClick={() => {
+            fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
+              method: "POST",
+              credentials: "include"
+            })
+            .then((res) => {
+              handleMenuClose();
+              setAuth(false);
+            })
+            .catch();
+          }}>
+            Logout
+          </MenuItem>
+          </>
+        )
+        : (
+          <>
+          <MenuItem onClick={() => {
+            push("/auth/login");
+            handleMenuClose();
+          }}>
+            Login
+          </MenuItem>
+          <MenuItem onClick={() => {
+            push("/auth/signup");
+            handleMenuClose();
+          }}>
+            Sign Up
+          </MenuItem>
+          </>
+        )
+      }
+      
     </Menu>
   );
 
@@ -150,15 +199,12 @@ export default function PrimarySearchAppBar() {
     </Menu>
   );
   
-
-  const {push} = useRouter();
-  const {isAuth, setAuth} = useContext(AuthContext);
   const CreatePoll = () => {
-    if (isAuth==false){
+    if (isAuth==false) {
       alert("You cannot create a poll without logging in.");
     }
-    else{
-      window.open('/poll_form', '_blank');
+    else {
+      push("/poll_form")
     }
   }
 
