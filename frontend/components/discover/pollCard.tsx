@@ -85,6 +85,7 @@ function MakeCard(
   return (
     <React.Fragment>
       <Card
+        sx={{boxShadow:2}}
         style={{
           display: 'flex',
           justifyContent: 'space-evenly',
