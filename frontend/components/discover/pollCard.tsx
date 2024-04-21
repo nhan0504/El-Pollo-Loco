@@ -12,7 +12,6 @@ import CommentIcon from '@mui/icons-material/Comment';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
-import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
@@ -129,8 +128,7 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
   );
 }
 
-export default function PollCard(tags:Array<string>, question: string, opts, username:string) {
-  const {height, width} = useWindowDimensions();
+export default function PollCard(tags:Array<string>, question: string, opts: any, username:string) {
   
   return (
     <Box sx={{ minWidth: 375}}>
