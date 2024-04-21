@@ -1,4 +1,4 @@
-import CreatePoll from "@/components/pollForm";
+import CreatePoll from "@/components/discover/pollForm";
 import PrimarySearchAppBar from "@/components/navigation";
 import React from "react";
 import Box from "@mui/material/Box";

@@ -1,25 +1,18 @@
 'use client';
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import LinearProgress from '@mui/material/LinearProgress';
-import { ButtonGroup } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
-import FormLabel from '@mui/material';
-import { MuiChipsInput } from 'mui-chips-input'
-import { stringify } from 'querystring';
-import { title } from 'process';
 
 function PollForm() {
-
+    
     const [pollData, setPollData] = useState({
         // Need to get current logged in user
         title: "",
@@ -38,6 +31,8 @@ function PollForm() {
     const pollRef = useRef(pollData);
 
     const [tags, setTags] = useState<string[]>([]);
+
+
 
     const handleChange = (event: any, fieldName: string, ind:number=0) => {
         const title = event.target.value;
@@ -60,10 +55,10 @@ function PollForm() {
         //event.preventDefault();
         const request = {
             method: 'POST',
+            credentials: 'include', 
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(
                 {
-                    user_id: 3,
                     title: pollData.title,
                     options: pollData.options.map((option) => option.optionText)
                 }
@@ -110,7 +105,6 @@ function PollForm() {
     const addOption = () => {
         pollData.options.length < 6 ?setPollData(pollData => ({
             ...pollData,
-            userID: pollData.userID,
             title: pollData.title,
             options: [...pollData.options, {optionID: 0, optionText: ""}]
         })): alert("You cannot add more than 6 options.")

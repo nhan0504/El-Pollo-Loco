@@ -1,6 +1,5 @@
 import PrimarySearchAppBar from '@/components/navigation';
-import Feed from '@/components/feed';
-import FeedButtons from '@/components/feedButtons';
+import Feed from '@/components/discover/feed';
 import { Box } from '@mui/material';
 
 export default function Navigation() {

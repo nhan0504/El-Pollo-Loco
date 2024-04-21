@@ -1,11 +1,9 @@
 'use client';
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import { Grid, grid2Classes } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
-import useWindowDimensions from './dimensions';
 import Comments from './comments'
 
 
@@ -46,7 +44,7 @@ export default function Feed() {
         let currCard = pollData[i];
         
           row.push( <Grid item xs={4} style={{padding: 50}} key={i}>
-                    {PollCard(["tag1", "tag2", "tag3"], currCard?.title, currCard?.options?.map((option: any) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.user_id)}
+                    {PollCard([""], currCard?.title, currCard?.options?.map((option: any) => ({optionText: option.option_text, votes: option.vote_count, option_id:option.option_id})), currCard?.username)}
                   </Grid>
           ) 
     }
@@ -79,16 +77,14 @@ export default function Feed() {
       );
 }
 
-const {height, width} = useWindowDimensions();
-
   return (isLoading?
-    <Box sx={{ minWidth: width, maxWidth: width, minHeight: height }}>
-      <FeedButtons/>
-      <div>loading...</div>
-    </Box>:
-    <Box sx={{ width: width}}>
-      <FeedButtons/>
-      {<CardsTogether/>}
-    </Box>
+  <Container maxWidth={false}>
+    <FeedButtons/>
+    <div>loading...</div>
+  </Container>:
+  <Container maxWidth={false}>
+    <FeedButtons/>
+    {<CardsTogether/>}
+  </Container>
   );
 }
