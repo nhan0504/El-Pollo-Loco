@@ -9,14 +9,16 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 import useWindowDimensions from './dimensions';
 import CommentBox from './comments';
+import { AuthContext } from '@/contexts/authContext';
 
 function MakeCard(tags:Array<string>, question: string, opts:{optionText:string, votes:number, option_id:number}, username:string) {
   //comment
+  const {isAuth, setAuth} = useContext(AuthContext);
   const [cardData, setCardData] = useState({
 
     totalVotes:opts?.map((opt)=>opt.votes).reduce((partialSum, a) => partialSum + a, 0),
@@ -32,7 +34,10 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const addVote = (ind: number) => {
-    
+    if (isAuth==false){
+      alert("you haven't logged in!");
+    }
+    else{
     const request = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
@@ -59,7 +64,7 @@ function MakeCard(tags:Array<string>, question: string, opts:{optionText:string,
             }
         })
         .catch(error => error.message);
-
+      }
 
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
     // Otherwise it might just be slightly out of date, though it will correct on page refresh
