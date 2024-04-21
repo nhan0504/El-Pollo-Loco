@@ -90,7 +90,7 @@ export default function Feed() {
   ) : (
     <Container maxWidth={false}>
       <FeedButtons />
-      {<CardsTogether />}
+      <CardsTogether />
     </Container>
   );
 }

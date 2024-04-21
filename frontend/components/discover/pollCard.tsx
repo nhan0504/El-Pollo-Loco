@@ -26,7 +26,6 @@ function MakeCard(
   //comment
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
-  const [voted, setVoted] = useState(false);
   const [cardData, setCardData] = useState({
     totalVotes: opts?.map((opt) => opt.votes).reduce((partialSum, a) => partialSum + a, 0),
     opts: opts?.map((opt) => {
@@ -47,31 +46,29 @@ function MakeCard(
     } else {
       const request = {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option_id: cardData.opts[ind].option_id,
         }),
       };
-      if (voted == false) {
-        fetch('http://localhost:3000/polls/vote', request)
-          .then((response) => {
-            if (!response.ok) {
-              return response.text().then((text) => {
-                throw new Error(text);
-              });
-            } else {
-              cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
-              setCardData({
-                ...cardData,
-                totalVotes: cardData.totalVotes + 1,
-                opts: cardData.opts,
-              });
-              setVoted(true);
-              return response.text();
-            }
-          })
-          .catch((error) => error.message);
-      }
+      fetch('http://localhost:3000/polls/vote', request)
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
+            setCardData({
+              ...cardData,
+              totalVotes: cardData.totalVotes + 1,
+              opts: cardData.opts,
+            });
+            return response.text();
+          }
+        })
+        .catch((error) => error.message);
     }
 
     // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
