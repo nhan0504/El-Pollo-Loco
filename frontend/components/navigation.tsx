@@ -20,6 +20,8 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRouter } from 'next/navigation';
+import { AuthContext } from '@/contexts/authContext';
+import { useContext } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -147,11 +149,17 @@ export default function PrimarySearchAppBar() {
       </MenuItem>
     </Menu>
   );
+  
 
   const {push} = useRouter();
+  const {isAuth, setAuth} = useContext(AuthContext);
   const CreatePoll = () => {
-  
-    window.open('/poll_form', '_blank');
+    if (isAuth==false){
+      alert("You cannot create a poll without logging in.");
+    }
+    else{
+      window.open('/poll_form', '_blank');
+    }
   }
 
   return (
