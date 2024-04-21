@@ -20,11 +20,6 @@ var feedRouter = require('./routes/feed');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-//--------------------------------------
-
 //Middleware
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', process.env.REQUEST_ORIGIN_URL);
@@ -74,9 +69,8 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
+  // send error code
   res.status(err.status || 500);
-  res.render('error');
 });
 
 module.exports = app;

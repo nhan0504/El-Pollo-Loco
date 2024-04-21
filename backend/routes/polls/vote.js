@@ -31,7 +31,6 @@ router.get('/:pollId', function (req, res) {
   );
 });
 
-// TODO Get this working with authentication after it is setup
 router.post('/', checkAuthenticated, function (req, res) {
   const userId = req.body.user_id;
   const optionId = req.body.option_id;
