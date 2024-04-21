@@ -38,10 +38,10 @@ router.get('/:pollId', function (req, res) {
 
 router.post('/', checkAuthenticated, function (req, res) {
   const { title, options } = req.body;
-  const user_id = req.user.user_id;
+  const userId = req.user.user_id;
   pool.query(
     'INSERT INTO Polls(user_id, title, created_at) VALUES (?,?,NOW())',
-    [user_id, title],
+    [userId, title],
     (error, results) => {
       if (error) {
         console.error(`Error creating poll`, error);
