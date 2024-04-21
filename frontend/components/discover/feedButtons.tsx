@@ -29,7 +29,7 @@ export default function FeedButtons() {
         variant="text"
         size="medium"
         style={{ fontSize: '16px', fontWeight: 'bold' }}
-        sx={{ mr: 3, textTransform: 'capitalize', color: 'black' }}
+        sx={{mr: 3, textTransform: 'capitalize', color: 'black' }}
         //onClick={switchFeed}
       >
         Discover
@@ -38,7 +38,7 @@ export default function FeedButtons() {
         variant="text"
         size="medium"
         style={{ fontSize: '16px' }}
-        sx={{ mr: 3, textTransform: 'capitalize', color: 'black' }}
+        sx={{mr: 3, textTransform: 'capitalize', color: 'black' }}
         //onClick={switchFeed}
       >
         Friends
