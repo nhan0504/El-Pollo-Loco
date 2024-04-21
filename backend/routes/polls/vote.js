@@ -3,6 +3,14 @@ var router = express.Router();
 
 const pool = require('../../db.js');
 
+const checkAuthenticated = require('../../middleware.js');
+
+router.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
@@ -23,9 +31,8 @@ router.get('/:pollId', function (req, res) {
   );
 });
 
-// TODO Get this working with authentication after it is setup
-router.post('/', function (req, res) {
-  const userId = req.body.user_id;
+router.post('/', checkAuthenticated, function (req, res) {
+  const userId = req.user.user_id;
   const optionId = req.body.option_id;
 
   pool.query(

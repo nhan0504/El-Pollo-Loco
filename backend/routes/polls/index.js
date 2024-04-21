@@ -2,12 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
+const checkAuthenticated = require('../../middleware.js');
 
-/* router.use(function(req, res, next) {
+router.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-}); */
+});
 
 const voteRouter = require('./vote');
 
@@ -40,8 +41,9 @@ router.get('/:pollId', function (req, res) {
   });
 });
 
-router.post('/', function (req, res) {
-  const { user_id, title, options } = req.body;
+router.post('/', checkAuthenticated, function (req, res) {
+  const { title, options } = req.body;
+  const user_id = req.user.user_id;
   pool.query(
     'INSERT INTO Polls(user_id, title, created_at) VALUES (?,?,NOW())',
     [user_id, title],
@@ -70,7 +72,7 @@ router.post('/', function (req, res) {
   );
 });
 
-router.delete('/:pollId', function (req, res) {
+router.delete('/:pollId', checkAuthenticated, function (req, res) {
   const pollId = req.params.pollId;
   pool.query('DELETE FROM Polls WHERE poll_id = ?', [pollId], (error, results) => {
     if (error) {
