@@ -15,7 +15,7 @@ import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
-import BasicModal from './errorMessage';
+import ErrorModal from '../errorMessage';
 
 
 

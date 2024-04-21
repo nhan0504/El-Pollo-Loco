@@ -31,7 +31,7 @@ export default function AuthProvider(props: any){
     .catch();
   }, []);
 
-  useEffect(()=>console.log("AUTH: " + auth ), [auth]); //Debugging.
+  //useEffect(()=>console.log("AUTH: " + auth ), [auth]); //Debugging.
 
   return (
     <AuthContext.Provider

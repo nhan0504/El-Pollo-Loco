@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -13,11 +13,19 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import { randomBytes } from 'crypto';
+import { AuthContext } from '@/contexts/authContext';
 
 export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
+  const { isAuth } = useContext(AuthContext);
   const { push } = useRouter();
+
+  useEffect(() => {
+    if (isAuth) {
+      push("/discover");
+    }
+  }, [isAuth]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -110,19 +110,19 @@ export default function PrimarySearchAppBar() {
     >
       {isAuth
         ? (
-          <>
+          [
           <MenuItem onClick={() => {
             //Redirect to profile.
             handleMenuClose();
-          }}>
+          }} key={1}>
             Profile
-          </MenuItem>
+          </MenuItem>,
           <MenuItem onClick={() => {
             //Redirect to account.
             handleMenuClose();
-          }}>
+          }} key={2}>
             My Account
-          </MenuItem>
+          </MenuItem>,
           <MenuItem onClick={() => {
             fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
               method: "POST",
@@ -133,26 +133,26 @@ export default function PrimarySearchAppBar() {
               setAuth(false);
             })
             .catch();
-          }}>
+          }} key={3}>
             Logout
           </MenuItem>
-          </>
+          ]
         )
         : (
-          <>
+          [
           <MenuItem onClick={() => {
             push("/auth/login");
             handleMenuClose();
-          }}>
+          }} key={1}>
             Login
-          </MenuItem>
+          </MenuItem>,
           <MenuItem onClick={() => {
             push("/auth/signup");
             handleMenuClose();
-          }}>
+          }} key={2}>
             Sign Up
           </MenuItem>
-          </>
+          ]
         )
       }
       

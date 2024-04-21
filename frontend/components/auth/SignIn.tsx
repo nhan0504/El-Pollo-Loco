@@ -1,5 +1,5 @@
 'use client';
-import { useState, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -19,6 +19,13 @@ export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
   const {isAuth, setAuth} = useContext(AuthContext);
   const { push } = useRouter();
+
+  useEffect(() => {
+    if (isAuth) {
+      console.log("AUTH")
+      push("/discover");
+    }
+  }, [isAuth]);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
