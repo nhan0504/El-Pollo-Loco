@@ -5,7 +5,9 @@ const pool = require("../../db.js");
 
 router.get("/", function(req, res) {
   pool.query(
-    "SELECT * FROM Polls ORDER BY created_at DESC LIMIT 6",
+    "SELECT Polls.*, Users.username FROM Polls " +
+    "JOIN Users ON Polls.user_id = Users.user_id " +
+    "ORDER BY Polls.created_at DESC LIMIT 6",
     (error, results) => {
       if (error) {
         console.error("Error fetching polls", error);
