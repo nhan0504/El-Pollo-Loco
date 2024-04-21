@@ -38,9 +38,8 @@ router.get('/:optionId/users', function (req, res) {
   });
 });
 
-// TODO Get this working with authentication after it is setup
-router.post('/', function (req, res) {
-  const userId = req.body.user_id;
+router.post('/', checkAuthenticated, function (req, res) {
+  const userId = req.user.user_id;
   const optionId = req.body.option_id;
 
   pool.query(
@@ -63,7 +62,7 @@ router.post('/', function (req, res) {
 //DELETE a vote (If user undo a vote)
 router.delete('/:optionId/:userId', checkAuthenticated, function (req, res) {
   const optionId = req.params.optionId;
-  const userId = req.params.userId;
+  const userId = req.user.user_id;
   pool.query(
     'DELETE FROM Votes WHERE option_id = ? AND user_id = ? ',
     [optionId, userId],
