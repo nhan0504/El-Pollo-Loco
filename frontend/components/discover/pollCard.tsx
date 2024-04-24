@@ -47,6 +47,7 @@ function MakeCard(
     } else {
       const request = {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option_id: cardData.opts[ind].option_id,

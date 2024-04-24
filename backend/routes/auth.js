@@ -156,4 +156,45 @@ router.get('/profile', checkAuthenticated, (req, res) => {
   });
 });
 
+router.post("/login/forgot_password", (req, res) => {
+  // Get email. DONE
+  // Check if user exists. DONE
+  // Check if token already exists. DONE
+  // If so, delete it. DONE
+  // Create new token. DONE
+  // Email user token.
+  const userEmail = req.body.email;
+
+  pool.query('SELECT * FROM users WHERE email = ?', [ userEmail ], (err, results) => {
+    if (err) { res.status(500).send("Internal database error. Try again"); }
+    if (results.length == 0) { res.status(404).send("User with that email does not exist."); }
+
+    const userId = results[0].user_id;
+    pool.query('SELECT * FROM ForgotPassword WHERE user_id = ?', [ userId ], (err, results) => {
+      if (err) { res.status(500).send("Internal database error. Try again"); }
+
+      //Delete token if it already exists.
+      if (results.length != 0) { 
+        pool.query('DELETE * FROM ForgotPassword WHERE user_id = ?', [ userId ], (err, results) => {
+          if (err) { res.status(500).send("Internal database error. Try again"); }
+        });
+      }
+      
+      //Create new token.
+      const token = crypto.randomBytes(32).toString('hex');
+      const expires = Date.now() + (1000 * 60 * 30) //30 minutes from now
+      pool.query('INSERT INTO ForgotPassword (token, user_id, expires) VALUES (?, ?, ?)', [ token, userId, expires ], (err, results) => {
+        if (err) { res.status(500).send("Internal database error. Try again"); }
+      });
+      
+      //Email token to user.
+    });
+  });
+});
+
+router.post("/login/forgot_password/:token", (req, res) => {
+  res.status(500);
+});
+
+
 module.exports = router;
