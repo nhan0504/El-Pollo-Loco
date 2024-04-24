@@ -4,10 +4,36 @@ var router = express.Router();
 const pool = require('../../db.js');
 
 router.get('/', function (req, res) {
+
+  // Weights for discover algorithm
+  const base = 100000;
+  const dateWeight = -0.4;
+  const voteWeight = 0.1;
+
   pool.query(
-    'SELECT Polls.*, Users.username FROM Polls ' +
-      'JOIN Users ON Polls.user_id = Users.user_id ' +
-      'ORDER BY Polls.created_at DESC LIMIT 6',
+    `SELECT 
+    Polls.poll_id, 
+    Polls.title, 
+    Polls.created_at, 
+    Users.username, 
+    COUNT(Votes.vote_id) AS vote_count,
+    (
+        (${base} - (DATEDIFF(CURDATE(), Polls.created_at))) * ${dateWeight} + 
+        COUNT(Votes.vote_id) * ${voteWeight}
+    ) AS score
+    FROM 
+        Polls
+    JOIN 
+        Users ON Polls.user_id = Users.user_id
+    LEFT JOIN 
+        Options ON Polls.poll_id = Options.poll_id
+    LEFT JOIN 
+        Votes ON Options.option_id = Votes.option_id
+    GROUP BY 
+        Polls.poll_id, Users.username
+    ORDER BY 
+        score DESC
+    LIMIT 6;`,
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
