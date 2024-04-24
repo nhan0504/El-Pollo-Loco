@@ -8,14 +8,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, Modal } from '@mui/material';
-import CommentIcon from '@mui/icons-material/Comment';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
-import ErrorModal from '../errorMessage';
 
 function MakeCard(
   tags: Array<string>,

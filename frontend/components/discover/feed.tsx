@@ -4,7 +4,6 @@ import { Container, Grid, Box } from '@mui/material';
 import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
-import Comments from './comments';
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Feed() {
