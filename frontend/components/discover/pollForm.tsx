@@ -57,7 +57,7 @@ function PollForm() {
       }),
     };
 
-    fetch('http://localhost:3000/polls/', request)
+    fetch(`${process.env.BACKEND_URL}/polls/`, request)
       .then((response) => {
         if (!response.ok) {
           return response.text().then((text) => {

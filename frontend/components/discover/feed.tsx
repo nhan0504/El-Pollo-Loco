@@ -20,7 +20,7 @@ export default function Feed() {
 
   async function getPolls(feedType: string) {
     if (feedType === 'discover') {
-      let response = await fetch('http://localhost:3000/feed', {
+      let response = await fetch(`${process.env.BACKEND_URL}/feed`, {
         method: 'GET',
       });
       let data = await response.json();

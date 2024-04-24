@@ -52,7 +52,7 @@ function MakeCard(
           option_id: cardData.opts[ind].option_id,
         }),
       };
-      fetch('http://localhost:3000/polls/vote', request)
+      fetch(`${process.env.BACKEND_URL}/polls/vote`, request)
         .then((response) => {
           if (!response.ok) {
             return response.text().then((text) => {
