@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Divider, Avatar, Grid, Paper } from '@material-ui/core';
+import { Divider, Avatar, Grid, Paper } from '@mui/material';
 import {
   Box,
   Card,
