@@ -133,7 +133,6 @@ function MakeCard(
           </CardActions>
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags.map((tag) => (
