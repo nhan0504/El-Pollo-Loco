@@ -15,10 +15,16 @@ import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
 
+type Option = {
+  optionText: string;
+  votes: number;
+  option_id: number;
+};
+
 function MakeCard(
   tags: Array<string>,
   question: string,
-  opts: { optionText: string; votes: number; option_id: number },
+  opts: Array<Option>,
   username: string,
 ) {
   //comment
@@ -42,15 +48,14 @@ function MakeCard(
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
     } else {
-      const request = {
+      fetch(`${process.env.BACKEND_URL}/polls/vote`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option_id: cardData.opts[ind].option_id,
         }),
-      };
-      fetch(`${process.env.BACKEND_URL}/polls/vote`, request)
+      })
         .then((response) => {
           if (!response.ok) {
             return response.text().then((text) => {

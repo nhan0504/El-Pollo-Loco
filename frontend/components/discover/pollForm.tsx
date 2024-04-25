@@ -46,8 +46,7 @@ function PollForm() {
   const { push } = useRouter();
 
   const handleSubmit = (event: any) => {
-    //event.preventDefault();
-    const request = {
+    fetch(`${process.env.BACKEND_URL}/polls/`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -55,9 +54,7 @@ function PollForm() {
         title: pollData.title,
         options: pollData.options.map((option) => option.optionText),
       }),
-    };
-
-    fetch(`${process.env.BACKEND_URL}/polls/`, request)
+    })
       .then((response) => {
         if (!response.ok) {
           return response.text().then((text) => {
