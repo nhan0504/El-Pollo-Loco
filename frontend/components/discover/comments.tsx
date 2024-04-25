@@ -26,7 +26,7 @@ import { ModalDialog } from '@mui/joy';
 import PollCard from  './pollCardNoComment'
 import useWindowDimensions from '../dimensions';
 
-export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }, username: string) {
+export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string) {
   const [open, setOpen] = React.useState<boolean>(false);
   return (
     <React.Fragment>
@@ -107,7 +107,7 @@ function Comments() {
   );
 }
 
-function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }, username: string){
+function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string){
   var width = (useWindowDimensions().width)*0.5
   return (
     <Paper style={{ minHeight: 'fit-content',

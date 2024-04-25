@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 function MakeCard(
   tags: Array<string>,
   question: string,
-  opts: { optionText: string; votes: number; option_id: number },
+  opts: { optionText: string; votes: number; option_id: number }[],
   username: string,
 ) {
   //comment
@@ -43,15 +43,14 @@ function MakeCard(
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
     } else {
-      const request = {
+      fetch(`${process.env.BACKEND_URL}/polls/vote`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option_id: cardData.opts[ind].option_id,
         }),
-      };
-      fetch(`${process.env.BACKEND_URL}/polls/vote`, request)
+      })
         .then((response) => {
           if (!response.ok) {
             return response.text().then((text) => {
