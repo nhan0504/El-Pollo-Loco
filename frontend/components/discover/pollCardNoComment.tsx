@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, Modal } from '@mui/material';
+import CommentIcon from '@mui/icons-material/Comment';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
@@ -15,16 +16,10 @@ import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
 
-type Option = {
-  optionText: string;
-  votes: number;
-  option_id: number;
-};
-
 function MakeCard(
   tags: Array<string>,
   question: string,
-  opts: Array<Option>,
+  opts: { optionText: string; votes: number; option_id: number },
   username: string,
 ) {
   //comment
@@ -48,14 +43,15 @@ function MakeCard(
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
     } else {
-      fetch(`${process.env.BACKEND_URL}/polls/vote`, {
+      const request = {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           option_id: cardData.opts[ind].option_id,
         }),
-      })
+      };
+      fetch(`${process.env.BACKEND_URL}/polls/vote`, request)
         .then((response) => {
           if (!response.ok) {
             return response.text().then((text) => {
@@ -137,7 +133,6 @@ function MakeCard(
           </CardActions>
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags.map((tag) => (
