@@ -6,9 +6,8 @@ const pool = require('../../db.js');
 router.get('/', function (req, res) {
 
   // Weights for discover algorithm
-  const base = 100000;
-  const dateWeight = -0.4;
-  const voteWeight = 0.1;
+  const dateWeight = -15;
+  const voteWeight = 1;
 
   pool.query(
     `SELECT 
@@ -18,7 +17,7 @@ router.get('/', function (req, res) {
     Users.username, 
     COUNT(Votes.vote_id) AS vote_count,
     (
-        (${base} - (DATEDIFF(CURDATE(), Polls.created_at))) * ${dateWeight} + 
+        ((DATEDIFF(CURDATE(), Polls.created_at))) * ${dateWeight} + 
         COUNT(Votes.vote_id) * ${voteWeight}
     ) AS score
     FROM 
