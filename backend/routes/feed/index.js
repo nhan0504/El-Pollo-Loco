@@ -3,6 +3,8 @@ var router = express.Router();
 
 const pool = require('../../db.js');
 
+const tagsFeed = require('./tagsFeed.js');
+
 router.get('/', function (req, res) {
   pool.query(
     'SELECT Polls.*, Users.username FROM Polls ' +
@@ -53,5 +55,7 @@ router.get('/', function (req, res) {
     },
   );
 });
+
+router.use('/tags', tagsFeed);
 
 module.exports = router;
