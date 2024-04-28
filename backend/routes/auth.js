@@ -9,7 +9,7 @@ var pool = require('../db.js');
 //Passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
-const checkAuthenticated = require('../middleware.js');
+const { checkAuthenticated, checkValidtoken } = require('../middleware.js');
 
 passport.use(
   new LocalStrategy(function (username, pass, cb) {
