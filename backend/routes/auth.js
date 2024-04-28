@@ -108,11 +108,12 @@ router.post('/signup', function (req, res) {
       } else {
         crypto.pbkdf2(
           userData.password,
-          userData.salt,
+          crypto.randomBytes(8).toString('hex'),
           310000,
           32,
           'sha256',
           function (err, hashedPassword) {
+            if (err) { res.status(500).send("Internal cryptographic error. Try again"); }
             pool.query(
               'INSERT INTO Users(username, pass, fname, lname, email, salt) VALUES (?,?,?,?,?,?)',
               [
@@ -192,8 +193,42 @@ router.post("/login/forgot_password", (req, res) => {
   });
 });
 
-router.post("/login/forgot_password/:token", (req, res) => {
-  res.status(500);
+router.post("/login/reset_password/:token", (req, res) => {
+  const newPassword = req.password;
+  const newSalt = crypto.randomBytes(8).toString('hex');
+
+  pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [ req.token ], (err, results) => {
+    if (err) { res.status(500).send("Internal database error. Try again"); }
+    if (results.length == 0) { res.status(401).send("Invalid token."); }
+
+    var user;
+    pool.query("SELECT * FROM Users WHERE email = ?", [ results[0].email ], (err, results) => {
+      if (err) { res.status(500).send("Internal database error. Try again"); }
+      if (results.length == 0) { res.status(401).send("The account for which you are changing the password no longer exists."); }
+      user = results[0]
+    });
+
+    pool.query("DELETE * FROM Users WHERE user_id = ?", [ user.user_id ], (err, results) => {
+      if (err) { res.status(500).send("Internal database error. Try again"); }
+    });
+
+    crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha-256", (err, newHashedPassword) => {
+      if (err) { res.status(500).send("Internal cryptographic error. Try again"); }
+
+      pool.query(              
+        'INSERT INTO Users(username, pass, fname, lname, email, salt) VALUES (?,?,?,?,?,?)', [ 
+        user.username,
+        newHashedPassword,
+        user.fname,
+        user.lname,
+        user.email,
+        newSalt
+       ], (err, results) => {
+        if (err) { return res.status(500).send("Internal database error. Try again"); }
+        res.status(200).send("Password successfully changed.")
+       });
+    });
+  });
 });
 
 
