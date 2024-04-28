@@ -134,6 +134,7 @@ export default function PrimarySearchAppBar() {
                   .then((res) => {
                     handleMenuClose();
                     setAuth(false);
+                    //push("/auth/login");
                   })
                   .catch();
               }}
@@ -208,6 +209,7 @@ export default function PrimarySearchAppBar() {
   const CreatePoll = () => {
     if (isAuth == false) {
       alert('You cannot create a poll without logging in.');
+      push("/auth/login");
     } else {
       push('/poll_form');
     }

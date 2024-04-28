@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
@@ -17,19 +16,20 @@ export default function FeedButtons() {
       sx={{
         bgcolor: 'white',
         display: { xs: 'flex' },
-        width: '330px',
+        width: '310px',
         height: '50px',
         p: 1,
         m: 2,
         border: '2px solid black',
         borderRadius: '30px',
+        dropShadow:3
       }}
     >
       <Button
         variant="text"
         size="medium"
         style={{ fontSize: '16px', fontWeight: 'bold' }}
-        sx={{ mr: 3, textTransform: 'capitalize', color: 'black' }}
+        sx={{borderRadius: 20, mr: 3, textTransform: 'capitalize', color: 'black' }}
         //onClick={switchFeed}
       >
         Discover
@@ -38,7 +38,7 @@ export default function FeedButtons() {
         variant="text"
         size="medium"
         style={{ fontSize: '16px' }}
-        sx={{ mr: 3, textTransform: 'capitalize', color: 'black' }}
+        sx={{borderRadius: 20, mr: 3, textTransform: 'capitalize', color: 'black' }}
         //onClick={switchFeed}
       >
         Friends
@@ -47,7 +47,7 @@ export default function FeedButtons() {
         variant="text"
         size="medium"
         style={{ fontSize: '16px' }}
-        sx={{ textTransform: 'capitalize', color: 'black' }}
+        sx={{ borderRadius: 20, textTransform: 'capitalize', color: 'black' }}
         //onClick={switchFeed}
       >
         Following

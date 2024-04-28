@@ -1,10 +1,10 @@
 'use client';
 import * as React from 'react';
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, Box } from '@mui/material';
 import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
-import Comments from './comments';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Feed() {
   const [pollData, setPollData] = useState<any[]>();
@@ -19,7 +19,7 @@ export default function Feed() {
 
   async function getPolls(feedType: string) {
     if (feedType === 'discover') {
-      let response = await fetch('http://localhost:3000/feed', {
+      let response = await fetch(`${process.env.BACKEND_URL}/feed`, {
         method: 'GET',
       });
       let data = await response.json();
@@ -84,13 +84,16 @@ export default function Feed() {
 
   return isLoading ? (
     <Container maxWidth={false}>
-      <FeedButtons />
-      <div>loading...</div>
+      
+        <FeedButtons />
+        <Box display="flex" justifyContent="center">
+        <CircularProgress></CircularProgress>
+        </Box>
     </Container>
   ) : (
     <Container maxWidth={false}>
       <FeedButtons />
-      {<CardsTogether />}
+      <CardsTogether />
     </Container>
   );
 }
