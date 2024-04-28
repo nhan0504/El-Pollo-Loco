@@ -30,9 +30,14 @@ import useWindowDimensions from '../dimensions';
 
 export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number) {
   const [open, setOpen] = React.useState<boolean>(false);
+  let comments = NoComments()
   return (
     <React.Fragment>
-      <Button variant="outlined" color="neutral" onClick={() => setOpen(true)}>
+      <Button variant="outlined" color="neutral" onClick={()=>{
+        setOpen(true)
+        comments = CommentsWPoll(tags, question, opts, username, pollId)
+        alert(comments);
+      }}>
         <Stack>
           <CommentIcon/>
             123 Comments
@@ -69,7 +74,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             Comments
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {CommentsWPoll(tags, question, opts, username, pollId)}
+            {comments}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -80,10 +85,10 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
 
 async function getComments(pollId: number) {
   
-  let cmts = await fetch(`${process.env.BACKEND_URL}/polls/comment/96`, {
+   let cmts = await fetch(`${process.env.BACKEND_URL}/polls/comment/96`, {
     method: 'GET',
     credentials: 'include',
-
+    headers: { 'Content-Type': 'application/json' }
   });
   
   cmts = await cmts.json();
@@ -98,8 +103,23 @@ function Comment(data: any) {
         <Avatar alt="Remy Sharp" />
       </Grid>
       <Grid item xs>
-        <h4 style={{ margin: 2, textAlign: 'left' }}>{data.user_id}</h4> 
-        <p style={{ textAlign: 'left' }}>{data.comment} </p>
+        <h4 style={{ margin: 2, textAlign: 'left' }}>{4}</h4> 
+        <h1 style={{ textAlign: 'left' }}>{"data.comment"} </h1>
+      </Grid>
+    </Grid>
+    </Paper>
+  );
+}
+function NoComments(){
+  return (
+    <Paper style={{ padding: "40px 20px" }}>
+    <Grid container spacing={2} >
+      <Grid item justifyContent='center'>
+        <Avatar alt="Remy Sharp" />
+      </Grid>
+      <Grid item xs>
+        <h4 style={{ margin: 2, textAlign: 'left' }}>{4}</h4> 
+        <h1 style={{ textAlign: 'left' }}>testing comment pls work </h1>
       </Grid>
     </Grid>
     </Paper>
@@ -126,7 +146,8 @@ function Comments(pollId: number, cmts: any) {
 }
 
 function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
-  var width = (useWindowDimensions().width)*0.5
+  let { innerWidth: width, innerHeight: height } = window;
+  width = (width)*0.5
  let cmts = getComments(pollId);
   return (
     <Paper style={{ minHeight: 'fit-content',

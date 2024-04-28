@@ -23,7 +23,7 @@ function MakeCard(
   username: string,
 ) {
   //comment
-  const { push } = useRouter();
+  const{ push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
     totalVotes: opts?.map((opt: { votes: any; }) => opt.votes).reduce((partialSum: any, a: any) => partialSum + a, 0),
