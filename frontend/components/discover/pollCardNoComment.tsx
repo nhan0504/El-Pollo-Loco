@@ -81,6 +81,8 @@ function MakeCard(
     } else return (option.votes / cardData.totalVotes) * 100;
   };
 
+  let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
+
   return (
     <React.Fragment>
       <Card
@@ -110,18 +112,32 @@ function MakeCard(
         {cardData.opts?.map((option, index) => (
           <CardActions key={option.optionText}>
             {/* Added onClick function as addVote */}
+            {/* <Box flexDirection="row" justifyContent="center" sx={{display:"flex", width:"100%", height:"100%" }}> */}
             <Button
               variant="contained"
               value={option.optionText}
               onClick={(event) => AddVote(index)}
-              style={{ maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%' }}
+              style={{ fontSize: "13px", maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%' }}
+              sx={{
+                ':hover': {
+                   // theme.palette.primary.main
+                  bgcolor: "inherit",
+                  color: optionColors[index]
+                },
+                backgroundColor: optionColors[index]
+              }}                
             >
               {option.optionText}
             </Button>
 
             {/* using getPercent which just divides the options's votes by total votes */}
-            <Box sx={{ width: 3 / 4, boxShadow: 1 }}>
-              <LinearProgress variant="determinate" value={getPercent(option)} />
+            <Box sx={{ width: 3 / 4, boxShadow: 2}} alignItems="center" style={{}} >
+              <LinearProgress variant="determinate" value={getPercent(option)} sx={{ height:10, 
+              '& .MuiLinearProgress-bar': {
+                    backgroundColor: optionColors[index],
+                    opacity:1
+                  },
+              }} style={{opacity:0.8}} />
             </Box>
 
             <Box sx={{ width: 55 }}>
@@ -129,6 +145,7 @@ function MakeCard(
                 {parseFloat(getPercent(option).toPrecision(3))}% 
               </Typography>
             </Box>
+            {/* </Box> */}
           </CardActions>
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
