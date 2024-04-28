@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Divider, Avatar, Grid, Paper } from '@mui/material';
@@ -26,7 +26,9 @@ import { ModalDialog } from '@mui/joy';
 import PollCard from  './pollCardNoComment'
 import useWindowDimensions from '../dimensions';
 
-export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string) {
+
+
+export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number) {
   const [open, setOpen] = React.useState<boolean>(false);
   return (
     <React.Fragment>
@@ -67,7 +69,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             Comments
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {CommentsWPoll(tags, question, opts, username)}
+            {CommentsWPoll(tags, question, opts, username, pollId)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -76,7 +78,19 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function Comment() {
+async function getComments(pollId: number) {
+  
+  let cmts = await fetch(`${process.env.BACKEND_URL}/polls/comment/96`, {
+    method: 'GET',
+    credentials: 'include',
+
+  });
+  
+  cmts = await cmts.json();
+  return cmts
+}
+
+function Comment(data: any) {
   return (
     <Paper style={{ padding: "40px 20px" }}>
     <Grid container spacing={2} >
@@ -84,37 +98,42 @@ function Comment() {
         <Avatar alt="Remy Sharp" />
       </Grid>
       <Grid item xs>
-        <h4 style={{ margin: 2, textAlign: 'left' }}>Michel Michel</h4>
-        <p style={{ textAlign: 'left' }}>Lorem ipsum dolor sit amet, . </p>
-        <p style={{ textAlign: 'left', color: 'gray' }}>posted 1 minute ago</p>
+        <h4 style={{ margin: 2, textAlign: 'left' }}>{data.user_id}</h4> 
+        <p style={{ textAlign: 'left' }}>{data.comment} </p>
       </Grid>
     </Grid>
     </Paper>
   );
 }
 
-function Comments() {
+function Comments(pollId: number, cmts: any) {
   //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
+  let listOfComments: any = []
+  for (let i = 0; i < cmts.length; i++) {
+    listOfComments.push(<React.Fragment>
+      {Comment(cmts[i])}
+    <Divider variant="fullWidth" style={{ margin: '30px 0' }}/>
+    </React.Fragment>)
   return (
     <Paper style={{ maxHeight: 400,
     minWidth: 'min-content', overflow: 'auto' }}>
       <List>
-        {Comment()}
-        <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-        {Comment()}
+        {listOfComments}
       </List>
     </Paper>
   );
 }
+}
 
-function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string){
+function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
   var width = (useWindowDimensions().width)*0.5
+ let cmts = getComments(pollId);
   return (
     <Paper style={{ minHeight: 'fit-content',
       minWidth: width, overflow: 'auto' }}>
           {PollCard(tags, question, opts, username)}
           <Divider variant="fullWidth" style={{ margin: '30px 0' }} />
-          {Comments()}
+          {Comments(pollId, cmts)}
       </Paper>
   );
 }

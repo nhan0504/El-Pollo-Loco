@@ -25,7 +25,7 @@ function MakeCard(
   tags: Array<string>,
   question: string,
   opts: Array<Option>,
-  username: string,
+  username: string, pollId: number
 ) {
   //comment
   const { push } = useRouter();
@@ -137,7 +137,7 @@ function MakeCard(
           </CardActions>
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username)}
+          {CommentBox(tags, question, opts, username, pollId)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags.map((tag) => (
@@ -155,7 +155,7 @@ export default function PollCard(
   tags: Array<string>,
   question: string,
   opts: any,
-  username: string,
+  username: string, pollId: number
 ) {
-  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username)}</Box>;
+  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId)}</Box>;
 }

@@ -50,7 +50,7 @@ export default function Feed() {
               votes: option.vote_count,
               option_id: option.option_id,
             })),
-            currCard?.username,
+            currCard?.username, currCard?.poll_id
           )}
         </Grid>,
       );
