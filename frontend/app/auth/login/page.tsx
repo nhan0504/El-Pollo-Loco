@@ -1,6 +1,6 @@
 'use client';
 import SignIn from '@/components/auth/SignIn';
-import login_handler from '@/utils/handlers/auth/login_handler';
+//import login_handler from '@/utils/handlers/auth/login_handler';
 import PrimarySearchAppBar from '@/components/navigation';
 
 export default function Login() {

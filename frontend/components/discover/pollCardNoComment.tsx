@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, Modal } from '@mui/material';
+import CommentIcon from '@mui/icons-material/Comment';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
@@ -15,16 +16,10 @@ import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
 
-type Option = {
-  optionText: string;
-  votes: number;
-  option_id: number;
-};
-
 function MakeCard(
   tags: Array<string>,
   question: string,
-  opts: Array<Option>,
+  opts: { optionText: string; votes: number; option_id: number }[],
   username: string,
 ) {
   //comment
@@ -71,7 +66,7 @@ function MakeCard(
             return response.text();
           }
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => error.message);
       
     }
 
@@ -117,6 +112,7 @@ function MakeCard(
         {cardData.opts?.map((option, index) => (
           <CardActions key={option.optionText}>
             {/* Added onClick function as addVote */}
+            {/* <Box flexDirection="row" justifyContent="center" sx={{display:"flex", width:"100%", height:"100%" }}> */}
             <Button
               variant="contained"
               value={option.optionText}
@@ -149,10 +145,10 @@ function MakeCard(
                 {parseFloat(getPercent(option).toPrecision(3))}% 
               </Typography>
             </Box>
+            {/* </Box> */}
           </CardActions>
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags.map((tag) => (
