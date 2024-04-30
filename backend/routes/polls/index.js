@@ -86,7 +86,7 @@ router.post('/', checkAuthenticated, async (req, res) => {
 function insertOption(pollId, options) {
   const optionsData = options.map((option) => [pollId, option]);
   pool.query(
-    'INSERT INTO Options(poll_id, option_text) VALUES (?)',
+    'INSERT INTO Options(poll_id, option_text) VALUES ?',
     [optionsData],
     (error, result) => {
       if (error) {

@@ -14,6 +14,8 @@ import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
+import Collapse from '@mui/material/Collapse';
+
 
 type Option = {
   optionText: string;
@@ -41,9 +43,13 @@ function MakeCard(
     }),
     comments: 0,
   });
-
+  
+  // A state for whether the options are collapsed, showing results
+  const [collapsed, setCollapsed] = useState<boolean>(false)
+  
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
+
     if (isAuth == false) {
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
@@ -62,6 +68,10 @@ function MakeCard(
               throw new Error(text);
             });
           } else {
+            // show results
+            setCollapsed(true)
+
+            // update local vote count - votes fetched at page load + 1
             cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
             setCardData({
               ...cardData,
@@ -71,7 +81,7 @@ function MakeCard(
             return response.text();
           }
         })
-        .catch((error) => alert(error.message));
+        .catch((error) => error.message);
       
     }
 
@@ -86,6 +96,7 @@ function MakeCard(
     } else return (option.votes / cardData.totalVotes) * 100;
   };
 
+  // colors for options, applied in order
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
 
   return (
@@ -94,7 +105,7 @@ function MakeCard(
         sx={{boxShadow:2}}
         style={{
           display: 'flex',
-          justifyContent: 'space-evenly',
+          justifyContent: 'center',
           flexDirection: 'column',
           border: '1px',
           borderRadius: 15,
@@ -117,40 +128,45 @@ function MakeCard(
         {cardData.opts?.map((option, index) => (
           <CardActions key={option.optionText}>
             {/* Added onClick function as addVote */}
+            
             <Button
               variant="contained"
               value={option.optionText}
               onClick={(event) => AddVote(index)}
-              style={{ fontSize: "13px", maxWidth: '30%', maxHeight: '30%', minWidth: '30%', minHeight: '30%' }}
+              style={{ fontSize: "13px", maxWidth: collapsed?"40%":"100%", maxHeight: '100%', minWidth: collapsed?"40%":'100%', minHeight: '100%' }}
               sx={{
                 ':hover': {
                    // theme.palette.primary.main
                   bgcolor: "inherit",
                   color: optionColors[index]
                 },
-                backgroundColor: optionColors[index]
+                backgroundColor: optionColors[index],
+                opacity: 0.8,
+                boxShadow:1
               }}                
             >
               {option.optionText}
             </Button>
-
             {/* using getPercent which just divides the options's votes by total votes */}
-            <Box sx={{ width: 3 / 4, boxShadow: 2}} alignItems="center" style={{}} >
+            {/* adjust width of progress bars if they're not supposed to show */}
+            <Box sx={{ width: collapsed? 3 / 4 : 0, boxShadow: 2}} alignItems="center" style={{}} >
               <LinearProgress variant="determinate" value={getPercent(option)} sx={{ height:10, 
               '& .MuiLinearProgress-bar': {
                     backgroundColor: optionColors[index],
                     opacity:1
                   },
               }} style={{opacity:0.8}} />
+              
             </Box>
 
-            <Box sx={{ width: 55 }}>
+            <Box sx={{ width: collapsed ? 55 : 0 }}>
               <Typography variant="body2" color="textSecondary">
                 {parseFloat(getPercent(option).toPrecision(3))}% 
               </Typography>
             </Box>
           </CardActions>
         ))}
+        
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
           {CommentBox(tags, question, opts, username)}
 
