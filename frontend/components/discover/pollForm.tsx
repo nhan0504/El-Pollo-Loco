@@ -41,6 +41,7 @@ function PollForm() {
 
   const pollRef = useRef(pollData);
 
+  
   //const [tags, setTags] = useState<string[]>([]);
   const [currTag, setTag] = useState<string>("");
   const [pressed, setPressed] = useState<KeyboardEvent>();
@@ -67,6 +68,7 @@ function PollForm() {
       body: JSON.stringify({
         title: pollData.title,
         options: pollData.options.map((option) => option.optionText),
+        tags:pollData.tags
       }),
     })
       .then((response) => {
@@ -76,11 +78,13 @@ function PollForm() {
           });
         } else {
           return response.text().then((text) => {
+            alert(pollData.tags);
+
             console.log(text);
           });
         }
       })
-      .catch((error) => error.message);
+      .catch((error) => alert(error.message));
 
     push('/discover');
     //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
@@ -169,15 +173,15 @@ function PollForm() {
 
   const handleTagChange = (newTag: string) => {
     //need this to be split by whitespace for now, should prolly make it more robust?
-    if (pressed.key === 'Enter' || pressed.key === ",") {
+    if (pressed?.key === 'Enter' || pressed?.key === ",") {
 
-      pollData.options.length < 20
+      pollData.tags.length < 20
       ? setPollData((pollData) => ({
           ...pollData,
           tags: [...pollData.tags,  newTag.substring(0, newTag.length-1)],
         }))
       : alert('You cannot add more than 20 tags.');
-
+      
       setTag("");
     }
 
@@ -205,7 +209,7 @@ function PollForm() {
                       size="small" 
                       variant="text" 
                       style={{fontSize:"11px"}} 
-                      sx={{display:"flex-block", flexDirection:"row", justifyContent:"center", ml: 0.5,  maxWidth: '10px', minWidth: '10px', maxHeight: '7px' }}>
+                      sx={{alignItems: 'center', display:"flex-block", flexDirection:"row", ml: 0.5,  maxWidth: '10px', minWidth: '10px', maxHeight: '7px' }}>
                       x</Button>
                     </React.Fragment>} 
             key={tag} 
@@ -278,19 +282,9 @@ function PollForm() {
             <Typography variant="body2" color="textSecondary" sx={{}}>
               Tags
             </Typography>
-            {/* <MuiChipsInput/> */}
-            {/* <TextField
-              type="text"
-              variant="outlined"
-              size="small"
-              name="tags"
-              sx={{}}
-              onChange={(event) => handleTagChange(event.target.value)}
-            /> */}
-            {/* <br /> */}
 
             <TextField 
-              placeholder="Separate tag names with commas." 
+              placeholder="Separate tag names with commas" 
               value={currTag} 
               onKeyDown={handleKeyDown} 
               onChange={(event) => handleTagChange(event.target.value)} 
@@ -305,7 +299,8 @@ function PollForm() {
               </Box>
             {/* </Stack> */}
 
-            {/* Can only make tags on enter press...and enter press submits the form (plus comma is more intuitive) */}
+            {/* This method can only make tags on enter press...and enter press submits the form (plus comma is more intuitive) */}
+            {/* I try not to leave too much commented out but over the next week I'll decide whether to keep trying w this */}
             {/* <Autocomplete
               clearIcon={true}
               options={[]}

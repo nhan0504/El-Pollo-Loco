@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import { ButtonGroup, Modal } from '@mui/material';
+import { ButtonGroup, IconButton, Modal } from '@mui/material';
 import { useContext, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
@@ -26,6 +26,7 @@ function MakeCard(
   question: string,
   opts: Array<Option>,
   username: string,
+  poll_id: number
 ) {
   //comment
   const { push } = useRouter();
@@ -153,9 +154,9 @@ function MakeCard(
         ))}
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
           {CommentBox(tags, question, opts, username)}
-
+          
           <ButtonGroup variant="text" aria-label="Basic button group">
-            {tags.map((tag) => (
+            {tags?.map((tag) => (
               <Button key={tag}>{tag}</Button>
             ))}
           </ButtonGroup>
@@ -171,6 +172,7 @@ export default function PollCard(
   question: string,
   opts: any,
   username: string,
+  poll_id: number
 ) {
-  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username)}</Box>;
+  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, poll_id)}</Box>;
 }

@@ -86,7 +86,7 @@ router.post('/', checkAuthenticated, async (req, res) => {
 function insertOption(pollId, options) {
   const optionsData = options.map((option) => [pollId, option]);
   pool.query(
-    'INSERT INTO Options(poll_id, option_text) VALUES (?)',
+    'INSERT INTO Options(poll_id, option_text) VALUES ?',
     [optionsData],
     (error, result) => {
       if (error) {
@@ -101,7 +101,7 @@ function insertOption(pollId, options) {
 function insertTag(pollId, tags) {
   for (const tagName of tags) {
     let tagId;
-
+    
     pool.query('SELECT tag_id FROM Tags WHERE tag_name = ?', [tagName], (error, result) => {
       if (error) {
         console.log('Error getting existing tag', error);

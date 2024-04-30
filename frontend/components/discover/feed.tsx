@@ -22,7 +22,9 @@ export default function Feed() {
       let response = await fetch(`${process.env.BACKEND_URL}/feed`, {
         method: 'GET',
       });
+      
       let data = await response.json();
+      // console.log(response.text)
       if (response.ok && data.length > 0) {
         //alert(JSON.stringify(data));
         setPollData(data);
@@ -33,17 +35,19 @@ export default function Feed() {
 
   function FormRow(pollData: any) {
     // Not the state pollData, but a parameter that contains 1 or 2 polls
+
     let row = [];
 
     for (let i = 0; i < pollData.length; i++) {
       // We can't pop off polls from the list since they need to stay in memory to rerender
       // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
       let currCard = pollData[i];
+      currCard.tags? alert(currCard.tags) : console.log("no tags");
 
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
           {PollCard(
-            [''],
+            currCard.tags,
             currCard?.title,
             currCard?.options?.map((option: any) => ({
               optionText: option.option_text,
@@ -51,6 +55,7 @@ export default function Feed() {
               option_id: option.option_id,
             })),
             currCard?.username,
+            currCard.poll_id
           )}
         </Grid>,
       );
