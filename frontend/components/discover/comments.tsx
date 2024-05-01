@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { Divider, Avatar, Grid, Paper, TextField } from '@mui/material';
@@ -35,7 +35,6 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
     <React.Fragment>
       <Button variant="outlined" color="neutral" onClick={()=>{
         setOpen(true)
-        comments = parent(tags, question, opts, username, pollId)
       }}>
         <Stack>
           <CommentIcon/>
@@ -73,7 +72,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             Comments
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {parent(tags, question, opts, username, pollId)}
+            {Parent(tags, question, opts, username, pollId)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -82,13 +81,11 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function parent(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
+function Parent(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
   let [cmts, setCmts] = React.useState([])
-  function getComments(pollId: number) {
-  
-     
-  
-    fetch(`${process.env.BACKEND_URL}/polls/comment/96`, {
+  useEffect(()=>{
+
+    fetch(`${process.env.BACKEND_URL}/polls/comment/${pollId}`, {
       method: 'GET',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' }
@@ -108,8 +105,8 @@ function parent(tags: string[], question: string, opts: { optionText: string; vo
       })
       .catch((error) => alert(error.message));
       
-      
-  }
+  }, [])
+
     
   
   
@@ -132,7 +129,6 @@ function parent(tags: string[], question: string, opts: { optionText: string; vo
   function Comments(pollId: number, cmts: any) {
     //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
     let listOfComments: any = []
-    console.log("in the comments function")
     if( cmts.length>0){
       listOfComments.push(<React.Fragment>
         {Comment(cmts[0])}
@@ -185,22 +181,20 @@ function parent(tags: string[], question: string, opts: { optionText: string; vo
   function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
     let { innerWidth: width, innerHeight: height } = window;
     width = (width)*0.5
-    getComments(pollId);
     //load until comments is not empty
     if (cmts.length==0){
-      
+
     }
     return (
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow: 'auto' }}>
             {PollCard(tags, question, opts, username)}
             {Comments(pollId, cmts)}
-            {/* {AddComment(cmts)} */}
+            {AddComment(cmts)}
             
         </Paper>
     );
   }
-
   return CommentsWPoll(tags, question, opts, username, pollId);
 }
 
