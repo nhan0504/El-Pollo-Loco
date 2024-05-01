@@ -216,22 +216,28 @@ router.post("/login/forgot_password", (req, res) => {
 });
 
 router.post("/login/reset_password/:token", (req, res) => {
-    const newPassword = req.password;
-    const newSalt = crypto.randomBytes(8).toString('hex');
+  const newPassword = req.body.password;
+  const newSalt = crypto.randomBytes(8).toString('hex');
 
-  pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [ req.token ], (err, results) => {
+  pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [ req.params.token ], (err, results) => {
     if (err) { return res.status(500).send(err); }
     if (results.length == 0) { return res.status(401).send("Invalid token."); }
 
     const email = results[0].email
 
-    crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha-256", (err, newHashedPassword) => {
+    crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha256", (err, newHashedPassword) => {
       if (err) { return res.status(500).send(err); }
 
-      pool.query("UPDATE Users SET password = ?, salt = ? WHERE email = ?", [ newHashedPassword, newSalt, email ], (err, results) => {
+      pool.query("UPDATE Users SET pass = ?, salt = ? WHERE email = ?", [ newHashedPassword, newSalt, email ], (err, results) => {
         if (err) { return res.status(500).send(err); }
       });
+
+      pool.query("DELETE FROM ForgotPassword WHERE token = ?", [ req.params.token ], (err, res) => {
+        if (err) { res.status(500).send(err); }
+      });
     });
+
+    return res.status(200).send("Success.")
   });
 });
 
