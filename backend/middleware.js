@@ -1,4 +1,4 @@
-import pool from "./db";
+var pool = require("./db");
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
