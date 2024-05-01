@@ -11,7 +11,7 @@ var transporter = nodemailer.createTransport({
     service: 'outlook',
     auth: {
         user: 'ElPolloLocoReset@outlook.com',
-        pass: '' //TODO: enter password
+        pass: `${OUTLOOK_PASSWORD}` //TODO: enter password
     }
 });
 //--------------------------------------
