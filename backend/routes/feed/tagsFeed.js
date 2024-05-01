@@ -6,13 +6,33 @@ const checkAuthenticated = require('../../middleware.js');
 
 router.get('/', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;
+
   pool.query(
-    `SELECT DISTINCT Polls.*, Users.username
-    FROM Polls
-    JOIN Users ON Polls.user_id = Users.user_id
-    JOIN PollsTags ON Polls.poll_id = PollsTags.poll_id
-    JOIN UserTag ON PollsTags.tag_id = UserTag.tag_id AND UserTag.user_id = ?
-    ORDER BY Polls.created_at DESC LIMIT 6`,
+    `SELECT 
+    Polls.poll_id, 
+    Polls.title, 
+    Polls.created_at, 
+    Users.username,
+    GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ', ') AS tags
+    FROM 
+        Polls
+    JOIN 
+        Users ON Polls.user_id = Users.user_id
+    JOIN 
+        PollsTags ON Polls.poll_id = PollsTags.poll_id
+    JOIN 
+        Tags ON PollsTags.tag_id = Tags.tag_id
+    JOIN 
+        UserTag ON Tags.tag_id = UserTag.tag_id AND UserTag.user_id = ?
+    JOIN 
+        PollsTags AS AllPollsTags ON Polls.poll_id = AllPollsTags.poll_id
+    JOIN 
+        Tags AS AllTags ON AllPollsTags.tag_id = AllTags.tag_id
+    GROUP BY 
+        Polls.poll_id
+    ORDER BY 
+        Polls.created_at DESC 
+    LIMIT 6;`,
     [userId],
     (error, pollResults) => {
       if (error) {
