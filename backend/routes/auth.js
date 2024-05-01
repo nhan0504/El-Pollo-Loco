@@ -31,28 +31,28 @@ passport.use(
                 return cb(null, false, { message: 'Incorrect username or password.' });
             }
 
-            crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-                if (err) {
-                    console.log(err);
-                }
-                try {
-                    const hashedPasswordHex = hashedPassword.toString('hex');
-                    if (
-                        crypto.timingSafeEqual(
-                            Buffer.from(row[0].pass, 'utf-8'),
-                            Buffer.from(hashedPasswordHex, 'utf-8'),
-                        )
-                    ) {
-                        return cb(null, row[0]);
-                    } else {
-                        return cb(null, false, { message: 'Incorrect username or password.' });
-                    }
-                } catch (e) {
-                    return cb(null, false, { message: 'Incorrect username or password.' });
-                }
-            });
-        });
-    }),
+      crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+        if (err) {
+          res.status(500).send(err);
+        }
+        try {
+          const hashedPasswordHex = hashedPassword.toString('hex');
+          if (
+            crypto.timingSafeEqual(
+              Buffer.from(row[0].pass, 'utf-8'),
+              Buffer.from(hashedPasswordHex, 'utf-8'),
+            )
+          ) {
+            return cb(null, row[0]);
+          } else {
+            return cb(null, false, { message: 'Incorrect username or password.' });
+          }
+        } catch (e) {
+          return cb(null, false, { message: 'Incorrect username or password.' });
+        }
+      });
+    });
+  }),
 );
 
 passport.serializeUser(function(user, cb) {
@@ -174,85 +174,65 @@ router.post("/login/forgot_password", (req, res) => {
     // Email user token.
     const userEmail = req.body.email;
 
-    pool.query('SELECT * FROM users WHERE email = ?', [userEmail], (err, results) => {
-        if (err) { res.status(500).send("Internal database error. Try again"); }
-        if (results.length == 0) { res.status(404).send("User with that email does not exist."); }
+  pool.query('SELECT * FROM Users WHERE email = ?', [ userEmail ], (err, results) => {
+    if (err) { return res.status(500).send(err); }
+    if (results.length === 0) { return res.status(404).send("User with that email does not exist."); }
 
-        const userId = results[0].user_id;
-        pool.query('SELECT * FROM ForgotPassword WHERE user_id = ?', [userId], (err, results) => {
-            if (err) { res.status(500).send("Internal database error. Try again"); }
+    const userId = results[0].user_id;
+    pool.query('SELECT * FROM ForgotPassword WHERE user_id = ?', [ userId ], (err, results) => {
+      if (err) { return res.status(500).send(err); }
 
-            //Delete token if it already exists.
-            if (results.length != 0) {
-                pool.query('DELETE * FROM ForgotPassword WHERE user_id = ?', [userId], (err, results) => {
-                    if (err) { res.status(500).send("Internal database error. Try again"); }
-                });
-            }
-
-            //Create new token.
-            const token = crypto.randomBytes(32).toString('hex');
-            const expires = Date.now() + (1000 * 60 * 30) //30 minutes from now
-            pool.query('INSERT INTO ForgotPassword (token, user_id, expires) VALUES (?, ?, ?)', [token, userId, expires], (err, results) => {
-                if (err) { res.status(500).send("Internal database error. Try again"); }
-            });
-
-            //Configure email
-            var mailOptions = {
-                from: 'ElPolloLocoReset@outlook.com',
-                to: `${userEmail}`,
-                subject: `Forgot Password Token`,
-                text: `Token: ${token}, Expires: ${expires}`
-            };
-
-            //Email token to the user
-            transporter.sendMail(mailOptions, function(error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
-
+      //Delete token if it already exists.
+      if (results.length != 0) { 
+        pool.query('DELETE FROM ForgotPassword WHERE user_id = ?', [ userId ], (err, results) => {
+          if (err) { return res.status(500).send(err); }
         });
+      }
+      
+      //Create new token.
+      const token = crypto.randomBytes(32).toString('hex');
+      const expires = Date.now() + (1000 * 60 * 30) //30 minutes from now
+      pool.query('INSERT INTO ForgotPassword(token, user_id, expires) VALUES (?,?, ?)', [ token, userId, expires ], (err, results) => {
+        if (err) { return res.status(500).send(err); }
+      });
+      
+      //Email token to user.
+      var mailOptions = {
+        from: 'ElPolloLocoReset@outlook.com',
+        to: `${userEmail}`,
+        subject: `Forgot Password Token`,
+        text: `You can reset your password at ${process.env.REQUEST_ORIGIN_URL}/auth/login/reset_password/${token}. This link expires in 30 minutes.`
+      };
+
+      transporter.sendMail(mailOptions, function(error, info) {
+          if (error) {
+              return res.status(500).send(error)
+          }
+      });
+
+      return res.status(200).send("Email with reset link has been sent.");
     });
+  });
 });
 
 router.post("/login/reset_password/:token", (req, res) => {
     const newPassword = req.password;
     const newSalt = crypto.randomBytes(8).toString('hex');
 
-    pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [req.token], (err, results) => {
-        if (err) { res.status(500).send("Internal database error. Try again"); }
-        if (results.length == 0) { res.status(401).send("Invalid token."); }
+  pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [ req.token ], (err, results) => {
+    if (err) { return res.status(500).send(err); }
+    if (results.length == 0) { return res.status(401).send("Invalid token."); }
 
-        var user;
-        pool.query("SELECT * FROM Users WHERE email = ?", [results[0].email], (err, results) => {
-            if (err) { res.status(500).send("Internal database error. Try again"); }
-            if (results.length == 0) { res.status(401).send("The account for which you are changing the password no longer exists."); }
-            user = results[0]
-        });
+    const email = results[0].email
 
-        pool.query("DELETE * FROM Users WHERE user_id = ?", [user.user_id], (err, results) => {
-            if (err) { res.status(500).send("Internal database error. Try again"); }
-        });
+    crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha-256", (err, newHashedPassword) => {
+      if (err) { return res.status(500).send(err); }
 
-        crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha-256", (err, newHashedPassword) => {
-            if (err) { res.status(500).send("Internal cryptographic error. Try again"); }
-
-            pool.query(
-                'INSERT INTO Users(username, pass, fname, lname, email, salt) VALUES (?,?,?,?,?,?)', [
-                    user.username,
-                    newHashedPassword,
-                    user.fname,
-                    user.lname,
-                    user.email,
-                    newSalt
-                ], (err, results) => {
-                    if (err) { return res.status(500).send("Internal database error. Try again"); }
-                    res.status(200).send("Password successfully changed.")
-                });
-        });
+      pool.query("UPDATE Users SET password = ?, salt = ? WHERE email = ?", [ newHashedPassword, newSalt, email ], (err, results) => {
+        if (err) { return res.status(500).send(err); }
+      });
     });
+  });
 });
 
 

@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const checkAuthenticated = require('../../middleware.js');
+const { checkAuthenticated } = require('../../middleware.js');
 
 const voteRouter = require('./vote');
 const commentRouter = require('./comment');
@@ -17,8 +17,7 @@ router.get('/:pollId', function (req, res) {
       return;
     }
     if (pollResults.length === 0) {
-      res.status(404).send('Poll not found');
-      return;
+      return res.status(404).send('Poll not found');
     }
 
     pool.query('SELECT option_id, option_text FROM Options WHERE poll_id = ?', [pollId], (error, optionsResults) => {
