@@ -7,8 +7,7 @@ import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grow from '@mui/material/Grow';
 
-export default function Feed() {
-  const [pollData, setPollData] = useState<any[]>();
+export default function Feed({ pollData, setPollData }: any) {
   const [isLoading, setLoading] = useState<boolean>(true);
   // should keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls
