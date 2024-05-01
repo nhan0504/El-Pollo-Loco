@@ -5,6 +5,9 @@ const pool = require('../../db.js');
 
 router.get('/', function (req, res) {
 
+  const pageNum = req.body.page_num;
+  const offset = pageNum * 6;
+
   // Weights for discover algorithm
   const dateWeight = -15;
   const voteWeight = 1;
@@ -32,7 +35,7 @@ router.get('/', function (req, res) {
         Polls.poll_id, Users.username
     ORDER BY 
         score DESC
-    LIMIT 6;`,
+    LIMIT 6 OFFSET ${offset};`,
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
