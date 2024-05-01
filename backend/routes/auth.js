@@ -10,8 +10,8 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'outlook',
     auth: {
-        user: `${process.env.OUTLOOK_EMAIL}`,
-        pass: `${process.env.OUTLOOK_PASSWORD}`
+        user: `${process.env.EMAIL_ADDRESS}`,
+        pass: `${process.env.EMAIL_PASSWORD}`
     }
 });
 //--------------------------------------
