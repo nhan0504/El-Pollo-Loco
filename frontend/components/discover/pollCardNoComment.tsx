@@ -23,8 +23,6 @@ function MakeCard(
   username: string,
 ) {
   //comment
-  const{ push } = useRouter();
-  const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
     totalVotes: opts?.map((opt: { votes: any; }) => opt.votes).reduce((partialSum: any, a: any) => partialSum + a, 0),
     opts: opts?.map((opt: { optionText: any; votes: any; option_id: any; }) => {
@@ -39,6 +37,9 @@ function MakeCard(
 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
+
+  const { isAuth, setAuth } = useContext(AuthContext);
+    const{ push } = useRouter();
     if (isAuth == false) {
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
