@@ -10,10 +10,16 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+
+// To do in this file - remove any of my hardcoded width/height 
+// values and make it fully responsive
 
 function PollForm() {
   const [pollData, setPollData] = useState({
-    // Need to get current logged in user
     title: '',
     options: [
       {
@@ -26,8 +32,6 @@ function PollForm() {
       },
     ],
   });
-
-  const pollRef = useRef(pollData);
 
   const [tags, setTags] = useState<string[]>([]);
 
@@ -53,6 +57,7 @@ function PollForm() {
       body: JSON.stringify({
         title: pollData.title,
         options: pollData.options.map((option) => option.optionText),
+        tags:[]
       }),
     })
       .then((response) => {
@@ -121,14 +126,13 @@ function PollForm() {
   const optionList = pollData.options?.map((option, index) => (
     <React.Fragment key={1}>
       <Box
-        flexDirection="row"
         alignItems="center"
-        justifyContent="center"
-        sx={{ color: 'black', display: 'flex' }}
+        sx={{ flexDirection: "row", justifyContent: "center", color: 'black', display: 'flex' }}
       >
-        <Typography variant="body1" sx={{}}>
+        {/* <Typography variant="body1" sx={{}}>
           Option
-        </Typography>
+        </Typography> */}
+        <ListItemText primary="Option" />
         <TextField
           type="text"
           name="option"
@@ -140,15 +144,16 @@ function PollForm() {
           sx={{ m: 1, width: 250 }}
           onChange={(event) => handleChange(event, 'options', index)}
         />
-        <Button
-          variant="text"
+        <IconButton
+          size="small"
+          edge="end"
           onClick={(event) => {
             removeOption(index);
           }}
-          sx={{ maxWidth: '10px', minWidth: '10px' }}
+          sx={{maxWidth: '10px', minWidth: '10px' }}
         >
-          X
-        </Button>
+          x
+        </IconButton>
       </Box>
     </React.Fragment>
   ));
@@ -201,11 +206,12 @@ function PollForm() {
             <Button onClick={addOption}>Add poll option</Button>
 
             <FormGroup>{optionList}</FormGroup>
+            
             <br />
             <Typography variant="body2" color="textSecondary" sx={{}}>
               Tags
             </Typography>
-            {/* <MuiChipsInput/> */}
+
             <TextField
               type="text"
               variant="outlined"
