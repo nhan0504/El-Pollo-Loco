@@ -217,10 +217,12 @@ function MakeCard(
         variant="outlined"
       >
         <CardContent>
-          <Stack alignItems="center" direction="row" gap={0}>
-            <PersonIcon fontSize="medium" />
-            <Typography variant="subtitle2">{username}</Typography>
-            <Typography sx={{ml:28}}variant="subtitle2" align="right">{cardData.totalVotes} votes</Typography>
+          <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
+            <Stack alignItems="center" direction="row" gap={0}>
+              <PersonIcon fontSize="medium" />
+              <Typography variant="subtitle2">{username}</Typography>
+            </Stack>
+            <Typography sx={{}} variant="subtitle2">{cardData.totalVotes} votes</Typography>
           </Stack>
           <br/>
           <Typography variant="h5" component="div" align="center">
@@ -228,7 +230,7 @@ function MakeCard(
           </Typography>
           <br/>
         </CardContent>
-
+        
         {optionList()}
 
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
