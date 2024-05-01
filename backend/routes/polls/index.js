@@ -8,6 +8,7 @@ const voteRouter = require('./vote');
 const commentRouter = require('./comment');
 
 // GET
+// Can we edit this to also return votes? - Lila
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query('SELECT * FROM Polls WHERE poll_id = ?', [pollId], (error, pollResults) => {

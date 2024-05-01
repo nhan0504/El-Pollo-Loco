@@ -15,9 +15,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
+// To do in this file - remove any of my hardcoded width/height 
+// values and make it fully responsive
+
 function PollForm() {
   const [pollData, setPollData] = useState({
-    // Need to get current logged in user
     title: '',
     options: [
       {
@@ -30,8 +32,6 @@ function PollForm() {
       },
     ],
   });
-
-  const pollRef = useRef(pollData);
 
   const [tags, setTags] = useState<string[]>([]);
 
