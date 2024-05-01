@@ -164,7 +164,8 @@ function Comments(pollId: number, cmts: any) {
   );
 }
 
-function AddComment(){
+function AddComment(cmts: {}[]){
+  let [currComment, setCurrComment] = React.useState("")
   return (
     <React.Fragment>
       <Paper style={{ padding: "20px 10px"}} elevation={3}>
@@ -174,7 +175,16 @@ function AddComment(){
       </Grid>
       <Grid item xs>
         <h4 style={{ margin: 2, textAlign: 'left' }}>sillyUser</h4> 
-        <TextField id="filled-basic" label="Write a comment..." variant="filled" fullWidth/>
+        <TextField id="filled-basic" label="Write a comment..." variant="filled" fullWidth onKeyDown={(ev) => {
+    
+    if (ev.key === 'Enter') {
+      ev.preventDefault();
+      //make new Comment
+      //should add to the databse too
+      cmts.push(Comment(currComment))
+
+    }
+  }}  onChange={(ev)=>{setCurrComment(ev.target.value)}}/>
       </Grid>
     </Grid>
     </Paper>
@@ -191,7 +201,7 @@ function CommentsWPoll(tags: string[], question: string, opts: { optionText: str
       minWidth: width, overflow: 'auto' }}>
           {PollCard(tags, question, opts, username)}
           {Comments(pollId, cmts)}
-          {AddComment()}
+          {AddComment(cmts)}
           
       </Paper>
   );
