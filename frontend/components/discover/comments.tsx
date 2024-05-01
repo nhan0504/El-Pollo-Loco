@@ -83,7 +83,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
 
 function Parent(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
   let [cmts, setCmts] = React.useState([])
-  useEffect(()=>{
+  const CommentGetter = useEffect(()=>{
 
     fetch(`${process.env.BACKEND_URL}/polls/comment/${pollId}`, {
       method: 'GET',
@@ -165,9 +165,34 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
       
       if (ev.key === 'Enter') {
         ev.preventDefault();
-        //make new Comment
-        //should add to the databse too
+        
+        //adds to the db
+
+          fetch(`${process.env.BACKEND_URL}/polls/comment`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              
+                "poll_id": pollId,
+                "parent_id": null,
+                "comment": currComment
+            
+            })
+          })
+            .then((response) => {
+              if (!response.ok) {
+                return response.text().then((text) => {
+                  throw new Error(text);
+                });
+              } else {
+              }
+            })
+            .catch((error) => alert(error.message));
+
         cmts.push(Comment(currComment))
+        CommentGetter;
+
   
       }
     }}  onChange={(ev)=>{setCurrComment(ev.target.value)}}/>
