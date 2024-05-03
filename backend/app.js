@@ -14,6 +14,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var pollsRouter = require('./routes/polls');
 var feedRouter = require('./routes/feed');
+var tagsRouter = require('./routes/tags');
 //--------------------------------------
 
 var app = express();
@@ -53,6 +54,7 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/polls', pollsRouter);
 app.use('/feed', feedRouter);
+app.use('/tags', tagsRouter);
 //---------------------------------------
 
 // catch 404 and forward to error handler
