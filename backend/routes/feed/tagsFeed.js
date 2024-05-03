@@ -6,6 +6,9 @@ const checkAuthenticated = require('../../middleware.js');
 
 router.get('/', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;
+  const pageNum = req.body.page_num;
+
+  const offset = pageNum * 6;
 
   pool.query(
     `SELECT 
@@ -32,7 +35,7 @@ router.get('/', checkAuthenticated, function (req, res) {
         Polls.poll_id
     ORDER BY 
         Polls.created_at DESC 
-    LIMIT 6;`,
+    LIMIT 6 OFFSET ${offset};`,
     [userId],
     (error, pollResults) => {
       if (error) {
