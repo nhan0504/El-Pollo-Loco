@@ -14,28 +14,34 @@ router.get('/', function (req, res) {
 
   pool.query(
     `SELECT 
-    Polls.poll_id, 
-    Polls.title, 
-    Polls.created_at, 
-    Users.username, 
-    COUNT(Votes.vote_id) AS vote_count,
-    (
-        ((DATEDIFF(CURDATE(), Polls.created_at))) * ${dateWeight} + 
-        COUNT(Votes.vote_id) * ${voteWeight}
-    ) AS score
+        Polls.poll_id, 
+        Polls.title, 
+        Polls.created_at, 
+        Users.username, 
+        COUNT(Votes.vote_id) AS vote_count,
+        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ', ') AS tags,
+        (
+            DATEDIFF(CURDATE(), Polls.created_at) * ? + 
+            COUNT(Votes.vote_id) * ?
+        ) AS score
     FROM 
         Polls
     JOIN 
         Users ON Polls.user_id = Users.user_id
     LEFT JOIN 
+        PollsTags ON Polls.poll_id = PollsTags.poll_id
+    LEFT JOIN 
+        Tags ON PollsTags.tag_id = Tags.tag_id
+    LEFT JOIN 
         Options ON Polls.poll_id = Options.poll_id
     LEFT JOIN 
         Votes ON Options.option_id = Votes.option_id
     GROUP BY 
-        Polls.poll_id, Users.username
+        Polls.poll_id
     ORDER BY 
         score DESC
-    LIMIT 6 OFFSET ${offset};`,
+    LIMIT 6 OFFSET ?;`,
+    [dateWeight, voteWeight, offset],
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
