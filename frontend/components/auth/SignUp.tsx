@@ -12,7 +12,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
-import { randomBytes } from 'crypto';
 import { AuthContext } from '@/contexts/authContext';
 
 export default function SignUp() {
@@ -50,7 +49,6 @@ export default function SignUp() {
           password: password,
           fname: fname,
           lname: lname,
-          salt: randomBytes(8).toString('hex'),
         }),
       })
         .then((res) => {
