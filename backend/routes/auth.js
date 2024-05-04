@@ -198,17 +198,20 @@ router.post("/login/forgot_password", (req, res) => {
       
       //Email token to user.
       var mailOptions = {
-        from: 'ElPolloLocoReset@outlook.com',
+        from: `${process.env.EMAIL_ADDRESS}`,
         to: `${userEmail}`,
         subject: `Forgot Password Token`,
         text: `You can reset your password at ${process.env.REQUEST_ORIGIN_URL}/auth/login/reset_password/${token}. This link expires in 30 minutes.`
       };
 
-      transporter.sendMail(mailOptions, function(error, info) {
+      /* transporter.sendMail(mailOptions, function(error, info) {
           if (error) {
               return res.status(500).send(error)
           }
-      });
+          else {
+            return res.status(200).send("Email with reset link has been sent.");
+          }
+      }); */
 
       return res.status(200).send("Email with reset link has been sent.");
     });
@@ -221,23 +224,28 @@ router.post("/login/reset_password/:token", (req, res) => {
 
   pool.query("SELECT * FROM ForgotPassword WHERE token = ?", [ req.params.token ], (err, results) => {
     if (err) { return res.status(500).send(err); }
-    if (results.length == 0) { return res.status(401).send("Invalid token."); }
+    if (results.length === 0) { return res.status(401).send("Invalid token."); }
 
-    const email = results[0].email
-
-    crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha256", (err, newHashedPassword) => {
+    const userId = results[0].user_id
+    
+    pool.query('SELECT * FROM Users WHERE user_id = ?', [ userId ], (err, results) => {
       if (err) { return res.status(500).send(err); }
+      if (results.length === 0) { return res.status(404).send("User with the email associated to this token not fond."); }
+      const email = results[0].email;
 
-      pool.query("UPDATE Users SET pass = ?, salt = ? WHERE email = ?", [ newHashedPassword, newSalt, email ], (err, results) => {
+      crypto.pbkdf2(newPassword, newSalt, 310000, 32, "sha256", (err, newHashedPassword) => {
         if (err) { return res.status(500).send(err); }
-      });
+  
+        pool.query("UPDATE Users SET pass = ?, salt = ? WHERE email = ?", [ newHashedPassword.toString('hex'), newSalt, email ], (err, results) => {
+          if (err) { return res.status(500).send(err); }
+          if (results.length === 0) { return res.status(404).send("User for which you are changing password does not exist.") }
+          console.log(results)
+          return res.status(200).send("Success.")
+        });
 
-      pool.query("DELETE FROM ForgotPassword WHERE token = ?", [ req.params.token ], (err, res) => {
-        if (err) { res.status(500).send(err); }
+        pool.query("DELETE FROM ForgotPassword WHERE token = ?", [ req.params.token ]);
       });
     });
-
-    return res.status(200).send("Success.")
   });
 });
 
