@@ -83,6 +83,12 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
 
 function Parent(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
   let [cmts, setCmts] = React.useState([])
+  function useForceUpdate(){
+    const [value, setValue] = useState(0); // integer state
+    return () => setValue(value => value + 1); // update state to force render
+    // A function that increment 👆🏻 the previous state like here 
+    // is better than directly setting `setValue(value + 1)`
+  }
   const CommentGetter = useEffect(()=>{
 
     fetch(`${process.env.BACKEND_URL}/polls/comment/${pollId}`, {
@@ -107,8 +113,8 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
       
   }, [])
 
-    
   
+
   
   function Comment(data: any) {
     return (
@@ -118,7 +124,7 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
           <Avatar alt="Remy Sharp" />
         </Grid>
         <Grid item xs>
-          <h4 style={{ margin: 2, textAlign: 'left' }}>sillyUser</h4> 
+          <h4 style={{ margin: 2, textAlign: 'left' }}>{data.username}</h4> 
           <p style={{ textAlign: 'left' }}>{data.comment} </p>
         </Grid>
       </Grid>
@@ -150,8 +156,9 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
     );
   }
   
-  function AddComment(cmts: {}[]){
+  function AddComment(cmts: any){
     let [currComment, setCurrComment] = React.useState("")
+    const forceUpdate = useForceUpdate();
     return (
       <React.Fragment>
         <Paper style={{ padding: "20px 10px"}} elevation={3}>
@@ -160,14 +167,15 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
           <Avatar alt="Remy Sharp" />
         </Grid>
         <Grid item xs>
-          <h4 style={{ margin: 2, textAlign: 'left' }}>sillyUser</h4> 
-          <TextField id="filled-basic" label="Write a comment..." variant="filled" fullWidth onKeyDown={(ev) => {
+          <TextField id="filled-basic" label="Write a comment..." variant="filled" fullWidth onChange={(ev)=>{
+            setCurrComment(ev.target.value);
+          }} 
+          
+          onKeyDown={(ev) => {
       
       if (ev.key === 'Enter') {
         ev.preventDefault();
-        
         //adds to the db
-
           fetch(`${process.env.BACKEND_URL}/polls/comment`, {
             method: 'POST',
             credentials: 'include',
@@ -189,13 +197,22 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
               }
             })
             .catch((error) => alert(error.message));
-
-        cmts.push(Comment(currComment))
-        CommentGetter;
-
-  
+            //data needs to be object
+        cmts.push(
+          {
+            "username": "alex_carter", //need to figire out how to lget the logged in user wo fetching
+            "comment_id": null, //for now this is null, it should be changed
+            "parent_id": null,
+            "comment": currComment
+          }
+        )
+        setCmts(cmts)
+        
       }
-    }}  onChange={(ev)=>{setCurrComment(ev.target.value)}}/>
+      //reload comments
+      forceUpdate();
+      
+    }} />
         </Grid>
       </Grid>
       </Paper>
