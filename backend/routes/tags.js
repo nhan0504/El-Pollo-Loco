@@ -8,7 +8,7 @@ var pool = require('../db.js');
 //Passport
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
-const checkAuthenticated = require('../middleware.js');
+const {checkAuthenticated} = require('../middleware.js');
 
 // Follow tagId
 router.post('/follow/:tagId', checkAuthenticated, function (req, res) {

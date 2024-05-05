@@ -243,12 +243,13 @@ function MakeCard(
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
           {CommentBox(tags, question, opts, username)}
           
-          <ButtonGroup variant="text" aria-label="Basic button group">
-            {tags?.map((tag?) => (
-              // On click, we'll want to transition to a "search" page that has polls w/ that tag
-              <Button key={tag}>{tag}</Button>
+          {/* <ButtonGroup style={{fontSize: '12px'}} variant="outlined" size="small" aria-label="Basic button group"> */}
+          <Box sx={{ color: 'blue', display: 'flex-inline', alignItems:"center" }}>
+            {tags?.map((tag) => (
+              <Button variant="contained" size="small" style={{fontSize: '12px'}} sx={{m:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
             ))}
-          </ButtonGroup>
+          </Box>
+          {/* </ButtonGroup> */}
           <br />
         </CardContent>
       </Card>

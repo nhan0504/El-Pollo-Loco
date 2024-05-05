@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const checkAuthenticated = require('../../middleware.js');
+const {checkAuthenticated} = require('../../middleware.js');
 
 router.get('/', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;

@@ -6,14 +6,14 @@ var crypto = require('crypto');
 var pool = require('../db.js');
 
 //Email
-var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport({
-    service: 'outlook',
-    auth: {
-        user: `${process.env.EMAIL_ADDRESS}`,
-        pass: `${process.env.EMAIL_PASSWORD}`
-    }
-});
+// var nodemailer = require('nodemailer');
+// var transporter = nodemailer.createTransport({
+//     service: 'outlook',
+//     auth: {
+//         user: `${process.env.EMAIL_ADDRESS}`,
+//         pass: `${process.env.EMAIL_PASSWORD}`
+//     }
+// });
 //--------------------------------------
 
 //Passport

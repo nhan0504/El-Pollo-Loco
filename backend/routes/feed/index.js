@@ -90,8 +90,6 @@ router.get('/', function (req, res) {
   );
 });
 
-router.use('/tags', tagsFeed);
-
 //Get poll by title
 router.get('/title/:titleName', function (req, res) {
   const query = `%${req.params.titleName}%`;
@@ -104,4 +102,7 @@ router.get('/title/:titleName', function (req, res) {
     res.json(result);
   });
 });
+
+router.use('/tags', tagsFeed);
+
 module.exports = router;

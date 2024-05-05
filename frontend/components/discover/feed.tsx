@@ -43,7 +43,7 @@ export default function Feed({ pollData, setPollData }: any) {
       // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
       let currCard = pollData[i];
       let loaded = true;
-      currCard.tags? alert(currCard.tags) : console.log("no tags");
+      // currCard.tags? alert(currCard.tags) : console.log("no tags");
 
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
