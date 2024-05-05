@@ -5,8 +5,8 @@ const pool = require('../../db.js');
 
 router.get('/', function (req, res) {
 
-  const pageNum = req.body.page_num;
-  const offset = pageNum * 6;
+  const pageNum = parseInt(req.query.page_num, 10) || 1;
+  const offset = (pageNum - 1) * 6;
 
   // Weights for discover algorithm
   const dateWeight = -15;
