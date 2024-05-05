@@ -5,9 +5,9 @@ import PollCard from './pollCard';
 import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import Grow from '@mui/material/Grow';
 
-export default function Feed() {
-  const [pollData, setPollData] = useState<any[]>();
+export default function Feed({ pollData, setPollData }: any) {
   const [isLoading, setLoading] = useState<boolean>(true);
   // should keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls
@@ -26,7 +26,7 @@ export default function Feed() {
       let data = await response.json();
       // console.log(response.text)
       if (response.ok && data.length > 0) {
-        //alert(JSON.stringify(data));
+        // alert(JSON.stringify(data));
         setPollData(data);
         setLoading(false);
       }
@@ -42,12 +42,13 @@ export default function Feed() {
       // We can't pop off polls from the list since they need to stay in memory to rerender
       // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
       let currCard = pollData[i];
+      let loaded = true;
       currCard.tags? alert(currCard.tags) : console.log("no tags");
 
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
           {PollCard(
-            currCard.tags,
+            (currCard.tags)?.split(","),
             currCard?.title,
             currCard?.options?.map((option: any) => ({
               optionText: option.option_text,
@@ -74,8 +75,8 @@ export default function Feed() {
         <Grid container item spacing={3} justifyContent="space-around" key={i}>
           {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
           {FormRow(pollData?.slice(i * cols, i * cols + cols))}
-        </Grid>,
-      );
+        </Grid>
+        );
     }
 
     return (
@@ -96,9 +97,13 @@ export default function Feed() {
         </Box>
     </Container>
   ) : (
-    <Container maxWidth={false}>
+    <React.Fragment>
       <FeedButtons />
-      <CardsTogether />
-    </Container>
+      <Grow in={true}>
+        <Container maxWidth={false}>
+          <CardsTogether />
+        </Container>
+      </Grow>
+    </React.Fragment>
   );
 }

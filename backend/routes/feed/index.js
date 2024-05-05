@@ -6,10 +6,44 @@ const pool = require('../../db.js');
 const tagsFeed = require('./tagsFeed.js');
 
 router.get('/', function (req, res) {
+
+  const pageNum = parseInt(req.body.page_num, 10) || 1;
+  const offset = (pageNum - 1) * 6;
+
+  // Weights for discover algorithm
+  const dateWeight = -15;
+  const voteWeight = 1;
+
   pool.query(
-    'SELECT Polls.*, Users.username FROM Polls ' +
-      'JOIN Users ON Polls.user_id = Users.user_id ' +
-      'ORDER BY Polls.created_at DESC LIMIT 6',
+    `SELECT 
+        Polls.poll_id, 
+        Polls.title, 
+        Polls.created_at, 
+        Users.username, 
+        COUNT(Votes.vote_id) AS vote_count,
+        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ', ') AS tags,
+        (
+            DATEDIFF(CURDATE(), Polls.created_at) * ? + 
+            COUNT(Votes.vote_id) * ?
+        ) AS score
+    FROM 
+        Polls
+    JOIN 
+        Users ON Polls.user_id = Users.user_id
+    LEFT JOIN 
+        PollsTags ON Polls.poll_id = PollsTags.poll_id
+    LEFT JOIN 
+        Tags ON PollsTags.tag_id = Tags.tag_id
+    LEFT JOIN 
+        Options ON Polls.poll_id = Options.poll_id
+    LEFT JOIN 
+        Votes ON Options.option_id = Votes.option_id
+    GROUP BY 
+        Polls.poll_id
+    ORDER BY 
+        score DESC
+    LIMIT 6 OFFSET ?;`,
+    [dateWeight, voteWeight, offset],
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
@@ -58,4 +92,16 @@ router.get('/', function (req, res) {
 
 router.use('/tags', tagsFeed);
 
+//Get poll by title
+router.get('/title/:titleName', function (req, res) {
+  const query = `%${req.params.titleName}%`;
+  pool.query('SELECT * from Polls WHERE title LIKE ?', [query], (error, result) => {
+    if (error) {
+      console.log(`Error getting poll containing ${query} in the title`);
+      res.status(500).send('Error searching for poll')
+    }
+
+    res.json(result);
+  });
+});
 module.exports = router;
