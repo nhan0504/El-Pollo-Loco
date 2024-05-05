@@ -89,6 +89,28 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
     // A function that increment 👆🏻 the previous state like here 
     // is better than directly setting `setValue(value + 1)`
   }
+  let [canComment, setCanComment]  = React.useState("false")
+  fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+    method: 'GET',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        return response.text().then((text) => {
+          throw new Error(text);
+        });
+      } else {
+        response.json().then((re)=>{
+          // alert(re)
+          if (re!="User is not authenticated"){
+            setCanComment(re.username)
+          }
+        });
+      }
+    })
+    .catch((error) => {});
+
   const CommentGetter = useEffect(()=>{
 
     fetch(`${process.env.BACKEND_URL}/polls/comment/${pollId}`, {
@@ -156,68 +178,74 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
     );
   }
   
-  function AddComment(cmts: any){
+  function AddComment(this: any, cmts: any){
     let [currComment, setCurrComment] = React.useState("")
     const forceUpdate = useForceUpdate();
-    return (
-      <React.Fragment>
-        <Paper style={{ padding: "20px 10px"}} elevation={3}>
-      <Grid container  spacing={2}>
-        <Grid item justifyContent='center'>
-          <Avatar alt="Remy Sharp" />
-        </Grid>
-        <Grid item xs>
-          <TextField id="filled-basic" label="Write a comment..." variant="filled" fullWidth onChange={(ev)=>{
-            setCurrComment(ev.target.value);
-          }} 
-          
-          onKeyDown={(ev) => {
-      
-      if (ev.key === 'Enter') {
-        ev.preventDefault();
-        //adds to the db
-          fetch(`${process.env.BACKEND_URL}/polls/comment`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+    
+    if (canComment!="false"){
+        return (
+          <React.Fragment>
+            <Paper style={{ padding: "20px 10px"}} elevation={3}>
+          <Grid container  spacing={2}>
+            <Grid item justifyContent='center'>
+              <Avatar alt="Remy Sharp" />
+            </Grid>
+            <Grid item xs>
+              <TextField id="filled-basic" value={currComment} label="Write a comment..." variant="filled" fullWidth onChange={(ev)=>{
+                setCurrComment(ev.target.value);
+              }} 
               
-                "poll_id": pollId,
+              onKeyDown={(ev) => {
+          
+          if (ev.key === 'Enter') {
+            ev.preventDefault();
+            //adds to the db
+              fetch(`${process.env.BACKEND_URL}/polls/comment`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+
+                    "poll_id": pollId,
+                    "parent_id": null,
+                    "comment": currComment
+                
+                })
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    return response.text().then((text) => {
+                      throw new Error(text);
+                    });
+                  } else {
+                  }
+                })
+                .catch((error) => alert(error.message));
+                //data needs to be object
+
+            cmts.push(
+              {
+                "username": canComment, //need to figire out how to lget the logged in user wo fetching
+                "comment_id": null, //for now this is null, it should be changed
                 "parent_id": null,
                 "comment": currComment
-            
-            })
-          })
-            .then((response) => {
-              if (!response.ok) {
-                return response.text().then((text) => {
-                  throw new Error(text);
-                });
-              } else {
               }
-            })
-            .catch((error) => alert(error.message));
-            //data needs to be object
-        cmts.push(
-          {
-            "username": "alex_carter", //need to figire out how to lget the logged in user wo fetching
-            "comment_id": null, //for now this is null, it should be changed
-            "parent_id": null,
-            "comment": currComment
+            )
+            setCmts(cmts)
+            setCurrComment('')
+            
           }
-        )
-        setCmts(cmts)
-        
-      }
-      //reload comments
-      forceUpdate();
-      
-    }} />
-        </Grid>
-      </Grid>
-      </Paper>
-      </React.Fragment>
-  );
+          //reload comments
+          forceUpdate();
+          
+        }} />
+            </Grid>
+          </Grid>
+          </Paper>
+          </React.Fragment>
+      );}
+
+    
   }
   
   function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
