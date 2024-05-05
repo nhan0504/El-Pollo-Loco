@@ -88,4 +88,16 @@ router.get('/', function (req, res) {
   );
 });
 
+//Get poll by title
+router.get('/title/:titleName', function (req, res) {
+  const query = `%${req.params.titleName}%`;
+  pool.query('SELECT * from Polls WHERE title LIKE ?', [query], (error, result) => {
+    if (error) {
+      console.log(`Error getting poll containing ${query} in the title`);
+      res.status(500).send('Error searching for poll')
+    }
+
+    res.json(result);
+  });
+});
 module.exports = router;
