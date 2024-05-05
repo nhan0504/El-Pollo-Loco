@@ -2,14 +2,17 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
+const checkAuthenticated = require('../../middleware.js');
 
-const userFeed = require('./userFeed.js');
+router.get('/', checkAuthenticated, function (req, res) {
+    const userId = req.user.user_id;
 
-router.get('/', function (req, res) {
   pool.query(
     'SELECT Polls.*, Users.username FROM Polls ' +
       'JOIN Users ON Polls.user_id = Users.user_id ' +
-      'ORDER BY Polls.created_at DESC LIMIT 6',
+      'WHERE Polls.user_id = ? ' +
+      'ORDER BY Polls.created_at DESC LIMIT 6 ',
+      [userId],
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
@@ -55,20 +58,5 @@ router.get('/', function (req, res) {
     },
   );
 });
-
-//Get poll by title
-router.get('/title/:titleName', function (req, res) {
-  const query = `%${req.params.titleName}%`;
-  pool.query('SELECT * from Polls WHERE title LIKE ?', [query], (error, result) => {
-    if (error) {
-      console.log(`Error getting poll containing ${query} in the title`);
-      res.status(500).send('Error searching for poll')
-    }
-
-    res.json(result);
-  });
-});
-
-router.use('/user', userFeed);
 
 module.exports = router;
