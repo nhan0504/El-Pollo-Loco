@@ -6,17 +6,26 @@ const checkAuthenticated = require('../../middleware.js');
 
 router.get('/', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;
-  const pageNum = req.body.page_num;
+  const pageNum = parseInt(req.body.page_num, 10) || 1;
+  const offset = (pageNum - 1) * 6;
 
-  const offset = pageNum * 6;
+  // Weights for algorithm
+  const dateWeight = -15;
+  const voteWeight = 1;
+
 
   pool.query(
     `SELECT 
     Polls.poll_id, 
     Polls.title, 
     Polls.created_at, 
-    Users.username,
-    GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ', ') AS tags
+    Users.username, 
+    COUNT(DISTINCT Votes.vote_id) AS vote_count,
+    GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ', ') AS tags,
+    (
+        DATEDIFF(CURDATE(), Polls.created_at) * ? + 
+        COUNT(DISTINCT Votes.vote_id) * ?
+    ) AS score
     FROM 
         Polls
     JOIN 
@@ -27,16 +36,20 @@ router.get('/', checkAuthenticated, function (req, res) {
         Tags ON PollsTags.tag_id = Tags.tag_id
     JOIN 
         UserTag ON Tags.tag_id = UserTag.tag_id AND UserTag.user_id = ?
-    JOIN 
+    LEFT JOIN 
         PollsTags AS AllPollsTags ON Polls.poll_id = AllPollsTags.poll_id
-    JOIN 
+    LEFT JOIN 
         Tags AS AllTags ON AllPollsTags.tag_id = AllTags.tag_id
+    LEFT JOIN 
+        Options ON Polls.poll_id = Options.poll_id
+    LEFT JOIN 
+        Votes ON Options.option_id = Votes.option_id
     GROUP BY 
         Polls.poll_id
     ORDER BY 
-        Polls.created_at DESC 
-    LIMIT 6 OFFSET ${offset};`,
-    [userId],
+        score DESC
+    LIMIT 6 OFFSET ?;`,
+    [dateWeight, voteWeight, userId, offset],
     (error, pollResults) => {
       if (error) {
         console.error('Error fetching polls based on followed tags', error);
