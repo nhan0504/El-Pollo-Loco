@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { AuthContext } from '@/contexts/authContext';
 
 import { Divider, Avatar, Grid, Paper, TextField } from '@mui/material';
 import {
@@ -81,8 +82,10 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function Parent(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
+function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
+  
   let [cmts, setCmts] = React.useState([])
+  const { isAuth, setAuth } = useContext(AuthContext);
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
     return () => setValue(value => value + 1); // update state to force render
@@ -90,26 +93,31 @@ function Parent(tags: string[], question: string, opts: { optionText: string; vo
     // is better than directly setting `setValue(value + 1)`
   }
   let [canComment, setCanComment]  = React.useState("false")
-  fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-    method: 'GET',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.text().then((text) => {
-          throw new Error(text);
-        });
-      } else {
-        response.json().then((re)=>{
-          // alert(re)
-          if (re!="User is not authenticated"){
-            setCanComment(re.username)
-          }
-        });
-      }
+  if (isAuth==false){
+    //alert("you cannot comment wo loggin in")
+  }
+  else{
+    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
     })
-    .catch((error) => {});
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          response.json().then((re)=>{
+            // alert(re)
+            if (re!="User is not authenticated"){
+              setCanComment(re.username)
+            }
+          });
+        }
+      })
+      .catch((error) => {});
+  }
 
   const CommentGetter = useEffect(()=>{
 
