@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, Modal } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext, useState} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
@@ -43,9 +43,10 @@ function MakeCard(
          votes: 0,
          option_id: -1
   }],
+    tags: tags,
     comments: 0,
   });
-  
+
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   
@@ -72,6 +73,8 @@ function MakeCard(
           } else {
             // show results
             setCollapsed(true)
+            cardData.opts.pop();
+
 
             // update local vote count - votes fetched at page load + 1
             cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
@@ -146,7 +149,7 @@ function MakeCard(
         <CardActions key={option.optionText}>
           {/* Added onClick function as addVote */}
           <Button
-            variant="contained"
+            variant="outlined"
             value={option.optionText}
             onClick={(event) => AddVote(index)}
             style={{ 
@@ -159,11 +162,14 @@ function MakeCard(
               ':hover': {
                 // theme.palette.primary.main
                 bgcolor: "inherit",
-                color: optionColors[index]
+                color: optionColors[index],
+                border: '1px solid ' + optionColors[index],
               },
               backgroundColor: optionColors[index],
+              color: "white",
+              // border: '1px solid black',
               opacity: 0.8,
-              boxShadow:1
+              boxShadow:2
             }}                
           >
             {option.optionText}
@@ -222,7 +228,7 @@ function MakeCard(
               <PersonIcon fontSize="medium" />
               <Typography variant="subtitle2">{username}</Typography>
             </Stack>
-            <Typography sx={{}} variant="subtitle2">{cardData.totalVotes} votes</Typography>
+            <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
           </Stack>
           <br/>
           <Typography variant="h5" component="div" align="center">
@@ -237,7 +243,7 @@ function MakeCard(
           {CommentBox(tags, question, opts, username)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
-            {tags.map((tag) => (
+            {tags?.map((tag?) => (
               // On click, we'll want to transition to a "search" page that has polls w/ that tag
               <Button key={tag}>{tag}</Button>
             ))}
