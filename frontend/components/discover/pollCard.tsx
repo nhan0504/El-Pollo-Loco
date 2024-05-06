@@ -107,8 +107,9 @@ function MakeCard(
 
   function optionList () {
 
-    // I think the main options buttons would look better with a border, or the outlined variant w/ different background colors
-
+    // ok, better idea for the option button appearance - regular color = outlined and hover = solid, 
+    // then whichever result the user has voted for (if any) has the fully solid background when results
+    // are shown
     let optList = cardData.opts?.map((option, index) => {
       
       // If it's the Show Results button, return special button
@@ -160,12 +161,13 @@ function MakeCard(
             sx={{
               ':hover': {
                 // theme.palette.primary.main
-                bgcolor: "inherit",
-                color: optionColors[index],
-                border: '1px solid ' + optionColors[index],
+                backgroundColor: optionColors[index],
+                color: "white",
+                border: '2px solid ' + optionColors[index],
               },
-              backgroundColor: optionColors[index],
-              color: "white",
+              bgcolor: "inherit",
+              color: "black",
+              border: '2px solid ' + optionColors[index],
               // border: '1px solid black',
               opacity: 0.8,
               boxShadow:2
