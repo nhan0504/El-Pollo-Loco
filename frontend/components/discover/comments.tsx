@@ -39,7 +39,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
       }}>
         <Stack>
           <CommentIcon/>
-            123 Comments
+            Comments
         </Stack>
       </Button>
       <Modal
