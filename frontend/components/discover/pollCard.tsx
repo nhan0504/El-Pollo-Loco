@@ -212,7 +212,7 @@ function MakeCard(
   return (
     <React.Fragment>
       <Card
-        sx={{boxShadow:2}}
+        sx={{display: { xs: 'flex', lg: 'none' }, boxShadow:2}}
         style={{
           display: 'flex',
           justifyContent: 'center',
