@@ -1,6 +1,7 @@
 'use client'
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, Grid, Box } from '@mui/material';
 
 import AspectRatio from '@mui/joy/AspectRatio';
@@ -25,22 +26,24 @@ import Card from '@mui/joy/Card';
 import CardActions from '@mui/joy/CardActions';
 import CardOverflow from '@mui/joy/CardOverflow';
 
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
-import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
-import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded';
-import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 import PollCard from '../discover/pollCard';
 import FeedButtons from '../discover/feedButtons';
+import { AuthContext } from '@/contexts/authContext';
+
 
 export default function MyProfile() {
 
+  const { push } = useRouter();
+
+  const { isAuth, setAuth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [pollData, setPollData] = useState([]);
-  const [editing, setEditing] = useState(false);
   const [userData, setUserData] = useState<{
     username: string,
     user_id: number,
@@ -48,43 +51,57 @@ export default function MyProfile() {
   }>([]);
 
   async function getPolls() {
-    let response = await fetch(`${process.env.BACKEND_URL}/feed/user`, {
-      method: 'GET',
-      credentials: 'include'
-    });
-    let data = await response.json();
-    if (response.ok) {
-      //alert(JSON.stringify(data));
-      setPollData(data);
+    // try{
+      let response = await fetch(`${process.env.BACKEND_URL}/feed/user`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      let data = await response.json();
+      if (response.ok) {
+        //alert(JSON.stringify(data));
+        setPollData(data);
 
-      // Once we've successfully fetched the user info, load page components
-      // Doing it like this because the username needs to be ready before we load
-      // but polls don't necessarily have to be there right away
-      if(userData.username != "")
-        setLoading(false);
-    }
+        // Once we've successfully fetched the user info, load page components
+        // Doing it like this because the username needs to be ready before we load
+        // but polls don't necessarily have to be there right away
+        if(userData.username != "")
+          setLoading(false);
+      }
+      else{
+
+      }
+    // }
+    // catch (error){
+    //   push('auth/login')
+    // }
   }
 
   async function getUser() {
-    let response = await fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-      method: 'GET',
-      credentials: 'include'
-    });
-    let data = await response.json();
-    if (response.ok) {
-      // alert(JSON.stringify(data));
-      setUserData(data);
-      // setLoading(false);
-    }
-    else{
-      // alert(JSON.stringify(data));
+    try{
+      let response = await fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      let data = await response.json();
+      if (response.ok) {
+        // alert(JSON.stringify(data));
+        setUserData(data);
+        // setLoading(false);
+      }
+      else{
+        // alert(JSON.stringify(data));
 
+      }
+    }
+    catch (error){
+      push('auth/login')
     }
   }
 
   useEffect(() => {
-    getPolls();
-    getUser();
+    
+      getPolls();
+      getUser();
   }, []);
 
   function FormRow(pollData: any) {
@@ -139,12 +156,66 @@ export default function MyProfile() {
         </Grid>
       </React.Fragment>
     );
-    }
+    } 
 
     else if(pollData.length == 0 && !loading){
 
       return <Typography level="body-sm">You haven't made any polls yet. Click the "Create Poll" button to get started!</Typography>
 
+    }
+  }
+
+  function getTotalVotes(){
+
+    let votes = 0;
+    pollData?.map((poll) => {
+      votes += poll?.options?.map((opt) => opt.vote_count).reduce((partialSum: any, a: any) => partialSum + a, 0);
+    });
+
+    return votes;
+  }
+
+
+  const [bio, setBio] = useState<string>("Write your bio here!");
+  const [isEditing, setEditing] = useState<boolean>(false);
+
+  const editableBio = () => {
+
+    // need to make sure the two components are aligned
+    if (isEditing) {
+      return(
+        <Textarea 
+          value={bio}
+          onChange={(event) => setBio(event.target.value)}
+          endDecorator={
+            <Box sx={{display: "flex"}}>
+              <Typography level="body-xs" sx={{ ml: 'auto' }}>
+                {bio.length} character(s)
+              </Typography>
+              <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
+              <Button size="sm" variant="outlined" color="neutral">
+                  Cancel
+              </Button>
+              <Button 
+                onClick={(event) => (setEditing(false))}
+                sx={{ ml: 'auto' }}
+                size="sm" variant="solid">
+                  Save
+              </Button>
+            </CardActions>
+            </Box>
+          }
+        >
+        </Textarea>
+      )
+    }
+    else{
+
+      return(
+
+        <Typography onClick={(event) => (setEditing(true))}>{bio}</Typography>
+
+      )
     }
   }
 
@@ -171,7 +242,7 @@ export default function MyProfile() {
           py: { xs: 2, md: 3 },
         }}
       >
-        <Box sx={{ mb: 1 }}>
+        <Box sx={{mb: 1 }}>
             <Typography level="title-md">{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
@@ -183,27 +254,55 @@ export default function MyProfile() {
             
           </Stack>
           
+        <Box sx={{display:"flex", flexDirection:"row", justifyContent: "center", alignItems:"center"}}>
+        
+          <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
+            
+            <Typography level="title-md">Poll Stats</Typography>
+            <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+          
+          </CardOverflow>
+  
+            <List sx={{display: "flex", flexDirection: "column"}}>
+              <ListItem disablePadding>
+                <Typography>{pollData.length} polls created</Typography>
+              </ListItem>
+              <ListItem disablePadding>
+                <Typography>{getTotalVotes()} people have voted on their polls</Typography>
+              </ListItem>
+
+
+            </List>
+          {/* I think it would be nice to have a bio here, but we'd need another database table to save it... */}
+          {/* <Box sx={{ mb: 1 }}>
+            <Typography level="title-md">Bio</Typography>
+            
+            {editableBio()}
+          </Box> */}
+          </Card>
+
+          <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
+            <Typography level="title-md">Friends</Typography>
+            <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+          
+          </CardOverflow>
+  
+            <List sx={{display: "flex", flexDirection: "column"}}>
+    
+
+            </List>
+          </Card>
+        </Box>
         
         <Card sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+        <Typography level="title-md">Polls</Typography>
 
-        <Box sx={{ mb: 1 }}>
-                <Typography level="title-md">Bio</Typography>
-                <Typography level="body-sm">
-                Write a short introduction to be displayed on your profile
-                </Typography>
-            </Box>
-            
-            <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-                <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-                <Button size="sm" variant="outlined" color="neutral">
-                    Cancel
-                </Button>
-                <Button size="sm" variant="solid">
-                    Save
-                </Button>
-                </CardActions>
-            </CardOverflow>
-          <CardsTogether /> 
+        
+        <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+          
+        </CardOverflow>
+
+        <CardsTogether /> 
           
         </Card>
       </Stack>
