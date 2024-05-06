@@ -24,7 +24,7 @@ export default function Feed({ pollData, setPollData }: any) {
       });
       let data = await response.json();
       if (response.ok && data.length > 0) {
-        //alert(JSON.stringify(data));
+        // alert(JSON.stringify(data));
         setPollData(data);
         setLoading(false);
       }
@@ -44,7 +44,7 @@ export default function Feed({ pollData, setPollData }: any) {
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
           {PollCard(
-            [''],
+            (currCard.tags)?.split(","),
             currCard?.title,
             currCard?.options?.map((option: any) => ({
               optionText: option.option_text,

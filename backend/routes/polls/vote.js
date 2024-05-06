@@ -3,7 +3,7 @@ var router = express.Router();
 
 const pool = require('../../db.js');
 
-const checkAuthenticated = require('../../middleware.js');
+const {checkAuthenticated } = require('../../middleware.js');
 
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
@@ -48,8 +48,7 @@ router.post('/', checkAuthenticated, function (req, res) {
     (error, results) => {
       if (error) {
         console.error(`Error when user ${userId} is voting for option ${optionId}`, error);
-        res.status(500).send('Error recording your vote');
-        return;
+        return res.status(500).send('Error recording your vote');
       }
       res.status(201).send({
         message: 'Vote successfully recorded',

@@ -150,7 +150,7 @@ function MakeCard(
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
 
           <ButtonGroup variant="text" aria-label="Basic button group">
-            {tags.map((tag) => (
+            {tags?.map((tag) => (
               <Button key={tag}>{tag}</Button>
             ))}
           </ButtonGroup>
