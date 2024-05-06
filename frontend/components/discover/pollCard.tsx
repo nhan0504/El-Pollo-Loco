@@ -75,7 +75,6 @@ function MakeCard(
             setCollapsed(true)
             cardData.opts.pop();
 
-
             // update local vote count - votes fetched at page load + 1
             cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
             
@@ -97,7 +96,7 @@ function MakeCard(
   };
 
   const ShowResults = () => {
-    // Remove Show Results  button
+    // Remove Show Results button when it's clicked
     cardData.opts.pop();
     setCardData({...cardData, opts: cardData.opts})
     setCollapsed(true);
