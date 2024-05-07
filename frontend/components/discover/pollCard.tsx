@@ -241,7 +241,7 @@ function MakeCard(
             variant="determinate" 
             value={getPercent(option)} 
             sx={{ 
-              height:10, 
+              height:5, 
               '& .MuiLinearProgress-bar': {
                   backgroundColor: optionColors[index],
                   opacity:1
