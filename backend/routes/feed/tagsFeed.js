@@ -4,9 +4,9 @@ var router = express.Router();
 const pool = require('../../db.js');
 const {checkAuthenticated} = require('../../middleware.js');
 
-router.get('/', checkAuthenticated, function (req, res) {
+router.get('/:pageNum?', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;
-  const pageNum = parseInt(req.body.page_num, 10) || 1;
+  const pageNum = parseInt(req.params.pageNum, 10) || 1;
   const offset = (pageNum - 1) * 6;
 
   // Weights for algorithm
@@ -57,7 +57,7 @@ router.get('/', checkAuthenticated, function (req, res) {
         return;
       }
       if (pollResults.length === 0) {
-        res.status(404).send('No polls found for the followed tags');
+        res.status(404).send('No results');
         return;
       }
 
