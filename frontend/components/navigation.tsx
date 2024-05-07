@@ -27,6 +27,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
   const { isAuth, setAuth } = useContext(AuthContext);
   const { push } = useRouter();
 
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -182,11 +183,11 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
         <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
         
         <Typography>
-          <Button variant="text" onClick={(event) => (push("auth/login"))}>Log in</Button>
+          <Button variant="text" onClick={(event) => {push("/auth/login")}}>Log in</Button>
         </Typography>
         <Typography variant="body2" alignSelf="center">/</Typography>
         <Typography>
-          <Button variant="text" onClick={(event) => (push("auth/signup"))}>Sign Up</Button>
+          <Button variant="text" onClick={(event) => (push("/auth/signup"))}>Sign Up</Button>
         </Typography>
         {/* <Link underline="none" href="/auth/login">
           <Typography variant="body1">Log In</Typography>
