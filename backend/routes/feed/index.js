@@ -3,9 +3,9 @@ var router = express.Router();
 
 const pool = require('../../db.js');
 
-router.get('/', function (req, res) {
+router.get('/:pageNum?', function (req, res) {
 
-  const pageNum = parseInt(req.body.page_num, 10) || 1;
+  const pageNum = parseInt(req.params.pageNum, 10) || 1;
   const offset = (pageNum - 1) * 6;
 
   // Weights for discover algorithm
