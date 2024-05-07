@@ -151,7 +151,7 @@ function MakeCard(
           <Button
             variant="outlined"
             value={option.optionText}
-            onClick={(event) => AddVote(index)}
+            onClick={(event) => {AddVote(index)}}
             style={{ 
               fontSize: "13px", 
               maxWidth: collapsed?"40%":"100%", 
@@ -201,6 +201,9 @@ function MakeCard(
 
     return optList;
   }
+
+  
+
 
   // Calculate percentage of votes for an option
   const getPercent = (option: { optionText: string; votes: number }) => {

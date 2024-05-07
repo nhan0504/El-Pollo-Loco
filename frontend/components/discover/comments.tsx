@@ -25,7 +25,6 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import { ModalDialog } from '@mui/joy';
 import PollCard from  './pollCardNoComment'
-import useWindowDimensions from '../dimensions';
 
 
 
@@ -39,7 +38,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
       }}>
         <Stack>
           <CommentIcon/>
-            123 Comments
+            Comments
         </Stack>
       </Button>
       <Modal
@@ -85,6 +84,8 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
 function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
   
   let [cmts, setCmts] = React.useState([])
+  let [userids, setUserIds] = React.useState([])
+  let [optionVotes, setOptionVotes] = React.useState([])
   const { isAuth, setAuth } = useContext(AuthContext);
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -118,6 +119,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       })
       .catch((error) => {});
   }
+  
 
   const CommentGetter = useEffect(()=>{
 
@@ -135,6 +137,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           response.json().then((re)=>{
             // alert(re)
             setCmts(re)
+            
             return re
           });
         }
@@ -143,10 +146,63 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       
   }, [])
 
+  const GetVotes = useEffect(()=>{
+    if (optionVotes.length == 0){
+    fetch(`${process.env.BACKEND_URL}/polls/vote/${pollId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          response.json().then((re)=>{
+            // alert(re)
+            setOptionVotes(re.map((obj: any)=>(obj.option_id)))
+          });
+        }
+      })
+      .catch((error) => {});}
+    
+  })
+
+
+  function OptionsToColors(){
+    let voters: number[] = [];
+    optionVotes?.map((opt: number)=>{
+      fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            response.json().then((re)=>{
+              // alert(re)
+              
+              let start: number[] = []
+              let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
+              voters.push(ret);
+            });
+          }
+        })
+        .catch((error) => {});
   
+    })
+    console.log(voters);
+    
+  }
 
   
   function Comment(data: any) {
+    //need to save the current comment id
     return (
       <Paper style={{ padding: "20px 10px"}} elevation={3}>
       <Grid container  spacing={2}>
@@ -156,7 +212,8 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
         <Grid item xs>
           <h4 style={{ margin: 2, textAlign: 'left' }}>{data.username}</h4> 
           <p style={{ textAlign: 'left' }}>{data.comment} </p>
-        </Grid>
+          
+          </Grid>
       </Grid>
       </Paper>
     );
@@ -185,6 +242,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       </Paper>
     );
   }
+
   
   function AddComment(this: any, cmts: any){
     let [currComment, setCurrComment] = React.useState("")
@@ -253,17 +311,18 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           </React.Fragment>
       );}
 
+
     
   }
   
   function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
     let { innerWidth: width, innerHeight: height } = window;
+    OptionsToColors();
     width = (width)*0.5
     //load until comments is not empty
-    if (cmts.length==0){
-
-    }
     return (
+      <div>
+      <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow: 'auto' }}>
             {PollCard(tags, question, opts, username)}
@@ -271,9 +330,15 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
             {AddComment(cmts)}
             
         </Paper>
+        </div>
     );
   }
+  
+
+  
   return CommentsWPoll(tags, question, opts, username, pollId);
+
+
 }
 
 function NoComments(){
@@ -291,6 +356,10 @@ function NoComments(){
     </Paper>
   );
 }
+
+
+//first  get votes by  poll id, then 
+// for each option get hte users who voted on that
 
 
 
