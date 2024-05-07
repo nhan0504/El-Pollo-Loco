@@ -28,7 +28,7 @@ import PollCard from  './pollCardNoComment'
 
 
 
-export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number) {
+export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, voted: any) {
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
   return (
@@ -72,7 +72,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             Comments
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {Parent(tags, question, opts, username, pollId)}
+            {Parent(tags, question, opts, username, pollId, voted)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -81,7 +81,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
+function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, voted: any){
   
   let [cmts, setCmts] = React.useState([])
   let [userids, setUserIds] = React.useState([])
@@ -325,7 +325,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow: 'auto' }}>
-            {PollCard(tags, question, opts, username)}
+            {PollCard(tags, question, opts, username, voted)}
             {Comments(pollId, cmts)}
             {AddComment(cmts)}
             
