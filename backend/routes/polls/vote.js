@@ -5,6 +5,27 @@ const pool = require('../../db.js');
 
 const {checkAuthenticated } = require('../../middleware.js');
 
+router.get('/voted', checkAuthenticated, function(req, res){
+
+  const userId = req.user.user_id;
+
+  pool.query(
+    'SELECT DISTINCT poll_id, Votes.option_id ' +
+    'FROM Votes, Options ' +
+    'WHERE Votes.option_id = Options.option_id ' +
+    'AND user_id = ?',
+    [userId],
+    (error, results) => {
+      if (error) {
+        console.error(`Error fetching polls voted on by user ${userId}`, error);
+        res.status(500).send('Error fetching polls voted on');
+        return;
+      }
+      res.json(results);
+    },
+  );
+});
+
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
