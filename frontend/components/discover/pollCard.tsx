@@ -300,7 +300,7 @@ function MakeCard(
         {optionList()}
 
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username, pollId)}
+          {CommentBox(tags, question, opts, username, pollId, voted)}
 
           <ButtonGroup variant="text" aria-label="Basic button group">
             {tags?.map((tag?) => (
