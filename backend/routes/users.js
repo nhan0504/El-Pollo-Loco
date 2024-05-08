@@ -48,10 +48,11 @@ router.delete('/:userId', function (req, res) {
     }
   });
 });
-
+/////////////////////////////////////////////
 
 // FOLLOW/UNFOLLOW ENDPOINTS
 
+/////////////////////////////////////////////
 router.get('/:userId/followers', function (req, res) {
   const userId = req.params.userId;
   pool.query(
