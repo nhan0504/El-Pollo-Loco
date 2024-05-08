@@ -11,7 +11,11 @@ router.get('/:userId', function (req, res) {
       res.status(500).send('Error fetching user data');
       return;
     }
-    res.json(results);
+    if (results.length === 0) {
+      res.status(404).send('User not found');
+    } else {
+      res.json(results);
+    }
   });
 });
 
@@ -26,7 +30,16 @@ router.post('/', function (req, res) {
         res.status(500).send('Error creating new user');
         return;
       }
-      res.send(`User created successfully`);
+
+      const newUser = {
+        user_id: results.insertId,
+        username: userData.username,
+        fname: userData.fname,
+        lname: userData.lname,
+        email: userData.email
+      };
+
+      res.status(201).json(newUser);
     },
   );
 });
