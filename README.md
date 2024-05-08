@@ -16,6 +16,8 @@ Step 3: Follow the link in the console output to the webpage (http://localhost:3
 
 ## API Documentation
 
+Unless otherwise specified, routes return status `200` on success, or `500` if an internal error is encountered.
+
 #### Create User Account (Authentication)
 
 ```http
