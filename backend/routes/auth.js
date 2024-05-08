@@ -15,6 +15,7 @@ var transporter = nodemailer.createTransport({
     }
 }); */
 
+//PASTE
 //Email Sendmail (requires unix)
 // var nodemailer = require('nodemailer');
 
@@ -23,6 +24,7 @@ var transporter = nodemailer.createTransport({
 //     newline: 'unix',
 //     path: '/usr/sbin/sendmail'
 // });
+//END PASTE
 
 //--------------------------------------
 
@@ -223,7 +225,7 @@ router.get('/profile', checkAuthenticated, (req, res) => {
             return res.status(200).send("Email with reset link has been sent.");
           }
       }); 
-
+      //PASTE sendmail
       //Configure sendmail(requires linux)
       var mailOptions = {
           from: 'support@elpolloloco.com',
@@ -240,6 +242,7 @@ router.get('/profile', checkAuthenticated, (req, res) => {
               console.log('Email sent: ' + info.response);
           }
       });
+      //ENDPASTE sendmail
 
       return res.status(200).send("Email with reset link has been sent.");
     });
