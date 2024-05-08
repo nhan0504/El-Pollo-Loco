@@ -15,6 +15,12 @@ import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
 import Collapse from '@mui/material/Collapse';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
 
 type Option = {
   optionText: string;
@@ -50,6 +56,9 @@ function MakeCard(
 
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
+  // Tracks tag dialog open state as well as whether the selected tag was actually followed
+  const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
+  const [tagSelected, setTagSelected] = useState<string>("");
   
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
@@ -170,7 +179,9 @@ function MakeCard(
               color: "white",
               // border: '1px solid black',
               opacity: 0.8,
-              boxShadow:2
+              boxShadow:2,
+              textTransform:"none",
+              textWeight:"bold"
             }}                
           >
             {option.optionText}
@@ -209,6 +220,27 @@ function MakeCard(
       return 0;
     } else return (option.votes / cardData.totalVotes) * 100;
   };
+    
+  // Need to use tags endpoint to send POST request w/ tag id, but we don't have tags ids right now
+  function followTag(tagName: string){
+    setTagDialogOpen({open: false, followed: true});
+  }
+
+  // Alert for when tag is followed
+  const followedAlert = () => {
+    if(tagDialogOpen.followed == true){
+      // let tag = tagSelected.slice(0,1).toUpperCase() + tagSelected.slice(1, tagSelected.length)
+      return(
+        <React.Fragment>
+        <br/>
+        <Alert style={{}} icon={<CheckIcon fontSize="inherit" />} severity="success"  onClose={(event) => {setTagDialogOpen({open: false, followed: false});}}>
+          {tagSelected} followed!
+        </Alert>
+        </React.Fragment>
+      )
+    }
+      return
+  }
 
   return (
     <React.Fragment>
@@ -246,13 +278,33 @@ function MakeCard(
           {/* <ButtonGroup style={{fontSize: '12px'}} variant="outlined" size="small" aria-label="Basic button group"> */}
           <Box sx={{ color: 'blue', display: 'flex-inline', alignItems:"center" }}>
             {tags?.map((tag) => (
-              <Button variant="contained" size="small" style={{fontSize: '12px'}} sx={{m:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
+              <Button variant="contained" onClick={(event) => {    
+                let capitalized = tag.slice(0,1).toUpperCase() + tag.slice(1, tag.length)
+                setTagSelected(capitalized);
+                setTagDialogOpen({open: true,  followed: false});
+              }} size="small" style={{fontSize: '12px'}} sx={{m:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
             ))}
+            <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{border: '3px solid black', borderRadius:"10px"}}>
+              <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+                
+                <DialogTitle textAlign="center">Would you like to follow this tag?</DialogTitle>           
+                <Typography textAlign="center" variant="body1">Polls tagged with "{tagSelected}" will appear on your Following feed.</Typography>
+                <br/>
+                <Button onClick={(event) => {followTag(tagSelected)}}  size="small" variant="contained" sx={{ alignSelf:"center"}}>{tagSelected} +</Button>
+              
+              </DialogContent>
+            </Dialog>
+
           </Box>
+          
           {/* </ButtonGroup> */}
+
           <br />
         </CardContent>
       </Card>
+
+      {followedAlert()}
+
     </React.Fragment>
   );
 }

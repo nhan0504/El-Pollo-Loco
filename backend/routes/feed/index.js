@@ -21,7 +21,7 @@ router.get('/', function (req, res) {
         Polls.created_at, 
         Users.username, 
         COUNT(Votes.vote_id) AS vote_count,
-        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ', ') AS tags,
+        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags,
         (
             DATEDIFF(CURDATE(), Polls.created_at) * ? + 
             COUNT(Votes.vote_id) * ?
