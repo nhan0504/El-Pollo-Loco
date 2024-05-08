@@ -1,18 +1,9 @@
-Read Me!
+## Usage
 
-Dependencies: React, NextJS, ExpressJS, MaterialUI
+1. Start the ExpressJS server with `$ cd backend && npm i && npm start`.
+2. Open a new terminal and start the NextJS server with `$ cd ../frontend && npm i && npm run dev`.
+3. Follow the link in the console output to access the webpage.
 
-Usage:
-
-Step 1: Start the ExpressJS server
-$ cd backend
-$ npm start
-
-Step 2: Start the NextJS server
-$ cd frontend
-$ npm run dev
-
-Step 3: Follow the link in the console output to the webpage (http://localhost:3001)
 
 ## API Documentation
 
