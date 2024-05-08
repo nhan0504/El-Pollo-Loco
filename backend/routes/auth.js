@@ -115,9 +115,10 @@ router.post('/signup', function(req, res) {
             } else if (results.length != 0) {
                 res.status(409).send('User with this name or email already exists.');
             } else {
+                const salt = crypto.randomBytes(8).toString('hex');
                 crypto.pbkdf2(
                     userData.password,
-                    crypto.randomBytes(8).toString('hex'),
+                    salt,
                     310000,
                     32,
                     'sha256',
@@ -130,7 +131,7 @@ router.post('/signup', function(req, res) {
                                 userData.fname,
                                 userData.lname,
                                 userData.email,
-                                userData.salt,
+                                salt,
                             ],
                             (error, results) => {
                                 if (error) {
