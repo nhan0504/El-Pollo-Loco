@@ -76,10 +76,11 @@ router.get('/:userId/followers', function (req, res) {
     }
 
     const followers = results.map(item => (item.username))
+    const totalFollowers = results.length > 0 ? results[0].total_followers : 0;
 
     const returnData = {
       followers: followers,
-      total_followers: results[0].total_followers
+      total_followers: totalFollowers
     };
     res.json(returnData);
   });
