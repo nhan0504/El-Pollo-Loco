@@ -87,6 +87,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   let [cmts, setCmts] = React.useState([])
   let [userids, setUserIds] = React.useState([])
   let [optionVotes, setOptionVotes] = React.useState([])
+  let [colorPairs, setColorPairs] = React.useState(new Map<number, string>());
   const { isAuth, setAuth } = useContext(AuthContext);
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -175,7 +176,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
 
    function OptionsToColors(){
     let voters: number[][] = [];
-    optionVotes?.map(async (opt: number)=>{
+    optionVotes?.map(async (opt: number, ind: number)=>{
       await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
         method: 'GET',
         credentials: 'include',
@@ -192,6 +193,10 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
               
               let start: number[] = []
               let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
+              for(let j = 0; j<ret.length; j++){
+                  colorPairs.set(ret[j], optionColors[ind]);
+                
+              }
               voters.push(ret);
             });
           }
@@ -212,7 +217,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           <Avatar alt="Remy Sharp" />
         </Grid>
         <Grid item xs>
-          <h4 style={{ margin: 2, textAlign: 'left' }}>{data.username}</h4> 
+          <h4 style={{ margin: 2, textAlign: 'left', color: color, textShadow: `0 0 0.1em ${color}, 0 0 0.02em ${color}`}}>{data.username}</h4> 
           <p style={{ textAlign: 'left' }}>{data.comment} </p>
           
           </Grid>
@@ -224,25 +229,17 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   function Comments(pollId: number, cmts: any) {
     //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
     //make color user_id pairing based on what they  voted for
-    let voters = OptionsToColors();
-    let colorPairs = new Map<number, string>();
-    for(let i = 0; i <voters.length; i++){
-      //find user in votes?
-      for(let j = 0; j<voters[i].length; j++){
-        colorPairs.set(voters[i][j], optionColors[i])
-      }
-    }
-    console.log(colorPairs)
+    OptionsToColors();
     let listOfComments: any = []
     if( cmts.length>0){
       listOfComments.push(<React.Fragment>
-        {Comment(cmts[0], "blue")}
+        {Comment(cmts[0], colorPairs.get(cmts[0].user_id))}
       </React.Fragment>);
     }
     for (let i = 1; i < cmts.length; i++) {
       listOfComments.push(<React.Fragment>
         <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
-        {Comment(cmts[i],  "blue")}
+        {Comment(cmts[i],  colorPairs.get(cmts[i].user_id))}
       </React.Fragment>)
     }
     return (
