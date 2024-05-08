@@ -47,7 +47,7 @@ export default function SignIn() {
           //upon succesful login set auth to true
           setAuth(true);
           setAlert(false);
-          if (username!=null) {
+          if (username!=null){
             localStorage.setItem("username", String(username));
           }
           push('/discover');
@@ -60,6 +60,10 @@ export default function SignIn() {
           setAlert(true);
         }
       });
+    
+        
+      
+    
   };
 
   return (

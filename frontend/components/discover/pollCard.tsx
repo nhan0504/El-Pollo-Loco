@@ -14,7 +14,7 @@ import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
-import Collapse from '@mui/material/Collapse';
+import usernameFriend from './addFriend'
 
 type Option = {
   optionText: string;
@@ -289,7 +289,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack alignItems="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" />
-              <Typography variant="subtitle2">{username}</Typography>
+              {usernameFriend(username)}
             </Stack>
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
           </Stack>
