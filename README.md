@@ -59,7 +59,7 @@ Returns status `401` if client is not logged in upon request.
 ```http
   GET /auth/is_authenticated
 ```
-Returns status `401` if user is not logged in.
+Returns status `401` if client is not logged in upon request.
 
 #### Get Profile Information (Authentication)
 
@@ -74,7 +74,3 @@ Returns status `401` if client is not logged in upon request. Otherwise returns 
 | `user_id`      | `string` | **Required**. User ID of account. |
 | `email`      | `string` | **Required**. Email of account. |
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `username`      | `string` | **Required**. Username of account. |
-| `password`      | `string` | **Required**. Plaintext password. |
