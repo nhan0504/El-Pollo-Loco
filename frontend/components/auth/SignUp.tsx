@@ -16,6 +16,8 @@ import { AuthContext } from '@/contexts/authContext';
 
 export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [emailFormatError, setEmailFormatError] = useState<boolean>(false);
+  const [existingError, setExistingError] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
   const { isAuth } = useContext(AuthContext);
   const { push } = useRouter();
@@ -46,8 +48,9 @@ export default function SignUp() {
           );
     };
     if (!validateEmail(email)) {
-      console.log('Invalid email format.');
-      return;
+      setEmailFormatError(true);
+    } else {
+      setEmailFormatError(false);
     }
 
     if (password === confirm_password) {
@@ -67,8 +70,13 @@ export default function SignUp() {
         .then((res) => {
           if (res.status === 200) {
             setAlert(false);
+            setExistingError(false);
             push('/auth/login');
+          } else if (res.status === 409){
+            setExistingError(true);
+            setAlert(true);
           } else {
+            setExistingError(false);
             setAlert(true);
           }
         })
@@ -132,10 +140,12 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  error={emailFormatError}
                   id="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  helperText={emailFormatError ? 'Invalid email format.' : undefined}
                 />
               </Grid>
               <Grid item xs={12}>
