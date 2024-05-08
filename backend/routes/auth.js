@@ -14,6 +14,16 @@ var transporter = nodemailer.createTransport({
         pass: `${process.env.EMAIL_PASSWORD}`
     }
 }); */
+
+//Email Sendmail (requires unix)
+// var nodemailer = require('nodemailer');
+
+// let transporter = nodemailer.createTransport({
+//     sendmail: true,
+//     newline: 'unix',
+//     path: '/usr/sbin/sendmail'
+// });
+
 //--------------------------------------
 
 //Passport
@@ -31,28 +41,28 @@ passport.use(
                 return cb(null, false, { message: 'Incorrect username or password.' });
             }
 
-      crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function (err, hashedPassword) {
-        if (err) {
-          res.status(500).send(err);
-        }
-        try {
-          const hashedPasswordHex = hashedPassword.toString('hex');
-          if (
-            crypto.timingSafeEqual(
-              Buffer.from(row[0].pass, 'utf-8'),
-              Buffer.from(hashedPasswordHex, 'utf-8'),
-            )
-          ) {
-            return cb(null, row[0]);
-          } else {
-            return cb(null, false, { message: 'Incorrect username or password.' });
-          }
-        } catch (e) {
-          return cb(null, false, { message: 'Incorrect username or password.' });
-        }
-      });
-    });
-  }),
+            crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                try {
+                    const hashedPasswordHex = hashedPassword.toString('hex');
+                    if (
+                        crypto.timingSafeEqual(
+                            Buffer.from(row[0].pass, 'utf-8'),
+                            Buffer.from(hashedPasswordHex, 'utf-8'),
+                        )
+                    ) {
+                        return cb(null, row[0]);
+                    } else {
+                        return cb(null, false, { message: 'Incorrect username or password.' });
+                    }
+                } catch (e) {
+                    return cb(null, false, { message: 'Incorrect username or password.' });
+                }
+            });
+        });
+    }),
 );
 
 passport.serializeUser(function(user, cb) {
@@ -213,6 +223,23 @@ router.get('/profile', checkAuthenticated, (req, res) => {
             return res.status(200).send("Email with reset link has been sent.");
           }
       }); 
+
+      //Configure sendmail(requires linux)
+      var mailOptions = {
+          from: 'support@elpolloloco.com',
+          to: `mremley@umass.edu`,
+          subject: `NO SMTP Forgot Password Token`,
+          text: `Token: Expires:`
+      };
+
+      //Email token to the user with sendmail(requires linux)
+      transporter.sendMail(mailOptions, function(error, info) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log('Email sent: ' + info.response);
+          }
+      });
 
       return res.status(200).send("Email with reset link has been sent.");
     });
