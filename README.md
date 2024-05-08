@@ -12,4 +12,4 @@ Step 2: Start the NextJS server
 $ cd frontend
 $ npm run dev
 
-Step 3: Follow the link in the console output to the webpage (http://localhost:)
+Step 3: Follow the link in the console output to the webpage (http://localhost:3001)
