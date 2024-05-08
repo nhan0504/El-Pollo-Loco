@@ -35,7 +35,7 @@ export default function Feed({ pollData, setPollData }: any) {
 
         // Directly pass in the list of poll ids - can't use states
         // since they aren't set until the function exits
-        await getVoted(data.map((poll) => {
+        await getVoted(data.map((poll: any) => {
           return poll.poll_id;
         }));
 
@@ -48,7 +48,7 @@ export default function Feed({ pollData, setPollData }: any) {
   }
 
   // Pass it the list of poll ids of 6 polls that were just fetched
-  async function getVoted(polls) {
+  async function getVoted(polls: any) {
     try{
       let response = await fetch(`${process.env.BACKEND_URL}/polls/vote/voted`, {
         method: 'GET',
@@ -63,7 +63,7 @@ export default function Feed({ pollData, setPollData }: any) {
         // this filtered list while keeping the original complete list. Otherwise
         // we have to keep fetching the complete list every time more polls are
         // loaded w/ infinite scroll
-        setPollsVoted(data.filter((poll) => polls.includes(poll.poll_id)));
+        setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
       }
       else{
         setPollsVoted([{poll_id: -1, option_id: -1}]);
