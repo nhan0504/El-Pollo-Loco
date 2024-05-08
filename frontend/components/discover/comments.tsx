@@ -83,6 +83,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
 
 function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, voted: any){
   
+  let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
   let [cmts, setCmts] = React.useState([])
   let [userids, setUserIds] = React.useState([])
   let [optionVotes, setOptionVotes] = React.useState([])
@@ -137,7 +138,9 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           response.json().then((re)=>{
             // alert(re)
             setCmts(re)
-            
+            re = (re.map((obj: any)=>obj.user_id))
+            re = re.filter((item: number, index: number) => re.indexOf(item) === index);
+            userids = re
             return re
           });
         }
@@ -170,10 +173,10 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   })
 
 
-  function OptionsToColors(){
-    let voters: number[] = [];
-    optionVotes?.map((opt: number)=>{
-      fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
+   function OptionsToColors(){
+    let voters: number[][] = [];
+    optionVotes?.map(async (opt: number)=>{
+      await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
         method: 'GET',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
@@ -196,12 +199,11 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
         .catch((error) => {});
   
     })
-    console.log(voters);
-    
+    return voters;
   }
 
   
-  function Comment(data: any) {
+  function Comment(data: any, color: any) {
     //need to save the current comment id
     return (
       <Paper style={{ padding: "20px 10px"}} elevation={3}>
@@ -221,16 +223,26 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
 
   function Comments(pollId: number, cmts: any) {
     //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
+    //make color user_id pairing based on what they  voted for
+    let voters = OptionsToColors();
+    let colorPairs = new Map<number, string>();
+    for(let i = 0; i <voters.length; i++){
+      //find user in votes?
+      for(let j = 0; j<voters[i].length; j++){
+        colorPairs.set(voters[i][j], optionColors[i])
+      }
+    }
+    console.log(colorPairs)
     let listOfComments: any = []
     if( cmts.length>0){
       listOfComments.push(<React.Fragment>
-        {Comment(cmts[0])}
+        {Comment(cmts[0], "blue")}
       </React.Fragment>);
     }
     for (let i = 1; i < cmts.length; i++) {
       listOfComments.push(<React.Fragment>
         <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
-        {Comment(cmts[i])}
+        {Comment(cmts[i],  "blue")}
       </React.Fragment>)
     }
     return (
@@ -317,7 +329,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   
   function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
     let { innerWidth: width, innerHeight: height } = window;
-    OptionsToColors();
+    
     width = (width)*0.5
     //load until comments is not empty
     return (
