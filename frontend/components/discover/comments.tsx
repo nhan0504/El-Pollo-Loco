@@ -96,11 +96,12 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
     // is better than directly setting `setValue(value + 1)`
   }
   let [canComment, setCanComment]  = React.useState("false")
+  canComment = String(localStorage.getItem("username"))
   if (isAuth==false){
     //alert("you cannot comment wo loggin in")
   }
   else{
-    setCanComment(String(localStorage.getItem("username")))
+    //setCanComment(canCmt)
   }
   
 
