@@ -69,8 +69,8 @@ export default function SignUp() {
       })
         .then((res) => {
           if (res.status === 200) {
-            setAlert(false);
             setExistingError(false);
+            setAlert(false);
             push('/auth/login');
           } else if (res.status === 409){
             setExistingError(true);
@@ -84,6 +84,7 @@ export default function SignUp() {
           throw err;
         });
     } else {
+      setExistingError(false);
       setPasswordError(true);
     }
   };
@@ -140,7 +141,7 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  error={emailFormatError}
+                  error={emailFormatError, existingError}
                   id="email"
                   label="Email Address"
                   name="email"
@@ -152,10 +153,12 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  error={existingError}
                   id="username"
                   label="Username"
                   name="username"
                   autoComplete="Username"
+                  helperText={existingError ? 'Username or email address already exists.' : undefined}
                 />
               </Grid>
               <Grid item xs={12}>
