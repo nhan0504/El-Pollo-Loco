@@ -25,11 +25,10 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import { ModalDialog } from '@mui/joy';
 import PollCard from  './pollCardNoComment'
-import useWindowDimensions from '../dimensions';
 
 
 
-export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number) {
+export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, voted: any) {
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
   return (
@@ -73,7 +72,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             Comments
           </Typography>
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {Parent(tags, question, opts, username, pollId)}
+            {Parent(tags, question, opts, username, pollId, voted)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -82,9 +81,13 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
+function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, voted: any){
   
+  let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
   let [cmts, setCmts] = React.useState([])
+  let [userids, setUserIds] = React.useState([])
+  let [optionVotes, setOptionVotes] = React.useState([])
+  let [colorPairs, setColorPairs] = React.useState(new Map<number, string>());
   const { isAuth, setAuth } = useContext(AuthContext);
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -118,6 +121,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       })
       .catch((error) => {});
   }
+  
 
   const CommentGetter = useEffect(()=>{
 
@@ -135,6 +139,9 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           response.json().then((re)=>{
             // alert(re)
             setCmts(re)
+            re = (re.map((obj: any)=>obj.user_id))
+            re = re.filter((item: number, index: number) => re.indexOf(item) === index);
+            userids = re
             return re
           });
         }
@@ -143,10 +150,66 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       
   }, [])
 
+  const GetVotes = useEffect(()=>{
+    if (optionVotes.length == 0){
+    fetch(`${process.env.BACKEND_URL}/polls/vote/${pollId}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+          response.json().then((re)=>{
+            // alert(re)
+            setOptionVotes(re.map((obj: any)=>(obj.option_id)))
+          });
+        }
+      })
+      .catch((error) => {});}
+    
+  })
+
+
+   function OptionsToColors(){
+    let voters: number[][] = [];
+    optionVotes?.map(async (opt: number, ind: number)=>{
+      await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            response.json().then((re)=>{
+              // alert(re)
+              
+              let start: number[] = []
+              let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
+              for(let j = 0; j<ret.length; j++){
+                  colorPairs.set(ret[j], optionColors[ind]);
+                
+              }
+              voters.push(ret);
+            });
+          }
+        })
+        .catch((error) => {});
   
+    })
+    return voters;
+  }
 
   
-  function Comment(data: any) {
+  function Comment(data: any, color: any) {
+    //need to save the current comment id
     return (
       <Paper style={{ padding: "20px 10px"}} elevation={3}>
       <Grid container  spacing={2}>
@@ -154,9 +217,10 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           <Avatar alt="Remy Sharp" />
         </Grid>
         <Grid item xs>
-          <h4 style={{ margin: 2, textAlign: 'left' }}>{data.username}</h4> 
+          <h4 style={{ margin: 2, textAlign: 'left', color: color, textShadow: `0 0 0.1em ${color}, 0 0 0.02em ${color}`}}>{data.username}</h4> 
           <p style={{ textAlign: 'left' }}>{data.comment} </p>
-        </Grid>
+          
+          </Grid>
       </Grid>
       </Paper>
     );
@@ -164,16 +228,18 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
 
   function Comments(pollId: number, cmts: any) {
     //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
+    //make color user_id pairing based on what they  voted for
+    OptionsToColors();
     let listOfComments: any = []
     if( cmts.length>0){
       listOfComments.push(<React.Fragment>
-        {Comment(cmts[0])}
+        {Comment(cmts[0], colorPairs.get(cmts[0].user_id))}
       </React.Fragment>);
     }
     for (let i = 1; i < cmts.length; i++) {
       listOfComments.push(<React.Fragment>
         <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
-        {Comment(cmts[i])}
+        {Comment(cmts[i],  colorPairs.get(cmts[i].user_id))}
       </React.Fragment>)
     }
     return (
@@ -185,6 +251,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
       </Paper>
     );
   }
+
   
   function AddComment(this: any, cmts: any){
     let [currComment, setCurrComment] = React.useState("")
@@ -253,27 +320,34 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
           </React.Fragment>
       );}
 
+
     
   }
   
   function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number){
     let { innerWidth: width, innerHeight: height } = window;
+    
     width = (width)*0.5
     //load until comments is not empty
-    if (cmts.length==0){
-
-    }
     return (
+      <div>
+      <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow: 'auto' }}>
-            {PollCard(tags, question, opts, username)}
+            {PollCard(tags, question, opts, username, voted)}
             {Comments(pollId, cmts)}
             {AddComment(cmts)}
             
         </Paper>
+        </div>
     );
   }
+  
+
+  
   return CommentsWPoll(tags, question, opts, username, pollId);
+
+
 }
 
 function NoComments(){
@@ -291,6 +365,10 @@ function NoComments(){
     </Paper>
   );
 }
+
+
+//first  get votes by  poll id, then 
+// for each option get hte users who voted on that
 
 
 
