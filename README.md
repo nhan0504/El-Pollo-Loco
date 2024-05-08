@@ -59,7 +59,7 @@ Returns status `401` if client is not logged in upon request.
 ```
 Returns status `401` if user is not logged in.
 
-#### Get Profile Information
+#### Get Profile Information (Authentication)
 
 ```http
   GET /auth/profile/
