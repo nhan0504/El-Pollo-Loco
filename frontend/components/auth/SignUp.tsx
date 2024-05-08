@@ -37,6 +37,7 @@ export default function SignUp() {
     const fname = data.get('firstname');
     const lname = data.get('lastname');
 
+    //  Validate email format (regular expression)
     const validateEmail = (email: FormDataEntryValue | null) => {
       return String(email)
           .toLowerCase()
