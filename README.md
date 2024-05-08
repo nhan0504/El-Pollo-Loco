@@ -1,5 +1,7 @@
 Read Me!
 
+Dependencies: React, NextJS, ExpressJS, MaterialUI
+
 Usage:
 
 Step 1: Start the ExpressJS server
