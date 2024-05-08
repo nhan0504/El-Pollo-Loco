@@ -100,26 +100,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
     //alert("you cannot comment wo loggin in")
   }
   else{
-    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text);
-          });
-        } else {
-          response.json().then((re)=>{
-            // alert(re)
-            if (re!="User is not authenticated"){
-              setCanComment(re.username)
-            }
-          });
-        }
-      })
-      .catch((error) => {});
+    setCanComment(String(localStorage.getItem("username")))
   }
   
 
@@ -174,8 +155,8 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   })
 
 
-   function OptionsToColors(){
-    let voters: number[][] = [];
+   const OptionsToColors: any = useEffect(()=>{
+    let voters: any[][] = [];
     optionVotes?.map(async (opt: number, ind: number)=>{
       await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
         method: 'GET',
@@ -191,7 +172,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
             response.json().then((re)=>{
               // alert(re)
               
-              let start: number[] = []
+              let start: any[] = []
               let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
               for(let j = 0; j<ret.length; j++){
                   colorPairs.set(ret[j], optionColors[ind]);
@@ -204,8 +185,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
         .catch((error) => {});
   
     })
-    return voters;
-  }
+  })
 
   
   function Comment(data: any, color: any) {
@@ -229,7 +209,6 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   function Comments(pollId: number, cmts: any) {
     //wrapped up in the same paper means they r replies to each other, seperate papers r seperate comments
     //make color user_id pairing based on what they  voted for
-    OptionsToColors();
     let listOfComments: any = []
     if( cmts.length>0){
       listOfComments.push(<React.Fragment>
