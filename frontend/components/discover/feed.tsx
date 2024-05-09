@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grow from '@mui/material/Grow';
 
+
+
 export default function Feed({ pollData, setPollData }: any) {
   const [isLoading, setLoading] = useState<boolean>(true);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);

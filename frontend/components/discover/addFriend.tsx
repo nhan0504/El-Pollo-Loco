@@ -21,7 +21,7 @@ const style = {
     borderRadius: 1
   };
   
-  export default function usernameFriend(username: string) {
+  export default function usernameFriend(username: string, user_id: number) {
     const [open, setOpen] = React.useState(false);
     const [isFriend, setFreind] = React.useState(false);
     const handleOpen = () => setOpen(true);
@@ -30,7 +30,10 @@ const style = {
       function handleClick(event: any): void {
           //alert("Successfully added friend!");
           setOpen(false);
-          setFreind(true);
+          setFreind(true); //setFreind is just a flag to tell the frontend what type of heart to render
+          //here we will actually make a freind in the db   
+          alert(user_id)
+          
       }
 
     return (

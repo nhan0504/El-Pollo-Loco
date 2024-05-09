@@ -22,6 +22,8 @@ type Option = {
   option_id: number;
 };
 
+
+
 function MakeCard(
   tags: Array<string>,
   question: string,
@@ -31,6 +33,7 @@ function MakeCard(
   voted: {poll_id: number, option_id: number}
 ) {
   //comment
+  const [user_id, setUserId] = React.useState(-1)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -58,6 +61,19 @@ function MakeCard(
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
+  useEffect(()=>{
+    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'include',
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then(re=> setUserId(re.user_id))
+        }
+      })
+      .catch();
+  }, [])
 
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
@@ -289,7 +305,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack alignItems="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" />
-              {usernameFriend(username)}
+              {usernameFriend(username, user_id)}
             </Stack>
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
           </Stack>
@@ -325,5 +341,6 @@ export default function PollCard(
   username: string, pollId: number,
   voted: {poll_id: number, option_id: number}
 ) {
+  
   return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId,voted)}</Box>;
 }
