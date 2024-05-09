@@ -21,6 +21,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
+import Divider from '@mui/material/Divider';
 
 type Option = {
   optionText: string;
@@ -37,7 +38,8 @@ function MakeCard(
   username: string, 
   pollId: number,
   createdAt: string,
-  voted: {poll_id: number, option_id: number}
+  voted: {poll_id: number, option_id: number},
+  inCommentBox: boolean
 ) {
   //comment
   const [user_id, setUserId] = React.useState(-1)
@@ -290,7 +292,13 @@ function MakeCard(
     return optList;
   }
 
-  
+  const commentBox = () => {
+    if (!inCommentBox)
+      return CommentBox(tags, question, opts, username, pollId, createdAt, voted)
+
+    else
+      return
+  }
 
 
   // Calculate percentage of votes for an option
@@ -375,9 +383,11 @@ function MakeCard(
         </CardContent>
         
         {optionList()}
-        <br/>
-        {CommentBox(tags, question, opts, username, pollId, voted)}
 
+        <br/>
+        {commentBox()}
+        <br/>
+        <Divider></Divider>
         
         {/* <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography> */}
 
@@ -395,12 +405,9 @@ function MakeCard(
           </CardContent>
 
           
-          {/* <Box sx={{color: 'blue', display: 'flex', flexDirection:"column", alignContent:"flex-end", justifyContent: 'space-evenly' }}> */}
 
-          {/* {CommentBox(tags, question, opts, username, pollId, voted)} */}
           <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography>
-
-          {/* </Box> */}
+          {/* <br/> */}
 
           <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{border: '3px solid black', borderRadius:"10px"}}>
             <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
@@ -429,8 +436,9 @@ export default function PollCard(
   username: string, 
   pollId: number,
   createdAt: string,
-  voted: {poll_id: number, option_id: number}
+  voted: {poll_id: number, option_id: number},
+  inCommentBox: boolean
 ) {
   
-  return <Box sx={{ minWidth: 450}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox)}</Box>;
 }
