@@ -16,6 +16,8 @@ import { AuthContext } from '@/contexts/authContext';
 
 export default function SignUp() {
   const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [emailFormatError, setEmailFormatError] = useState<boolean>(false);
+  const [existingError, setExistingError] = useState<boolean>(false);
   const [alert, setAlert] = useState<boolean>(false);
   const { isAuth } = useContext(AuthContext);
   const { push } = useRouter();
@@ -37,6 +39,21 @@ export default function SignUp() {
     const fname = data.get('firstname');
     const lname = data.get('lastname');
 
+    //  Validate email format (regular expression)
+    const validateEmail = (email: FormDataEntryValue | null) => {
+      return String(email)
+          .toLowerCase()
+          .match(
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          );
+    };
+    if (!validateEmail(email)) {
+      setEmailFormatError(true);
+      return;
+    } else {
+      setEmailFormatError(false);
+    }
+
     if (password === confirm_password) {
       setPasswordError(false);
       fetch(`${process.env.BACKEND_URL}/auth/signup`, {
@@ -53,9 +70,14 @@ export default function SignUp() {
       })
         .then((res) => {
           if (res.status === 200) {
+            setExistingError(false);
             setAlert(false);
             push('/auth/login');
+          } else if (res.status === 409){
+            setExistingError(true);
+            setAlert(true);
           } else {
+            setExistingError(false);
             setAlert(true);
           }
         })
@@ -63,6 +85,7 @@ export default function SignUp() {
           throw err;
         });
     } else {
+      setExistingError(false);
       setPasswordError(true);
     }
   };
@@ -119,20 +142,25 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  //error={emailFormatError}
+                  error={emailFormatError, existingError}
                   id="email"
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  helperText={emailFormatError ? 'Invalid email format.' : undefined}
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
+                  error={existingError}
                   id="username"
                   label="Username"
                   name="username"
                   autoComplete="Username"
+                  helperText={existingError ? 'Username or email address already exists.' : undefined}
                 />
               </Grid>
               <Grid item xs={12}>

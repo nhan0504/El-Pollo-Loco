@@ -8,13 +8,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, IconButton, Modal } from '@mui/material';
-import { useContext, useState} from 'react';
+import { useContext, useState, useEffect} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
 import { AuthContext } from '@/contexts/authContext';
 import { useRouter } from 'next/navigation';
-import Collapse from '@mui/material/Collapse';
+import usernameFriend from './addFriend'
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -28,14 +28,18 @@ type Option = {
   option_id: number;
 };
 
+
+
 function MakeCard(
   tags: Array<string>,
   question: string,
   opts: Array<Option>,
-  username: string,
-  poll_id: number
+  username: string, 
+  pollId: number,
+  voted: {poll_id: number, option_id: number}
 ) {
   //comment
+  const [user_id, setUserId] = React.useState(-1)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -54,6 +58,29 @@ function MakeCard(
     comments: 0,
   });
 
+  const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
+
+  // If the user has voted on this poll, automatically show results
+  useEffect(() => {
+    if(voted.option_id != -1){
+      ShowResults();
+      setHasVoted({voted: true, option_id: voted.option_id});
+    }
+  }, []);
+  useEffect(()=>{
+    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'include',
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json().then(re=> setUserId(re.user_id))
+        }
+      })
+      .catch();
+  }, [])
+
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   // Tracks tag dialog open state as well as whether the selected tag was actually followed
@@ -66,7 +93,8 @@ function MakeCard(
     if (isAuth == false) {
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
-    } else {
+    } 
+    else if (!hasVoted.voted) {
       fetch(`${process.env.BACKEND_URL}/polls/vote`, {
         method: 'POST',
         credentials: 'include',
@@ -84,7 +112,7 @@ function MakeCard(
             // show results
             setCollapsed(true)
             cardData.opts.pop();
-
+            setHasVoted({voted: true, option_id: cardData.opts[ind].option_id});
 
             // update local vote count - votes fetched at page load + 1
             cardData.opts[ind].votes = cardData.opts[ind].votes + 1;
@@ -107,10 +135,13 @@ function MakeCard(
   };
 
   const ShowResults = () => {
-    // Remove Show Results  button
-    cardData.opts.pop();
-    setCardData({...cardData, opts: cardData.opts})
+    if(cardData.opts[cardData.opts.length - 1].optionText === "Show Results"){
+      // Remove Show Results button when it's clicked
+      cardData.opts.pop();
+      setCardData({...cardData, opts: cardData.opts})
+    }
     setCollapsed(true);
+
   }
 
   // colors for options, applied in order
@@ -118,8 +149,9 @@ function MakeCard(
 
   function optionList () {
 
-    // I think the main options buttons would look better with a border, or the outlined variant w/ different background colors
-
+    // ok, better idea for the option button appearance - regular color = outlined and hover = solid, 
+    // then whichever result the user has voted for (if any) has the fully solid background when results
+    // are shown
     let optList = cardData.opts?.map((option, index) => {
       
       // If it's the Show Results button, return special button
@@ -155,13 +187,60 @@ function MakeCard(
         )
       }
       else{
+        // Different button styles depending on state of poll/option
+        const styles = () => ({
+          thisOptionVoted: {
+              ":hover": {
+                backgroundColor: optionColors[index],
+                color: "white",
+                border: '2px solid ' + optionColors[index],
+              },
+              bgcolor: optionColors[index],
+              color: "white",
+              border: '2px solid ' + optionColors[index],
+            },
+          notThisOption:{
+            ":hover": {
+              backgroundColor: "inherit",
+              color: "black",
+              border: '2px solid ' + optionColors[index],
+            },
+            bgcolor: "inherit",
+            color: "black",
+            border: '2px solid ' + optionColors[index],
+          },
+          pollNotVoted:{
+            ":hover": {
+              backgroundColor: optionColors[index],
+              color: "white",
+              border: '2px solid ' + optionColors[index],
+            },
+            bgcolor: "inherit",
+            color: "black",
+            border: '2px solid ' + optionColors[index],
+          }
+          
+        });
+        
+        let style
+
+        if(hasVoted.voted && option.option_id == hasVoted.option_id){
+          style = styles().thisOptionVoted;
+        }
+        else if(hasVoted.voted){
+          style = styles().notThisOption;
+        }
+        else{
+          style = styles().pollNotVoted;
+        }
+
         return (
         <CardActions key={option.optionText}>
           {/* Added onClick function as addVote */}
           <Button
             variant="outlined"
             value={option.optionText}
-            onClick={(event) => AddVote(index)}
+            onClick={(event) => {AddVote(index)}}
             style={{ 
               fontSize: "13px", 
               maxWidth: collapsed?"40%":"100%", 
@@ -169,15 +248,11 @@ function MakeCard(
               minHeight: '100%'
             }}
             sx={{
-              ':hover': {
-                // theme.palette.primary.main
-                bgcolor: "inherit",
-                color: optionColors[index],
-                border: '1px solid ' + optionColors[index],
-              },
-              backgroundColor: optionColors[index],
-              color: "white",
-              // border: '1px solid black',
+              // The hover/normal colors are swapped to show the option that
+              ":hover": style[':hover'],
+              color:style.color,
+              bgcolor:style.bgcolor,
+              border: style.border,
               opacity: 0.8,
               boxShadow:2,
               textTransform:"none",
@@ -193,7 +268,7 @@ function MakeCard(
             variant="determinate" 
             value={getPercent(option)} 
             sx={{ 
-              height:10, 
+              height:5, 
               '& .MuiLinearProgress-bar': {
                   backgroundColor: optionColors[index],
                   opacity:1
@@ -213,6 +288,9 @@ function MakeCard(
 
     return optList;
   }
+
+  
+
 
   // Calculate percentage of votes for an option
   const getPercent = (option: { optionText: string; votes: number }) => {
@@ -245,7 +323,7 @@ function MakeCard(
   return (
     <React.Fragment>
       <Card
-        sx={{boxShadow:2}}
+        sx={{display: { xs: 'flex', lg: 'none' }, boxShadow:2}}
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -259,7 +337,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack alignItems="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" />
-              <Typography variant="subtitle2">{username}</Typography>
+              {usernameFriend(username, user_id)}
             </Stack>
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
           </Stack>
@@ -273,7 +351,7 @@ function MakeCard(
         {optionList()}
 
         <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username)}
+          {CommentBox(tags, question, opts, username, pollId, voted)}
           
           {/* <ButtonGroup style={{fontSize: '12px'}} variant="outlined" size="small" aria-label="Basic button group"> */}
           <Box sx={{ color: 'blue', display: 'flex-inline', alignItems:"center" }}>
@@ -313,8 +391,9 @@ export default function PollCard(
   tags: Array<string>,
   question: string,
   opts: any,
-  username: string,
-  poll_id: number
+  username: string, pollId: number,
+  voted: {poll_id: number, option_id: number}
 ) {
-  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, poll_id)}</Box>;
+  
+  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId,voted)}</Box>;
 }

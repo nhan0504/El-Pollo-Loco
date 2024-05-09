@@ -53,6 +53,7 @@ function PollForm() {
   const [currTag, setTag] = useState<string>("");
   const [pressed, setPressed] = useState<KeyboardEvent>();
 
+  // Update all pollData values every time an input box changes
   const handleChange = (event: any, fieldName: string, ind: number = 0) => {
     const title = event.target.value;
     if (fieldName === 'title') {
@@ -126,6 +127,8 @@ function PollForm() {
       : alert('You cannot add more than 6 options.');
   };
 
+  // Not great naming for variables here but ind = index of the option being removed, match to
+  // map index to find the right option
   function removeOption(ind: number) {
     const newOptions =
       pollData.options.length > 2
@@ -281,7 +284,6 @@ function PollForm() {
             />
             </Typography>
 
-            
             <Button onClick={addOption}>Add poll option</Button>
 
             <FormGroup>{optionList}</FormGroup>
@@ -335,7 +337,6 @@ function PollForm() {
 }
 
 export default function CreatePoll() {
-  console.log('here!');
   return (
     <Box sx={{ minWidth: 370, minHeight: 700, m: 3, p: 3 }}>
       <PollForm />

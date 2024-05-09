@@ -5,9 +5,9 @@ const pool = require('../../db.js');
 
 const tagsFeed = require('./tagsFeed.js');
 
-router.get('/', function (req, res) {
+router.get('/:pageNum?', function (req, res) {
 
-  const pageNum = parseInt(req.body.page_num, 10) || 1;
+  const pageNum = parseInt(req.params.pageNum, 10) || 1;
   const offset = (pageNum - 1) * 6;
 
   // Weights for discover algorithm
@@ -19,7 +19,8 @@ router.get('/', function (req, res) {
         Polls.poll_id, 
         Polls.title, 
         Polls.created_at, 
-        Users.username, 
+        Users.username,
+        Users.user_id, 
         COUNT(Votes.vote_id) AS vote_count,
         GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags,
         (

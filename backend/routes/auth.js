@@ -6,14 +6,26 @@ var crypto = require('crypto');
 var pool = require('../db.js');
 
 //Email
+/* var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport({
+    service: 'outlook',
+    auth: {
+        user: `${process.env.EMAIL_ADDRESS}`,
+        pass: `${process.env.EMAIL_PASSWORD}`
+    }
+}); */
+
+//PASTE
+//Email Sendmail (requires unix)
 // var nodemailer = require('nodemailer');
-// var transporter = nodemailer.createTransport({
-//     service: 'outlook',
-//     auth: {
-//         user: `${process.env.EMAIL_ADDRESS}`,
-//         pass: `${process.env.EMAIL_PASSWORD}`
-//     }
+
+// let transporter = nodemailer.createTransport({
+//     sendmail: true,
+//     newline: 'unix',
+//     path: '/usr/sbin/sendmail'
 // });
+//END PASTE
+
 //--------------------------------------
 
 //Passport
@@ -31,28 +43,28 @@ passport.use(
                 return cb(null, false, { message: 'Incorrect username or password.' });
             }
 
-      crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function (err, hashedPassword) {
-        if (err) {
-          res.status(500).send(err);
-        }
-        try {
-          const hashedPasswordHex = hashedPassword.toString('hex');
-          if (
-            crypto.timingSafeEqual(
-              Buffer.from(row[0].pass, 'utf-8'),
-              Buffer.from(hashedPasswordHex, 'utf-8'),
-            )
-          ) {
-            return cb(null, row[0]);
-          } else {
-            return cb(null, false, { message: 'Incorrect username or password.' });
-          }
-        } catch (e) {
-          return cb(null, false, { message: 'Incorrect username or password.' });
-        }
-      });
-    });
-  }),
+            crypto.pbkdf2(pass, row[0].salt, 310000, 32, 'sha256', function(err, hashedPassword) {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                try {
+                    const hashedPasswordHex = hashedPassword.toString('hex');
+                    if (
+                        crypto.timingSafeEqual(
+                            Buffer.from(row[0].pass, 'utf-8'),
+                            Buffer.from(hashedPasswordHex, 'utf-8'),
+                        )
+                    ) {
+                        return cb(null, row[0]);
+                    } else {
+                        return cb(null, false, { message: 'Incorrect username or password.' });
+                    }
+                } catch (e) {
+                    return cb(null, false, { message: 'Incorrect username or password.' });
+                }
+            });
+        });
+    }),
 );
 
 passport.serializeUser(function(user, cb) {
@@ -115,9 +127,10 @@ router.post('/signup', function(req, res) {
             } else if (results.length != 0) {
                 res.status(409).send('User with this name or email already exists.');
             } else {
+                const salt = crypto.randomBytes(8).toString('hex');
                 crypto.pbkdf2(
                     userData.password,
-                    crypto.randomBytes(8).toString('hex'),
+                    salt,
                     310000,
                     32,
                     'sha256',
@@ -130,7 +143,7 @@ router.post('/signup', function(req, res) {
                                 userData.fname,
                                 userData.lname,
                                 userData.email,
-                                userData.salt,
+                                salt,
                             ],
                             (error, results) => {
                                 if (error) {
@@ -165,7 +178,7 @@ router.get('/profile', checkAuthenticated, (req, res) => {
     });
 });
 
-router.post("/login/forgot_password", (req, res) => {
+/* router.post("/login/forgot_password", (req, res) => {
     // Get email. DONE
     // Check if user exists. DONE
     // Check if token already exists. DONE
@@ -204,14 +217,32 @@ router.post("/login/forgot_password", (req, res) => {
         text: `You can reset your password at ${process.env.REQUEST_ORIGIN_URL}/auth/login/reset_password/${token}. This link expires in 30 minutes.`
       };
 
-      /* transporter.sendMail(mailOptions, function(error, info) {
+     transporter.sendMail(mailOptions, function(error, info) {
           if (error) {
               return res.status(500).send(error)
           }
           else {
             return res.status(200).send("Email with reset link has been sent.");
           }
-      }); */
+      }); 
+      //PASTE sendmail
+      //Configure sendmail(requires linux)
+      var mailOptions = {
+          from: 'support@elpolloloco.com',
+          to: `mremley@umass.edu`,
+          subject: `NO SMTP Forgot Password Token`,
+          text: `Token: Expires:`
+      };
+
+      //Email token to the user with sendmail(requires linux)
+      transporter.sendMail(mailOptions, function(error, info) {
+          if (error) {
+              console.log(error);
+          } else {
+              console.log('Email sent: ' + info.response);
+          }
+      });
+      //ENDPASTE sendmail
 
       return res.status(200).send("Email with reset link has been sent.");
     });
@@ -247,7 +278,7 @@ router.post("/login/reset_password/:token", (req, res) => {
       });
     });
   });
-});
+}); */
 
 
 module.exports = router;
