@@ -30,10 +30,9 @@ function MakeCard(
   opts: Array<Option>,
   username: string, 
   pollId: number,
-  voted: {poll_id: number, option_id: number}
+  voted: {poll_id: number, option_id: number}, user_id: number
 ) {
   //comment
-  const [user_id, setUserId] = React.useState(-1)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -61,20 +60,6 @@ function MakeCard(
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
-  useEffect(()=>{
-    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'include',
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then(re=> setUserId(re.user_id))
-        }
-      })
-      .catch();
-  }, [])
-
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   
@@ -339,8 +324,8 @@ export default function PollCard(
   question: string,
   opts: any,
   username: string, pollId: number,
-  voted: {poll_id: number, option_id: number}
+  voted: {poll_id: number, option_id: number}, user_id:number
 ) {
   
-  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId,voted)}</Box>;
+  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId,voted, user_id)}</Box>;
 }
