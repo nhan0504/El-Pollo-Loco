@@ -32,7 +32,7 @@ const style = {
           setOpen(false);
           setFreind(true); //setFreind is just a flag to tell the frontend what type of heart to render
           //here we will actually make a freind in the db   
-          alert(user_id)
+          //TODO
           
       }
 
