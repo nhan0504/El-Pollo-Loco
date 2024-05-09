@@ -49,6 +49,7 @@ export default function SignUp() {
     };
     if (!validateEmail(email)) {
       setEmailFormatError(true);
+      return;
     } else {
       setEmailFormatError(false);
     }
@@ -141,6 +142,7 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  //error={emailFormatError}
                   error={emailFormatError, existingError}
                   id="email"
                   label="Email Address"
