@@ -25,7 +25,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { isAuth, setAuth } = useContext(AuthContext);
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
 
 
   const isMenuOpen = Boolean(anchorEl);
@@ -182,7 +182,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
 
       return(
         <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
-        
+        {/* Need to make sure the correct buttons are chosen before nav render */}
         <Typography>
           <Button variant="text" onClick={(event) => {push("/auth/login")}}>Log in</Button>
         </Typography>

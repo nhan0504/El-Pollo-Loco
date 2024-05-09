@@ -22,7 +22,27 @@ export default function SignIn() {
   useEffect(() => {
     if (isAuth) {
       console.log('AUTH');
-      push('/discover');
+
+      // Now that we're authenticated, get user id and set in localStorage
+      fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then((res) => {
+          if (res.status === 200) {   
+            res.json().then((re)=>{
+              // alert(re)
+              localStorage.setItem("userid", String(re.user_id));
+              push('/discover');
+            });       
+
+          } else {
+            // If it doesn't successfully get the info, set userid to -1
+            localStorage.setItem("userid", String(-1));
+          }
+        })
+        .catch((error) => error.message);
+      // push('/discover');
     }
   }, [isAuth]);
 
@@ -51,7 +71,6 @@ export default function SignIn() {
             localStorage.setItem("username", String(username));
             localStorage.setItem("feed", "discover");
           }
-          push('/discover');
         } else {
           setAlert(true);
         }
@@ -63,7 +82,7 @@ export default function SignIn() {
       });
 
     
-        
+      
       
     
   };

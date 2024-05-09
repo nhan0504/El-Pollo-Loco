@@ -10,6 +10,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
+// Should cache some info in localStorage potentially, can share across components
+// and maybe decrease fetches
+
 export default function Feed({ pollData, setPollData }: any) {
 
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -31,7 +34,6 @@ export default function Feed({ pollData, setPollData }: any) {
   // infinite scrolling
 
   async function getPolls(feedType: string) {
-
     setLoading(true);
     let requestType: string = ""
 

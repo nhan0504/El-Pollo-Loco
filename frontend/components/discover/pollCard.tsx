@@ -440,5 +440,5 @@ export default function PollCard(
   inCommentBox: boolean
 ) {
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox)}</Box>;
 }
