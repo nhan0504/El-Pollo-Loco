@@ -142,8 +142,8 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  error={emailFormatError}
-                  //error={emailFormatError, existingError}
+                  //error={emailFormatError}
+                  error={emailFormatError, existingError}
                   id="email"
                   label="Email Address"
                   name="email"
