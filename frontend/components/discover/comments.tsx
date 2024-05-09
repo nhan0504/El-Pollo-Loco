@@ -36,8 +36,9 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
       <Button variant="outlined" color="neutral" onClick={()=>{
         setOpen(true)
       }}>
-        <Stack>
+        <Stack direction="row">
           <CommentIcon/>
+          &nbsp;
             Comments
         </Stack>
       </Button>
@@ -46,7 +47,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
         aria-describedby="modal-desc"
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
       >
         <ModalDialog >
         <Sheet

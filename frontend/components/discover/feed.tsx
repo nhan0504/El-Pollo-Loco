@@ -2,40 +2,60 @@
 import * as React from 'react';
 import { Container, Grid, Box } from '@mui/material';
 import PollCard from './pollCard';
-import FeedButtons from './feedButtons';
 import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grow from '@mui/material/Grow';
-
-
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
 export default function Feed({ pollData, setPollData }: any) {
+
   const [isLoading, setLoading] = useState<boolean>(true);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
-  // const [pollsOnPage, setPollsOnPage] = useState<number[]>();
+  const [currFeed, setCurrentFeed] = useState<string | null>(localStorage.getItem("feed") != null ? localStorage.getItem("feed") : 'discover');
+  const [noPolls, setNoPolls] = useState<boolean>(false);
 
   // Need to keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls by passing in the page num to GET request. Pages not zero indexed.
   const [virtualPage, setVirtualPage] = useState<number>(2);
 
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
-  useEffect(() => {
-    getPolls('discover');
-  }, []);
+  useEffect(() => {      
+    localStorage.setItem("feed", currFeed);
+    getPolls(currFeed);
+  }, [currFeed]);
 
   // Should there be another useEffect that triggers when the virtual page number is changed? Need to get more poll for
   // infinite scrolling
 
   async function getPolls(feedType: string) {
-    if (feedType === 'discover') {
-      let response = await fetch(`${process.env.BACKEND_URL}/feed`, {
-        method: 'GET'
+
+    setLoading(true);
+    let requestType: string = ""
+
+    if(feedType === 'discover')
+      requestType = "/feed"
+    else if(feedType === 'friends')
+      requestType = "/feed/tags/2"
+    else if(feedType === 'following')
+      requestType = "/feed/tags/1"
+    else{
+      requestType = "/feed"
+    }
+
+    try{
+
+      let response = await fetch(`${process.env.BACKEND_URL}` + requestType, {
+        method: 'GET',
+        credentials:'include'
       });
       
       let data = await response.json();
-      // console.log(response.text)
+
       if (response.ok && data.length > 0) {
-        // alert(JSON.stringify(data));
+        setNoPolls(false);    
 
         // Directly pass in the list of poll ids - can't use states
         // since they aren't set until the function exits
@@ -45,9 +65,15 @@ export default function Feed({ pollData, setPollData }: any) {
 
         // Wait until we have the list that tells us which polls on
         // the page have been voted on before continuing
-        setPollData(data);        
+        setPollData(data);    
         setLoading(false);
       }
+    }
+
+    catch (error) {
+      setPollData([]);
+      setNoPolls(true);
+      setLoading(false);
     }
   }
 
@@ -87,6 +113,112 @@ export default function Feed({ pollData, setPollData }: any) {
     return voted;
   }
 
+  const switchFeed = (currFeed: string) => {
+    setNoPolls(false);    
+    localStorage.setItem("feed", currFeed);
+    setCurrentFeed(currFeed);
+  };
+  
+  function FeedButtons() {
+    const styles = () => ({
+      currFeed: {
+        style:{
+          fontSize: '16px', 
+          fontWeight: 'bold'
+         } ,
+         sx:{
+          ':hover': {
+            // theme.palette.primary.main
+            color: "white",
+            bgcolor:"black"
+          },
+          minWidth:"100px",
+          bgcolor:"black", 
+          mr: 3, 
+          textTransform: 'capitalize', 
+          color: 'white'
+        }
+      },
+      notCurrFeed:{
+        style:{
+          fontSize: '16px'
+         } ,
+         sx:{
+          ':hover': {
+            // theme.palette.primary.main
+            color: "white",
+            bgcolor:"black",
+          },
+          minWidth:"100px",
+          bgcolor:"#eeeeee", 
+          mr: 3, 
+          textTransform: 'capitalize', 
+          color: 'black'
+        }
+      },
+    });
+
+    let discoverStyle = styles().notCurrFeed;
+    let friendsStyle = styles().notCurrFeed;
+    let followingStyle = styles().notCurrFeed;
+    followingStyle = styles().notCurrFeed;
+    if (currFeed == 'discover')
+      discoverStyle = styles().currFeed;
+    else if (currFeed == 'friends')
+      friendsStyle = styles().currFeed;
+    else if (currFeed == 'following')
+      followingStyle = styles().currFeed;
+
+
+    return (
+      /* Buttons to switch feeds */
+      <Box
+        component="section"
+        sx={{
+          display:"flex",
+          bgcolor: 'white',
+          color:"white",
+          width: '310px',
+          maxHeight: '40px',
+          p: 1,
+          m: 2,
+          // border: '2px solid black',
+          // borderRadius: '30px',
+          dropShadow:3,
+        }}
+      >
+        <Button
+          variant="text"
+          size="medium"
+          onClick={(event) => switchFeed("discover")}
+          style={discoverStyle?.style}
+          sx={discoverStyle?.sx}
+        >
+          Discover
+        </Button>
+        <Button
+          variant="text"
+          size="medium"
+          onClick={(event) => switchFeed("friends")}
+          style={friendsStyle?.style}
+          sx={friendsStyle?.sx}
+          //onClick={switchFeed}
+        >
+          Friends
+        </Button>
+        <Button
+          variant="text"
+          size="medium"
+          onClick={(event) => switchFeed("following")}
+          style={followingStyle?.style}
+          sx={followingStyle?.sx}
+        >
+          Following
+        </Button>
+      </Box>
+    );
+  }
+
   function FormRow(pollData: any) {
     // Not the state pollData, but a parameter that contains 1 or 2 polls
 
@@ -99,7 +231,7 @@ export default function Feed({ pollData, setPollData }: any) {
       let currCard = pollData[i];
       let loaded = true;
       // currCard.tags? alert(currCard.tags) : console.log("no tags");
-
+      let date = new Date(Date.parse(currCard?.created_at));
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
           {PollCard(
@@ -112,6 +244,7 @@ export default function Feed({ pollData, setPollData }: any) {
             })),
             currCard?.username, 
             currCard?.poll_id,
+            date.toDateString() + ", " + date.toLocaleTimeString(),
             wasVotedOn(currCard.poll_id)
           )}
         </Grid>,
@@ -126,13 +259,34 @@ export default function Feed({ pollData, setPollData }: any) {
     const cols = 2;
     let grid = [];
 
-    for (let i = 0; i < rows; i++) {
+    // If polls were retrievedm display them
+    if(!noPolls){
+      for (let i = 0; i < rows; i++) {
+        grid.push(
+          <Grid container item spacing={3} justifyContent="space-evenly" sx={{alignContent:"stretch"}} key={i}>
+            {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
+            {FormRow(pollData?.slice(i * cols, i * cols + cols))}
+          </Grid>
+          );
+      }
+    }
+
+    else if(noPolls){
+      let message: string = ""
+      if(currFeed == "friends")
+        message = "You don't have any friends yet! Click another user's username to get started."
+      else if(currFeed == "following")
+        message = "You're not following any tags yet. Click a tag on any poll to get started."
+      else
+        message = "Oops! We can't get any polls right now. Try again later."
+
       grid.push(
-        <Grid container item spacing={3} justifyContent="space-around" key={i}>
-          {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
-          {FormRow(pollData?.slice(i * cols, i * cols + cols))}
-        </Grid>
-        );
+        <Card sx={{alignSelf:"center"}}>
+          <CardContent>
+            <Typography>{message}</Typography>
+          </CardContent>
+        </Card>
+      );
     }
 
     return (

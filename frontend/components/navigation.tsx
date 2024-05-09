@@ -94,7 +94,8 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
                   .then((res) => {
                     handleMenuClose();
                     setAuth(false);
-                    //push("/auth/login");
+                    localStorage.clear()
+                    window.location.reload();
                   })
                   .catch();
               }}

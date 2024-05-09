@@ -36,6 +36,7 @@ function MakeCard(
   opts: Array<Option>,
   username: string, 
   pollId: number,
+  createdAt: string,
   voted: {poll_id: number, option_id: number}
 ) {
   //comment
@@ -302,17 +303,43 @@ function MakeCard(
   // Need to use tags endpoint to send POST request w/ tag id, but we don't have tags ids right now
   function followTag(tagName: string){
     setTagDialogOpen({open: false, followed: true});
+    if (isAuth == false) {
+      alert('You cannot follow tags without logging in. Redirecting to login page.');
+      push('/auth/login');
+    } else {
+      // alert("following tag")
+      fetch(`${process.env.BACKEND_URL}/tags/follow/` + tagName, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            // alert(response.text());
+            return response.text();
+          }
+        })
+        .catch((error) => error.message);
+      
+    }
+
   }
 
   // Alert for when tag is followed
   const followedAlert = () => {
     if(tagDialogOpen.followed == true){
-      // let tag = tagSelected.slice(0,1).toUpperCase() + tagSelected.slice(1, tagSelected.length)
+      let tag = tagSelected.slice(0,1).toUpperCase() + tagSelected.slice(1, tagSelected.length)
       return(
         <React.Fragment>
         <br/>
         <Alert style={{}} icon={<CheckIcon fontSize="inherit" />} severity="success"  onClose={(event) => {setTagDialogOpen({open: false, followed: false});}}>
-          {tagSelected} followed!
+          {tag} followed!
         </Alert>
         </React.Fragment>
       )
@@ -326,7 +353,6 @@ function MakeCard(
         sx={{display: { xs: 'flex', lg: 'none' }, boxShadow:2}}
         style={{
           display: 'flex',
-          justifyContent: 'center',
           flexDirection: 'column',
           border: '1px',
           borderRadius: 15,
@@ -349,36 +375,45 @@ function MakeCard(
         </CardContent>
         
         {optionList()}
+        <br/>
+        {CommentBox(tags, question, opts, username, pollId, voted)}
 
-        <CardContent sx={{ color: 'blue', display: 'flex'}}>
-          {CommentBox(tags, question, opts, username, pollId, voted)}
+        
+        {/* <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography> */}
+
+        <CardContent sx={{ color: 'blue', display: 'flex', alignItems:"baseline"}}>
           
-          {/* <ButtonGroup style={{fontSize: '12px'}} variant="outlined" size="small" aria-label="Basic button group"> */}
-          <Box sx={{ color: 'blue', display: 'flex-inline', alignItems:"center" }}>
+          <Box sx={{ width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap", justifyContent:"center"}}>
             {tags?.map((tag) => (
               <Button variant="contained" onClick={(event) => {    
-                let capitalized = tag.slice(0,1).toUpperCase() + tag.slice(1, tag.length)
-                setTagSelected(capitalized);
+                setTagSelected(tag);
                 setTagDialogOpen({open: true,  followed: false});
-              }} size="small" style={{fontSize: '12px'}} sx={{m:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
+              }} size="small" style={{fontSize: '12px'}} sx={{mx:1, my:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
             ))}
-            <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{border: '3px solid black', borderRadius:"10px"}}>
-              <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
-                
-                <DialogTitle textAlign="center">Would you like to follow this tag?</DialogTitle>           
-                <Typography textAlign="center" variant="body1">Polls tagged with "{tagSelected}" will appear on your Following feed.</Typography>
-                <br/>
-                <Button onClick={(event) => {followTag(tagSelected)}}  size="small" variant="contained" sx={{ alignSelf:"center"}}>{tagSelected} +</Button>
-              
-              </DialogContent>
-            </Dialog>
 
           </Box>
+          </CardContent>
+
           
-          {/* </ButtonGroup> */}
+          {/* <Box sx={{color: 'blue', display: 'flex', flexDirection:"column", alignContent:"flex-end", justifyContent: 'space-evenly' }}> */}
+
+          {/* {CommentBox(tags, question, opts, username, pollId, voted)} */}
+          <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography>
+
+          {/* </Box> */}
+
+          <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{border: '3px solid black', borderRadius:"10px"}}>
+            <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+              
+              <DialogTitle textAlign="center">Would you like to follow this tag?</DialogTitle>           
+              <Typography textAlign="center" variant="body1">Polls tagged with "{tagSelected}" will appear on your Following feed.</Typography>
+              <br/>
+              <Button onClick={(event) => {followTag(tagSelected)}}  size="small" variant="contained" sx={{ alignSelf:"center"}}>{tagSelected} +</Button>
+            
+            </DialogContent>
+          </Dialog>
 
           <br />
-        </CardContent>
       </Card>
 
       {followedAlert()}
@@ -391,9 +426,11 @@ export default function PollCard(
   tags: Array<string>,
   question: string,
   opts: any,
-  username: string, pollId: number,
+  username: string, 
+  pollId: number,
+  createdAt: string,
   voted: {poll_id: number, option_id: number}
 ) {
   
-  return <Box sx={{ minWidth: 375 }}>{MakeCard(tags, question, opts, username, pollId,voted)}</Box>;
+  return <Box sx={{ minWidth: 450}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted)}</Box>;
 }

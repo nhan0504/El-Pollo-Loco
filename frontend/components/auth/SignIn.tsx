@@ -49,6 +49,7 @@ export default function SignIn() {
           setAlert(false);
           if (username!=null){
             localStorage.setItem("username", String(username));
+            localStorage.setItem("feed", "discover");
           }
           push('/discover');
         } else {
