@@ -42,7 +42,6 @@ function MakeCard(
   inCommentBox: boolean
 ) {
   //comment
-  const [user_id, setUserId] = React.useState(-1)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -70,20 +69,6 @@ function MakeCard(
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
-  useEffect(()=>{
-    fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-      method: 'GET',
-      mode: 'cors',
-      credentials: 'include',
-    })
-      .then((res) => {
-        if (res.ok) {
-          res.json().then(re=> setUserId(re.user_id))
-        }
-      })
-      .catch();
-  }, [])
-
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   // Tracks tag dialog open state as well as whether the selected tag was actually followed
@@ -437,8 +422,8 @@ export default function PollCard(
   pollId: number,
   createdAt: string,
   voted: {poll_id: number, option_id: number},
-  inCommentBox: boolean
+  inCommentBox: boolean, user_id:number
 ) {
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox, user_id)}</Box>;
 }

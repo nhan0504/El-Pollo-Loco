@@ -26,8 +26,8 @@ export default function Feed({ pollData, setPollData }: any) {
 
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
   useEffect(() => {      
-    localStorage.setItem("feed", currFeed);
-    getPolls(currFeed);
+    localStorage.setItem("feed", String(currFeed));
+    getPolls(String(currFeed));
   }, [currFeed]);
 
   // Should there be another useEffect that triggers when the virtual page number is changed? Need to get more poll for
@@ -246,9 +246,7 @@ export default function Feed({ pollData, setPollData }: any) {
             })),
             currCard?.username, 
             currCard?.poll_id,
-            date.toDateString() + ", " + date.toLocaleTimeString(),
-            wasVotedOn(currCard.poll_id),
-            false
+            wasVotedOn(currCard.poll_id)
           )}
         </Grid>,
       );

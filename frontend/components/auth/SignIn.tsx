@@ -16,6 +16,7 @@ import { AuthContext } from '@/contexts/authContext';
 
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
+  const [uid, setUID] = useState(localStorage.setItem("my_user_id", ''))
   const { isAuth, setAuth } = useContext(AuthContext);
   const { push } = useRouter();
 
@@ -80,7 +81,21 @@ export default function SignIn() {
           setAlert(true);
         }
       });
-
+      fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            response.json().then((re=>setUID(localStorage.setItem("my_user_id", re.user_id))))
+          }
+        })
+        .catch((error) => {});
     
       
       
