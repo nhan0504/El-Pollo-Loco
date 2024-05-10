@@ -246,7 +246,8 @@ export default function Feed({ pollData, setPollData }: any) {
             })),
             currCard?.username, 
             currCard?.poll_id,
-            wasVotedOn(currCard.poll_id)
+            date.toDateString() + ", " + date.toLocaleTimeString(),
+            wasVotedOn(currCard.poll_id), false, currCard?.user_id
           )}
         </Grid>,
       );

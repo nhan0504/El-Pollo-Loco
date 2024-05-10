@@ -39,7 +39,7 @@ function MakeCard(
   pollId: number,
   createdAt: string,
   voted: {poll_id: number, option_id: number},
-  inCommentBox: boolean
+  inCommentBox: boolean, user_id: number
 ) {
   //comment
   const { push } = useRouter();
