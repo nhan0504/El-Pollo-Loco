@@ -444,7 +444,7 @@ function MakeCard(
     
     return {
       header: isFollowing(tagSelected) ? "Would you like to unfollow this tag?" : "Would you like to follow this tag?", 
-      body: isFollowing(tagSelected) ?"Polls tagged with " + tagSelected + " will no longer appear on your Following feed." : "Polls tagged with " + tagSelected + " will appear on your Following feed.", 
+      body: isFollowing(tagSelected) ?'Polls tagged with "' + tagSelected + '" will no longer appear on your Following feed.' : 'Polls tagged with "' + tagSelected + '" will appear on your Following feed.', 
     }
   }
 
