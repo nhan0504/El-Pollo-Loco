@@ -32,7 +32,7 @@ const style = {
     const handleClose = () => setOpen(false);
 
     React.useEffect(()=>{
-        console.log(my_user_id)
+        //console.log(my_user_id)
         if (isAuth){
             fetch(`${process.env.BACKEND_URL}/users/${my_user_id}/following`, {
                 method: 'GET',
