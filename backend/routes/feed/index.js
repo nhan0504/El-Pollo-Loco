@@ -4,6 +4,7 @@ var router = express.Router();
 const pool = require('../../db.js');
 
 const tagsFeed = require('./tagsFeed.js');
+const friendsFeed = require('./friendsFeed.js');
 
 router.get('/:pageNum?', function (req, res) {
 
@@ -105,5 +106,6 @@ router.get('/title/:titleName', function (req, res) {
 });
 
 router.use('/tags', tagsFeed);
+router.use('/friends', friendsFeed);
 
 module.exports = router;
