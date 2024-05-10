@@ -16,13 +16,35 @@ import { AuthContext } from '@/contexts/authContext';
 
 export default function SignIn() {
   const [alert, setAlert] = useState<boolean>(false);
+  const [uid, setUID] = useState(localStorage.setItem("my_user_id", ''))
   const { isAuth, setAuth } = useContext(AuthContext);
   const { push } = useRouter();
 
   useEffect(() => {
     if (isAuth) {
       console.log('AUTH');
-      push('/discover');
+
+      // Now that we're authenticated, get user id and set in localStorage
+      fetch(`${process.env.BACKEND_URL}/auth/profile`, {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then((res) => {
+          if (res.status === 200) {   
+            res.json().then((re)=>{
+              // alert(re)
+              localStorage.setItem("my_user_id", String(re.user_id));
+              push('/discover');
+            });       
+
+          } else {
+            // If it doesn't successfully get the info, set userid to -1
+            localStorage.setItem("my_user_id", String(-1));
+            localStorage.setItem("feed", "discover");
+          }
+        })
+        .catch((error) => error.message);
+      // push('/discover');
     }
   }, [isAuth]);
 
@@ -47,7 +69,9 @@ export default function SignIn() {
           //upon succesful login set auth to true
           setAuth(true);
           setAlert(false);
-          push('/discover');
+          if (username!=null){
+            localStorage.setItem("username", String(username));
+          }
         } else {
           setAlert(true);
         }
@@ -57,6 +81,8 @@ export default function SignIn() {
           setAlert(true);
         }
       });
+      
+    
   };
 
   return (

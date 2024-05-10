@@ -10,6 +10,9 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Autocomplete from '@mui/material/Autocomplete';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,7 +22,16 @@ import ListItemText from '@mui/material/ListItemText';
 // values and make it fully responsive
 
 function PollForm() {
-  const [pollData, setPollData] = useState({
+  const [pollData, setPollData] = useState<{
+    title: string;
+    options: {
+        optionID: number;
+        optionText: string;
+    }[];
+    tags: string[];
+  }>
+  ({
+    // Need to get current logged in user
     title: '',
     options: [
       {
@@ -31,10 +43,17 @@ function PollForm() {
         optionText: '',
       },
     ],
+    tags: []
   });
 
-  const [tags, setTags] = useState<string[]>([]);
+  //const pollRef = useRef(pollData);
 
+  
+  //const [tags, setTags] = useState<string[]>([]);
+  const [currTag, setTag] = useState<string>("");
+  const [pressed, setPressed] = useState<KeyboardEvent>();
+
+  // Update all pollData values every time an input box changes
   const handleChange = (event: any, fieldName: string, ind: number = 0) => {
     const title = event.target.value;
     if (fieldName === 'title') {
@@ -57,7 +76,7 @@ function PollForm() {
       body: JSON.stringify({
         title: pollData.title,
         options: pollData.options.map((option) => option.optionText),
-        tags:[]
+        tags:pollData.tags
       }),
     })
       .then((response) => {
@@ -71,10 +90,10 @@ function PollForm() {
           });
         }
       })
-      .catch((error) => error.message);
+      .catch((error) => alert(error.message));
 
-    push('/discover');
-    //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
+    // push('/discover');
+    window.location.reload();
     //POST
   };
 
@@ -106,6 +125,8 @@ function PollForm() {
       : alert('You cannot add more than 6 options.');
   };
 
+  // Not great naming for variables here but ind = index of the option being removed, match to
+  // map index to find the right option
   function removeOption(ind: number) {
     const newOptions =
       pollData.options.length > 2
@@ -158,11 +179,70 @@ function PollForm() {
     </React.Fragment>
   ));
 
-  const handleTagChange = (newTags: string) => {
+  const handleTagChange = (newTag: string) => {
     //need this to be split by whitespace for now, should prolly make it more robust?
+    if (pressed?.key === 'Enter' || pressed?.key === ",") {
 
-    setTags([newTags]);
-  };
+      pollData.tags.length < 20
+      ? setPollData((pollData) => ({
+          ...pollData,
+          tags: [...pollData.tags,  newTag.substring(0, newTag.length-1)],
+        }))
+      : alert('You cannot add more than 20 tags.');
+      
+      setTag("");
+    }
+
+    else{
+
+      setTag(newTag);
+    }
+  }
+
+  const handleKeyDown = (event) => {
+
+    setPressed(event);
+  }
+
+  function tagChips(pollData){
+    
+    return(
+        pollData.tags?.map((tag, index) => (
+        
+          <Chip 
+            label={
+            <React.Fragment>
+              {tag}
+              <Button 
+                onClick={(event) => removeTag(index)}
+                size="small" 
+                variant="text" 
+                style={{fontSize:"11px"}} 
+                sx={{alignItems: 'center', display:"flex-block", flexDirection:"row", ml: 0.5,  maxWidth: '10px', minWidth: '10px', maxHeight: '7px' }}>
+                x</Button>
+              </React.Fragment>} 
+            key={tag} 
+            variant="outlined" 
+            sx={{m:0.5}}
+            />
+        ))
+    )
+  }
+
+  function removeTag(ind: number){
+    const newTags =
+    pollData.tags.filter(function (tag, index) {
+          if (ind == index) {
+            return false;
+          }
+          return true;
+        })
+
+    setPollData((pollData) => ({
+      ...pollData,
+      tags: newTags
+    }));
+  }
 
   return (
     <Card
@@ -182,7 +262,7 @@ function PollForm() {
               handleSubmit(event);
             }
           }}
-          method="POST"
+          
         >
           <FormControl>
             
@@ -202,7 +282,6 @@ function PollForm() {
             />
             </Typography>
 
-            
             <Button onClick={addOption}>Add poll option</Button>
 
             <FormGroup>{optionList}</FormGroup>
@@ -212,15 +291,20 @@ function PollForm() {
               Tags
             </Typography>
 
-            <TextField
-              type="text"
-              variant="outlined"
+            <TextField 
+              placeholder="Separate tag names with commas" 
+              value={currTag} 
+              onKeyDown={handleKeyDown} 
+              onChange={(event) => handleTagChange(event.target.value)} 
               size="small"
-              name="tags"
-              sx={{}}
-              onChange={(event) => handleTagChange(event.target.value)}
-            />
-            <br />
+              sx={{m:1}}
+              >
+            </TextField>
+
+            <Box display="flex" sx={{maxWidth:350, flexWrap: 'wrap'}}>
+                {tagChips(pollData)}
+              </Box>
+            <br/>
 
             <Button variant="contained" type="submit" sx={{ m: 2 }}>
               Create
@@ -233,9 +317,8 @@ function PollForm() {
 }
 
 export default function CreatePoll() {
-  console.log('here!');
   return (
-    <Box sx={{ minWidth: 370, minHeight: 700, m: 3, p: 3 }}>
+    <Box sx={{ minWidth: 370, minHeight: "min-content"}}>
       <PollForm />
     </Box>
   );

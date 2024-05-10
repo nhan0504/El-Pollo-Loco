@@ -7,7 +7,7 @@ const pool = require('../../db.js');
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
-    'SELECT comment_id, user_id, parent_id, comment FROM Comments WHERE poll_id = ?',
+    'SELECT Users.username, Users.user_id, comment_id, parent_id, comment FROM Comments JOIN Users ON Comments.user_id = Users.user_id WHERE poll_id = ?',
     [pollId],
     (error, results) => {
       if (error) {
