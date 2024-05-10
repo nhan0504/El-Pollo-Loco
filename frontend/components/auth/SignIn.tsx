@@ -33,13 +33,14 @@ export default function SignIn() {
           if (res.status === 200) {   
             res.json().then((re)=>{
               // alert(re)
-              localStorage.setItem("userid", String(re.user_id));
+              localStorage.setItem("my_user_id", String(re.user_id));
               push('/discover');
             });       
 
           } else {
             // If it doesn't successfully get the info, set userid to -1
-            localStorage.setItem("userid", String(-1));
+            localStorage.setItem("my_user_id", String(-1));
+            localStorage.setItem("feed", "discover");
           }
         })
         .catch((error) => error.message);
@@ -70,7 +71,6 @@ export default function SignIn() {
           setAlert(false);
           if (username!=null){
             localStorage.setItem("username", String(username));
-            localStorage.setItem("feed", "discover");
           }
         } else {
           setAlert(true);
@@ -81,23 +81,6 @@ export default function SignIn() {
           setAlert(true);
         }
       });
-      fetch(`${process.env.BACKEND_URL}/auth/profile`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
-      })
-        .then((response) => {
-          if (!response.ok) {
-            return response.text().then((text) => {
-              throw new Error(text);
-            });
-          } else {
-            response.json().then((re=>setUID(localStorage.setItem("my_user_id", re.user_id))))
-          }
-        })
-        .catch((error) => {});
-    
-      
       
     
   };

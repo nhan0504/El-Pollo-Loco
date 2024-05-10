@@ -17,10 +17,10 @@ export default function Feed({ pollData, setPollData }: any) {
 
   const [isLoading, setLoading] = useState<boolean>(true);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
-  const [currFeed, setCurrentFeed] = useState<string | null>(localStorage.getItem("feed") != null ? localStorage.getItem("feed") : 'discover');
   const [noPolls, setNoPolls] = useState<boolean>(false);
   const [followedTags, setFollowedTags] = useState<string[]>([]);
-  const [gridDone, setGridDone] = useState<boolean>(false);
+  const [currFeed, setCurrentFeed] = useState<string | null>(window ? localStorage?.getItem("feed") : 'discover');
+
   // Need to keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls by passing in the page num to GET request. Pages not zero indexed.
   const [virtualPage, setVirtualPage] = useState<number>(2);
@@ -315,7 +315,6 @@ export default function Feed({ pollData, setPollData }: any) {
       );
     }
 
-    setGridDone(true);
     return (
       <React.Fragment>
         <Grid container spacing={1}>
