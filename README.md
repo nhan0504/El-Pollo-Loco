@@ -38,7 +38,7 @@ Returns status `409` if a user with the same username or email already exists.
 | `username`      | `string` | **Required**. Username of account. |
 | `password`      | `string` | **Required**. Plaintext password. |
 
-Returns status `401` if the password is invaild, or if the user does not exist. Client is provided with a cookie (`name=poll_cookie`).
+Returns status `401` if the password is invaild, or if the user does not exist. Client is provided with a cookie expiring 24 hours after issuing (`name=poll_cookie`).
 
 #### Log Out of User Account (Authenticated)
 
@@ -157,4 +157,6 @@ Returns status `404` if the specified tag does not exist or client is not follow
 ```
 Returns status `404` if the client is not following any tags. Returns `string[]`.
 
+### Polls
 
+### Feeds
