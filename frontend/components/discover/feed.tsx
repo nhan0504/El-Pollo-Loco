@@ -42,7 +42,7 @@ export default function Feed({ pollData, setPollData }: any) {
     if(feedType === 'discover')
       requestType = "/feed"
     else if(feedType === 'friends')
-      requestType = "/feed/tags/2"
+      requestType = "/feed/friends/1"
     else if(feedType === 'following')
       requestType = "/feed/tags/1"
     else{

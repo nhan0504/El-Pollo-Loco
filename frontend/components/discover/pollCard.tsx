@@ -38,13 +38,14 @@ function MakeCard(
   question: string,
   opts: Array<Option>,
   username: string, 
+  userId: number,
   pollId: number,
   createdAt: string,
   voted: {poll_id: number, option_id: number},
   followedTags: string[],
   inCommentBox: boolean
 ) {
-  const [user_id, setUserId] = React.useState(-1)
+  const [user_id, setUserId] = React.useState(userId)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -552,8 +553,9 @@ export default function PollCard(
               option_id: option.option_id,
             }));
   let username = pollData?.username;
+  let userId = pollData?.user_id;
   let pollId = pollData?.poll_id;
   let createdAt = date.toDateString() + ", " + date.toLocaleTimeString();
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, userId, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
 }
