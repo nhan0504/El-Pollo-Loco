@@ -7,7 +7,9 @@
 
 ## API Documentation
 
-Unless otherwise specified, routes return status `200` on success, or `500` if an internal error is encountered. Routes flagged with "(Authenticated)" will return status `401` if the client's browser does not provide a valid authentication cookie (`name=poll_cookie`).
+Unless otherwise specified, routes return status `200` or `201` on success, and `500` if an internal error is encountered. Routes flagged with "(Authenticated)" will return status `401` if the client's browser does not provide a valid authentication cookie (`name=poll_cookie`).
+
+### Authentication
 
 #### Create User Account 
 
@@ -36,14 +38,14 @@ Returns status `409` if a user with the same username or email already exists.
 | `username`      | `string` | **Required**. Username of account. |
 | `password`      | `string` | **Required**. Plaintext password. |
 
-Returns status `401` if the password is invaild, or if the user does not exist. Client is provided with a cookie (`name=poll_cookie`) upon successful login.
+Returns status `401` if the password is invaild, or if the user does not exist. Client is provided with a cookie (`name=poll_cookie`).
 
 #### Log Out of User Account (Authenticated)
 
 ```http
   POST /auth/logout/
 ```
-Returns status `401` if client is not logged in upon request.
+Deauthenticates cookie provided by client browser.
 
 #### Check If Signed In 
 
@@ -57,7 +59,7 @@ Returns status `401` if client is not logged in upon request.
 ```http
   GET /auth/profile/
 ```
-Returns status `401` if client is not logged in upon request. Otherwise returns the following object.
+Returns status `401` if client is not logged in upon request. Returns the following object.
 
 ```
 {
@@ -66,13 +68,14 @@ Returns status `401` if client is not logged in upon request. Otherwise returns 
   user_id: string
 }
 ```
+### User Following
 
 #### Get Followers List Of User
 
 ```http
   GET /users/:user_id/followers/
 ```
-Returns the following object upon successful request.
+Returns the following object.
 
 ```
 {
@@ -90,7 +93,7 @@ Returns the following object upon successful request.
 ```http
   GET /users/:user_id/following/
 ```
-Returns the following object upon successful request.
+Returns the following object.
 
 ```
 {
@@ -124,4 +127,34 @@ Updates client profile to unfollow the user specified by `:user_id`.
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `:user_id`      | `string` | **Required**. ID of account to unfollow. |
+
+### Poll Tags
+
+#### Follow A Tag (Authenticated)
+
+```http
+  GET /tags/follow/:tag_name/
+```
+Returns status `404` if the specified tag does not exist. Updates client profile to follow the tag specified by `:tag_name`.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:tag_name`      | `string` | **Required**. Name of tag to follow. |
+
+#### Unfollow A Tag (Authenticated)
+
+```http
+  GET /tags/unfollow/:tag_name/
+```
+Returns status `404` if the specified tag does not exist or client is not following the tag. Updates client profile to unfollow the tag specified by `:tag_name`.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:tag_name`      | `string` | **Required**. Name of tag to unfollow. |
+
+#### Get Tag Following List (Authenticated)
+
+```http
+  GET /tags/
+```
+Returns status `404` if the client is not following any tags. Returns `string[]`.
+
 
