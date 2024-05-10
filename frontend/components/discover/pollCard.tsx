@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import { ButtonGroup, IconButton, Modal } from '@mui/material';
-import { useContext, useState, useEffect} from 'react';
+import { useContext, useState, useEffect, useMemo} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
 import CommentBox from './comments';
@@ -22,6 +22,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Divider from '@mui/material/Divider';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type Option = {
   optionText: string;
@@ -32,6 +33,7 @@ type Option = {
 
 
 function MakeCard(
+  rawData: any,
   tags: Array<string>,
   question: string,
   opts: Array<Option>,
@@ -39,9 +41,10 @@ function MakeCard(
   pollId: number,
   createdAt: string,
   voted: {poll_id: number, option_id: number},
-  inCommentBox: boolean, user_id: number
+  followedTags: string[],
+  inCommentBox: boolean
 ) {
-  //comment
+  const [user_id, setUserId] = React.useState(-1)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
   const [cardData, setCardData] = useState({
@@ -61,7 +64,15 @@ function MakeCard(
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
-
+  const [tagsFollowed, setTagsFollowed] = useState<string[]>(followedTags);
+  // A state for whether the options are collapsed, showing results
+  const [collapsed, setCollapsed] = useState<boolean>(false)
+  // Tracks tag dialog open state as well as whether the selected tag was actually followed
+  const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
+  // Tracks the poll deletion dialog open state as well as whether a poll was actually deleted
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<{open:boolean, deleted:boolean}>({open: false, deleted: false});
+  const [tagSelected, setTagSelected] = useState<string>("");
+   
   // If the user has voted on this poll, automatically show results
   useEffect(() => {
     if(voted.option_id != -1){
@@ -69,12 +80,12 @@ function MakeCard(
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
-  // A state for whether the options are collapsed, showing results
-  const [collapsed, setCollapsed] = useState<boolean>(false)
-  // Tracks tag dialog open state as well as whether the selected tag was actually followed
-  const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
-  const [tagSelected, setTagSelected] = useState<string>("");
-  
+
+
+  useEffect(() =>{
+    tagList();
+  }, [tagSelected])
+ 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
 
@@ -116,11 +127,27 @@ function MakeCard(
         .catch((error) => error.message);
       
     }
-
-    // Should actually fetch real vote count from database in case other votes have been made in between posting and this statement
-    // Otherwise it might just be slightly out of date, though it will correct on page refresh
-    // setCardData({...cardData, totalVotes: cardData.totalVotes, opts: cardData.opts})
   };
+
+  function deletePoll() {
+
+    fetch(`${process.env.BACKEND_URL}/polls/` + pollId, {
+      method: 'DELETE',
+      credentials: 'include',
+      mode: 'cors',
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        } else {
+
+          return response.text();
+        }
+      })
+      .catch((error) => error.message); 
+  }
 
   const ShowResults = () => {
     if(cardData.opts[cardData.opts.length - 1].optionText === "Show Results"){
@@ -131,6 +158,13 @@ function MakeCard(
     setCollapsed(true);
 
   }
+  
+  // Calculate percentage of votes for an option
+  const getPercent = (option: { optionText: string; votes: number }) => {
+    if (cardData.totalVotes === 0) {
+      return 0;
+    } else return (option.votes / cardData.totalVotes) * 100;
+  };
 
   // colors for options, applied in order
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
@@ -279,20 +313,23 @@ function MakeCard(
 
   const commentBox = () => {
     if (!inCommentBox)
-      return CommentBox(tags, question, opts, username, pollId, createdAt, voted)
+      return CommentBox(rawData, voted, followedTags)
 
     else
       return
   }
 
+  const deleteButton = () => {
+    if(username == localStorage.getItem("username")){
+      return(
+        <IconButton onClick={(event) => (setDeleteDialogOpen({open: true, deleted: false}))}><DeleteIcon/></IconButton>
+      )
 
-  // Calculate percentage of votes for an option
-  const getPercent = (option: { optionText: string; votes: number }) => {
-    if (cardData.totalVotes === 0) {
-      return 0;
-    } else return (option.votes / cardData.totalVotes) * 100;
-  };
-    
+    }
+
+    else return
+  }
+
   // Need to use tags endpoint to send POST request w/ tag id, but we don't have tags ids right now
   function followTag(tagName: string){
     setTagDialogOpen({open: false, followed: true});
@@ -315,30 +352,123 @@ function MakeCard(
             });
           } else {
             // alert(response.text());
+            followedTags.push(tagName);
+            setTagSelected(tagSelected + " ");
             return response.text();
           }
         })
-        .catch((error) => error.message);
-      
+        .catch((error) => error.message); 
     }
+  }
+
+  function unfollowTag(tagName: string){
+    setTagDialogOpen({open: false, followed: false});
+    if (isAuth == false) {
+      alert('You cannot follow tags without logging in. Redirecting to login page.');
+      push('/auth/login');
+    } else {
+      // alert("following tag")
+      fetch(`${process.env.BACKEND_URL}/tags/unfollow/` + tagName, {
+        method: 'DELETE',
+        credentials: 'include',
+        mode: 'cors',
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(text);
+            });
+          } else {
+            // alert(response.text());
+            followedTags.splice(followedTags.indexOf(tagName), 1);
+            setTagSelected(tagSelected + " ");
+            return response.text();
+          }
+        })
+        .catch((error) => error.message); 
+    }
+
 
   }
 
   // Alert for when tag is followed
-  const followedAlert = () => {
-    if(tagDialogOpen.followed == true){
-      let tag = tagSelected.slice(0,1).toUpperCase() + tagSelected.slice(1, tagSelected.length)
+  const deletedAlert = () => {
+    if(deleteDialogOpen.deleted == true){
       return(
         <React.Fragment>
         <br/>
         <Alert style={{}} icon={<CheckIcon fontSize="inherit" />} severity="success"  onClose={(event) => {setTagDialogOpen({open: false, followed: false});}}>
-          {tag} followed!
+          Poll deleted. Refresh to see change.
         </Alert>
         </React.Fragment>
       )
     }
       return
   }
+
+  const getDialog = (type: string) => {
+
+    if(type == "tag"){
+      return(
+        <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{}}>
+          <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+            <DialogTitle textAlign="center">{tagFollowMessage().header}</DialogTitle>           
+            <Typography textAlign="center" variant="body1">{tagFollowMessage().body}</Typography>
+            <br/>
+            <Button onClick={(event) => {!isFollowing(tagSelected) ? followTag(tagSelected) : unfollowTag(tagSelected)}}  size="small" variant="contained" sx={{bgcolor: !isFollowing(tagSelected) ? "#1976d2" : "green", alignSelf:"center"}}>{tagLabel(tagSelected)}</Button>
+          </DialogContent>
+        </Dialog>
+      )
+    }
+    else if(type == "delete"){
+      return(
+        <Dialog open={deleteDialogOpen.open} onClose={(event) => setDeleteDialogOpen({open: false, deleted: deleteDialogOpen.deleted})} sx={{}}>
+          <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+            
+            <DialogTitle textAlign="center">Are you sure you want to delete this poll?</DialogTitle>           
+            {/* <Typography textAlign="center" variant="body1">{tagFollowMessage().body}</Typography> */}
+            <br/>
+            <Stack direction="row" sx={{width:"60%", alignSelf:"center", display:"flex",  justifyContent:"space-between"}}>
+              <Button onClick={(event) => {deletePoll(); setDeleteDialogOpen({open: false, deleted: true});}}  size="small" variant="contained" sx={{bgcolor: "#1976d2", alignSelf:"center"}}>Yes</Button>
+              <Button onClick={(event) => {setDeleteDialogOpen({open: false, deleted: false})}}  size="small" variant="contained" sx={{bgcolor: "#1976d2", alignSelf:"center"}}>No</Button>
+            </Stack>
+          </DialogContent>
+        </Dialog>
+        )
+    }
+    else
+      return
+  }
+
+  const tagFollowMessage = () => {
+    
+    return {
+      header: isFollowing(tagSelected) ? "Would you like to unfollow this tag?" : "Would you like to follow this tag?", 
+      body: isFollowing(tagSelected) ?"Polls tagged with " + tagSelected + " will no longer appear on your Following feed." : "Polls tagged with " + tagSelected + " will appear on your Following feed.", 
+    }
+  }
+
+  const isFollowing = (tagName: string) => {
+
+    return followedTags.includes(tagName);
+  }
+
+  const tagLabel = (tagName: string) => {
+    return isFollowing(tagName) ? tagName + " ✓" : tagName + " +";
+  }
+
+  const tagList = () => {
+        
+    return(
+      tags?.map((tag) => {
+        return(
+        <Button onClick={(event) => {    
+          setTagSelected(tag);
+          setTagDialogOpen({open: true,  followed: false});
+        }} size="small" variant="contained" style={{fontSize: '12px', textTransform:'uppercase'}} sx={{bgcolor:!isFollowing(tag)?'#1976d2' : "green", color:'white', mx:1, my:1, maxHeight:"50%"}} key={tag}>{tagLabel(tag)}</Button>
+      )})
+    )
+  };
 
   return (
     <React.Fragment>
@@ -369,61 +499,61 @@ function MakeCard(
         
         {optionList()}
 
-        <br/>
-        {commentBox()}
-        <br/>
+        {/* {commentBox()} */}
+        {/* <br/>
         <Divider></Divider>
-        
+         */}
         {/* <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography> */}
 
         <CardContent sx={{ color: 'blue', display: 'flex', alignItems:"baseline"}}>
           
           <Box sx={{ width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap", justifyContent:"center"}}>
-            {tags?.map((tag) => (
-              <Button variant="contained" onClick={(event) => {    
-                setTagSelected(tag);
-                setTagDialogOpen({open: true,  followed: false});
-              }} size="small" style={{fontSize: '12px'}} sx={{mx:1, my:1, maxHeight:"50%"}} key={tag}>{tag}</Button>
-            ))}
+            
+            {tagList()}
 
           </Box>
           </CardContent>
 
-          
-
           <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography>
-          {/* <br/> */}
+          <br/>
+          <Box sx={{ width:"100%", display: 'flex', alignItems:"center", justifyContent:"center"}}>
+            {deleteButton()}
+          </Box>
+          <br/>
+          <Divider></Divider>
 
-          <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{border: '3px solid black', borderRadius:"10px"}}>
-            <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
-              
-              <DialogTitle textAlign="center">Would you like to follow this tag?</DialogTitle>           
-              <Typography textAlign="center" variant="body1">Polls tagged with "{tagSelected}" will appear on your Following feed.</Typography>
-              <br/>
-              <Button onClick={(event) => {followTag(tagSelected)}}  size="small" variant="contained" sx={{ alignSelf:"center"}}>{tagSelected} +</Button>
-            
-            </DialogContent>
-          </Dialog>
+          <br/>
+          {commentBox()}
+
+         {getDialog("tag")}
+         {getDialog("delete")}
 
           <br />
       </Card>
-
-      {followedAlert()}
+      {deletedAlert()}
 
     </React.Fragment>
   );
 }
 
 export default function PollCard(
-  tags: Array<string>,
-  question: string,
-  opts: any,
-  username: string, 
-  pollId: number,
-  createdAt: string,
+  pollData: any,
   voted: {poll_id: number, option_id: number},
-  inCommentBox: boolean, user_id:number
+  followedTags: string[],
+  inCommentBox: boolean
 ) {
+  // Process raw poll data to pass to MakeCard
+  let date = new Date(Date.parse(pollData?.created_at));
+  let tags = (pollData.tags)?.split(",");
+  let question = pollData?.title;
+  let opts = pollData?.options?.map((option: any) => ({
+              optionText: option.option_text,
+              votes: option.vote_count,
+              option_id: option.option_id,
+            }));
+  let username = pollData?.username;
+  let pollId = pollData?.poll_id;
+  let createdAt = date.toDateString() + ", " + date.toLocaleTimeString();
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(tags, question, opts, username, pollId, createdAt, voted, inCommentBox, user_id)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
 }

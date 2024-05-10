@@ -21,7 +21,7 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
     Polls.created_at, 
     Users.username, 
     COUNT(DISTINCT Votes.vote_id) AS vote_count,
-    GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ', ') AS tags,
+    GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ',') AS tags,
     (
         DATEDIFF(CURDATE(), Polls.created_at) * ? + 
         COUNT(DISTINCT Votes.vote_id) * ?

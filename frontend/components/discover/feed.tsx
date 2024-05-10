@@ -19,17 +19,19 @@ export default function Feed({ pollData, setPollData }: any) {
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
   const [currFeed, setCurrentFeed] = useState<string | null>(localStorage.getItem("feed") != null ? localStorage.getItem("feed") : 'discover');
   const [noPolls, setNoPolls] = useState<boolean>(false);
-
+  const [followedTags, setFollowedTags] = useState<string[]>([]);
+  const [gridDone, setGridDone] = useState<boolean>(false);
   // Need to keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls by passing in the page num to GET request. Pages not zero indexed.
   const [virtualPage, setVirtualPage] = useState<number>(2);
 
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
-  useEffect(() => {      
-    localStorage.setItem("feed", String(currFeed));
-    getPolls(String(currFeed));
-  }, [currFeed]);
-
+  useEffect(() => {
+    localStorage.setItem("feed", currFeed);
+    getPolls(currFeed);
+    getFollowedTags();
+  },[]);
+  
   // Should there be another useEffect that triggers when the virtual page number is changed? Need to get more poll for
   // infinite scrolling
 
@@ -79,6 +81,29 @@ export default function Feed({ pollData, setPollData }: any) {
     }
   }
 
+  async function getFollowedTags(){
+    try{
+      let response = await fetch(`${process.env.BACKEND_URL}/tags`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      let data = await response.json();
+      if (response.ok) {
+        setFollowedTags(data);
+        localStorage.setItem("tags", JSON.stringify(data));
+      }
+      else{
+        setPollsVoted([{poll_id: -1, option_id: -1}]);
+      }
+    }
+    catch (error) {
+
+    }
+
+
+
+  }
+
   // Pass it the list of poll ids of 6 polls that were just fetched
   async function getVoted(polls: any) {
     try{
@@ -115,10 +140,12 @@ export default function Feed({ pollData, setPollData }: any) {
     return voted;
   }
 
+  // Switch the feed type, refetch polls
   const switchFeed = (currFeed: string) => {
     setNoPolls(false);    
     localStorage.setItem("feed", currFeed);
     setCurrentFeed(currFeed);
+    getPolls(currFeed);
   };
   
   function FeedButtons() {
@@ -226,29 +253,24 @@ export default function Feed({ pollData, setPollData }: any) {
 
     let row = [];
 
+
     for (let i = 0; i < pollData.length; i++) {
 
       // We can't pop off polls from the list since they need to stay in memory to rerender
       // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
       let currCard = pollData[i];
       let loaded = true;
-      // currCard.tags? alert(currCard.tags) : console.log("no tags");
+
       let date = new Date(Date.parse(currCard?.created_at));
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} key={i}>
           {PollCard(
-            (currCard.tags)?.split(","),
-            currCard?.title,
-            currCard?.options?.map((option: any) => ({
-              optionText: option.option_text,
-              votes: option.vote_count,
-              option_id: option.option_id,
-            })),
-            currCard?.username, 
-            currCard?.poll_id,
-            date.toDateString() + ", " + date.toLocaleTimeString(),
-            wasVotedOn(currCard.poll_id), false, currCard?.user_id
+            currCard,
+            wasVotedOn(currCard.poll_id),
+            followedTags,
+            false
           )}
+          
         </Grid>,
       );
     }
@@ -256,12 +278,14 @@ export default function Feed({ pollData, setPollData }: any) {
     return <React.Fragment>{row}</React.Fragment>;
   }
 
+  
+
   function CardsTogether() {
     const rows = 3;
     const cols = 2;
     let grid = [];
 
-    // If polls were retrievedm display them
+    // If polls were retrieved display them
     if(!noPolls){
       for (let i = 0; i < rows; i++) {
         grid.push(
@@ -291,6 +315,7 @@ export default function Feed({ pollData, setPollData }: any) {
       );
     }
 
+    setGridDone(true);
     return (
       <React.Fragment>
         <Grid container spacing={1}>

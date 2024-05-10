@@ -28,7 +28,8 @@ import PollCard from  './pollCard'
 
 
 
-export default function CommentBox(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, createdAt:string, voted: any) {
+export default function CommentBox(pollData: any, voted: any, followedTags: string[]) {
+  
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
   return (
@@ -53,16 +54,19 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
         <Sheet
           variant="outlined"
           sx={{
+            display:"flex",
+            flexDirection:"column",
             minHeight: 'min-content',
             minWidth: 'min-content',
             overflow: 'auto',
             borderRadius: 'md',
             p: 3,
-            boxShadow: '10px, 5px, 5px'
+            boxShadow: '10px, 5px, 5px',
+            alignContent:"center"
           }}
         >
           <ModalClose variant="plain" sx={{ m: 1 }} />
-          <Typography
+          {/* <Typography
             component="h2"
             id="modal-title"
             level="h4"
@@ -71,9 +75,9 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
             mb={1}
           >
             Comments
-          </Typography>
+          </Typography> */}
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {Parent(tags, question, opts, username, pollId, createdAt, voted)}
+            {Parent(pollData, voted, followedTags)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -82,7 +86,7 @@ export default function CommentBox(tags: string[], question: string, opts: { opt
   );
 }
 
-function Parent (tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId: number, createdAt: string, voted: any){
+function Parent (pollData: any, voted: any, followedTags: string[]){
   
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
   let [cmts, setCmts] = React.useState([])
@@ -90,6 +94,9 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   let [optionVotes, setOptionVotes] = React.useState([])
   let [colorPairs, setColorPairs] = React.useState(new Map<number, string>());
   const { isAuth, setAuth } = useContext(AuthContext);
+
+  let pollId = pollData?.poll_id;
+
   function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
     return () => setValue(value => value + 1); // update state to force render
@@ -305,17 +312,17 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
     
   }
   
-  function CommentsWPoll(tags: string[], question: string, opts: { optionText: string; votes: number; option_id: number; }[], username: string, pollId:number, createdAt:string, voted:any){
+  function CommentsWPoll(pollData: any, pollId:number, voted:any, followedTags: string[]){
     let { innerWidth: width, innerHeight: height } = window;
     
     width = (width)*0.5
     //load until comments is not empty
     return (
       <div>
-      <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
+      {/* <Divider variant="fullWidth" style={{ margin: '5px 0' }}/> */}
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow:"auto"}}>
-            {PollCard(tags, question, opts, username, pollId, createdAt, voted, true)}
+            {PollCard(pollData, voted, followedTags, true)}
             {Comments(pollId, cmts)}
             {AddComment(cmts)}
             
@@ -326,7 +333,7 @@ function Parent (tags: string[], question: string, opts: { optionText: string; v
   
 
   
-  return CommentsWPoll(tags, question, opts, username, pollId, createdAt, voted);
+  return CommentsWPoll(pollData, pollId, voted, followedTags);
 
 
 }
