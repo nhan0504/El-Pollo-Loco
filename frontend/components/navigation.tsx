@@ -18,7 +18,11 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchComponent from './discover/search';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/authContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import PollForm from './discover/pollForm';
 
 export default function PrimarySearchAppBar({ setPollData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -30,6 +34,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [pollFormOpen, setPollFormOpen] = useState<boolean>(false);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -176,6 +181,17 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
     }
   };
 
+  function pollFormDialog() {
+
+    return(
+    <Dialog PaperProps={{ style:{ }, sx: {m:0, p:0, maxHeight:800, position:"absolute", top:15 } }} open={pollFormOpen} onClose={(event) => setPollFormOpen(false)} sx={{m:0, p:0, }}>
+      {/* <DialogContent sx={{maxWidth: 350, maxHeight:500, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}} style={{ overflow:"auto" }}> */}
+        {PollForm()}   
+      {/* </DialogContent> */}
+    </Dialog>
+    )
+  }
+
   const endMenuButtons = () => {
 
     if (isAuth == false){
@@ -242,16 +258,12 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
           </Box>
         </React.Fragment>
       )
-
-
     }
-
-
   }
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
-      <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2' }}>
+      <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2' , mb:3}}>
         <Toolbar>
           {/* <IconButton
             size="large"
@@ -279,10 +291,11 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
               push('/discover');
             }}
           />
-          <Button variant="contained" size="medium" sx={{}} onClick={CreatePoll}>
+          <Button variant="contained" size="medium" sx={{}} onClick={(event) => setPollFormOpen(true)}>
             Create Poll&nbsp;
             <AddIcon fontSize="small" />
           </Button>
+          {pollFormDialog()}
 
           <SearchComponent setPollData={setPollData} />
 

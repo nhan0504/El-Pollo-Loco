@@ -9,6 +9,9 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import Fade from '@mui/material/Fade';
+
 
 // Should cache some info in localStorage potentially, can share across components
 // and maybe decrease fetches
@@ -20,6 +23,8 @@ export default function Feed({ pollData, setPollData }: any) {
   const [noPolls, setNoPolls] = useState<boolean>(false);
   const [followedTags, setFollowedTags] = useState<string[]>([]);
   const [currFeed, setCurrentFeed] = useState<string | null>(localStorage?.getItem("feed") != null ? localStorage?.getItem("feed") : 'discover');
+  // const [tagSelected, setTagSelected] = useState<string>("");
+  // const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
 
   // Need to keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
   // polls by passing in the page num to GET request. Pages not zero indexed.
@@ -99,9 +104,6 @@ export default function Feed({ pollData, setPollData }: any) {
     catch (error) {
 
     }
-
-
-
   }
 
   // Pass it the list of poll ids of 6 polls that were just fetched
@@ -207,10 +209,12 @@ export default function Feed({ pollData, setPollData }: any) {
         component="section"
         sx={{
           display:"flex",
-          bgcolor: 'white',
           color:"white",
           width: '310px',
           maxHeight: '40px',
+          position:"absolute",
+          top:"80px",
+          left:"20px",
           p: 1,
           m: 2,
           // border: '2px solid black',
@@ -249,6 +253,31 @@ export default function Feed({ pollData, setPollData }: any) {
       </Box>
     );
   }
+  
+  const tagList = () => {
+    
+    if(followedTags?.length != 0 && currFeed == "following"){
+      return(
+        <Stack direction="row" sx={{ mb:0.5, pt:5, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
+
+        <Typography noWrap style={{}} variant="h6" sx={{width:"min-content", color: "black"}}>You are following</Typography>
+        {/* border:"1px solid black",  */}
+        <Box sx={{ ml: 1.5, mb:0.5, width:"550px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
+
+          {followedTags?.map((tag) => {
+            return(
+            <Button onClick={(event) => {    
+            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
+          )})}
+        </Box>
+        </Stack>
+      )
+    }
+    else
+      return(<Box display='none'></Box>)
+  };
+
+  
 
   function FormRow(pollData: any) {
     // Not the state pollData, but a parameter that contains 1 or 2 polls
@@ -265,7 +294,7 @@ export default function Feed({ pollData, setPollData }: any) {
 
       let date = new Date(Date.parse(currCard?.created_at));
       row.push(
-        <Grid item xs={4} style={{ padding: 50 }} key={i}>
+        <Grid item xs={4} style={{ padding: 50 }} sx={{}} key={i}>
           {PollCard(
             currCard,
             wasVotedOn(currCard.poll_id),
@@ -279,8 +308,6 @@ export default function Feed({ pollData, setPollData }: any) {
 
     return <React.Fragment>{row}</React.Fragment>;
   }
-
-  
 
   function CardsTogether() {
     const rows = 3;
@@ -331,12 +358,20 @@ export default function Feed({ pollData, setPollData }: any) {
       
         <FeedButtons />
         <Box display="flex" justifyContent="center">
-        <CircularProgress></CircularProgress>
+          <CircularProgress></CircularProgress>
         </Box>
     </Container>
   ) : (
     <React.Fragment>
-      <FeedButtons />
+      <Stack sx={{width:"100%", ml: 35}} direction="row" spacing={1}>
+        <Box height="70px" display="flex" justifyContent="flex-start">
+
+          <FeedButtons />
+        </Box>
+        <Fade in={currFeed == "following"}>
+          {tagList()}
+        </Fade>
+      </Stack>
       <Grow in={true}>
         <Container maxWidth={false}>
           <CardsTogether />

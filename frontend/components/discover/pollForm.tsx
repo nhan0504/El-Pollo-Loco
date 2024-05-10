@@ -86,16 +86,14 @@ function PollForm() {
           });
         } else {
           return response.text().then((text) => {
-            alert(pollData.tags);
-
             console.log(text);
           });
         }
       })
       .catch((error) => alert(error.message));
 
-    push('/discover');
-    //alert("Successfully made poll!" + pollData.title + pollData.options[0].optionText+ pollData.options[1].optionText+tags[0]);
+    // push('/discover');
+    window.location.reload();
     //POST
   };
 
@@ -212,16 +210,17 @@ function PollForm() {
         pollData.tags?.map((tag, index) => (
         
           <Chip 
-            label={<React.Fragment>
-                    {tag}
-                    <Button 
-                      onClick={(event) => removeTag(index)}
-                      size="small" 
-                      variant="text" 
-                      style={{fontSize:"11px"}} 
-                      sx={{alignItems: 'center', display:"flex-block", flexDirection:"row", ml: 0.5,  maxWidth: '10px', minWidth: '10px', maxHeight: '7px' }}>
-                      x</Button>
-                    </React.Fragment>} 
+            label={
+            <React.Fragment>
+              {tag}
+              <Button 
+                onClick={(event) => removeTag(index)}
+                size="small" 
+                variant="text" 
+                style={{fontSize:"11px"}} 
+                sx={{alignItems: 'center', display:"flex-block", flexDirection:"row", ml: 0.5,  maxWidth: '10px', minWidth: '10px', maxHeight: '7px' }}>
+                x</Button>
+              </React.Fragment>} 
             key={tag} 
             variant="outlined" 
             sx={{m:0.5}}
@@ -243,7 +242,6 @@ function PollForm() {
       ...pollData,
       tags: newTags
     }));
-
   }
 
   return (
@@ -303,27 +301,9 @@ function PollForm() {
               >
             </TextField>
 
-            {/* <Stack display="flex" direction="row" spacing={1} sx={{}}> */}
             <Box display="flex" sx={{maxWidth:350, flexWrap: 'wrap'}}>
                 {tagChips(pollData)}
               </Box>
-            {/* </Stack> */}
-
-            {/* This method can only make tags on enter press...and enter press submits the form (plus comma is more intuitive) */}
-            {/* I try not to leave too much commented out but over the next week I'll decide whether to keep trying w this */}
-            {/* <Autocomplete
-              clearIcon={true}
-              options={[]}
-              freeSolo
-              multiple
-              renderTags={() => tagChips(pollData)}
-              // renderTags={(tags, props) =>
-              //   tags.map((option, index) => (
-              //     <Chip label={option} {...props({ index })} />
-              //   ))
-              // }
-              renderInput={(params) => <TextField label="Add Tags" placeholder="Type and press enter" onKeyDown={handleKeyDown} onChange={(event) => handleTagChange(event.target.value)} {...params} />}
-            /> */}
             <br/>
 
             <Button variant="contained" type="submit" sx={{ m: 2 }}>
@@ -338,7 +318,7 @@ function PollForm() {
 
 export default function CreatePoll() {
   return (
-    <Box sx={{ minWidth: 370, minHeight: 700, m: 3, p: 3 }}>
+    <Box sx={{ minWidth: 370, minHeight: "min-content"}}>
       <PollForm />
     </Box>
   );

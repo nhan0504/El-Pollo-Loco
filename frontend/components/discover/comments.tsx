@@ -34,7 +34,7 @@ export default function CommentBox(pollData: any, voted: any, followedTags: stri
   let comments = NoComments()
   return (
     <React.Fragment>
-      <Button variant="plain" color="neutral" onClick={()=>{
+      <Button variant="plain" color="neutral" sx={{minHeight:"60px"}} onClick={()=>{
         setOpen(true)
       }}>
         <Stack direction="row">
@@ -53,6 +53,7 @@ export default function CommentBox(pollData: any, voted: any, followedTags: stri
         <ModalDialog >
         <Sheet
           variant="outlined"
+          style={{ overflow: "hidden" }}
           sx={{
             display:"flex",
             flexDirection:"column",

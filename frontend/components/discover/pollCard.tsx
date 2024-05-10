@@ -23,14 +23,14 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Divider from '@mui/material/Divider';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Slide from '@mui/material/Slide';
+
 
 type Option = {
   optionText: string;
   votes: number;
   option_id: number;
 };
-
-
 
 function MakeCard(
   rawData: any,
@@ -72,7 +72,7 @@ function MakeCard(
   // Tracks the poll deletion dialog open state as well as whether a poll was actually deleted
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<{open:boolean, deleted:boolean}>({open: false, deleted: false});
   const [tagSelected, setTagSelected] = useState<string>("");
-   
+  const [transition, setTransition] = React.useState(false);
   // If the user has voted on this poll, automatically show results
   useEffect(() => {
     if(voted.option_id != -1){
@@ -88,7 +88,7 @@ function MakeCard(
  
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
-
+    
     if (isAuth == false) {
       alert('You cannot vote without logging in. Redirecting to login page.');
       push('/auth/login');
@@ -156,7 +156,6 @@ function MakeCard(
       setCardData({...cardData, opts: cardData.opts})
     }
     setCollapsed(true);
-
   }
   
   // Calculate percentage of votes for an option
@@ -169,11 +168,17 @@ function MakeCard(
   // colors for options, applied in order
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
 
-  function optionList () {
+  useEffect(() => {
+    optionList();
+    // alert("triggered");
+  }, [transition]);
 
-    // ok, better idea for the option button appearance - regular color = outlined and hover = solid, 
-    // then whichever result the user has voted for (if any) has the fully solid background when results
-    // are shown
+
+  const optionList = () => {
+
+    // let transitionTime = 600;
+    // let transitionTrigger = !transition ? true : false;
+
     let optList = cardData.opts?.map((option, index) => {
       
       // If it's the Show Results button, return special button
@@ -186,13 +191,13 @@ function MakeCard(
             <Button
               variant="outlined"
               value="Show Results"
-              onClick={(event) => ShowResults()}
+              onClick={(event) => {setTransition(true); ShowResults();}}
               style={{ 
                 fontSize: "12px", 
-                maxWidth: collapsed?"0px":"35%", 
+                maxWidth: collapsed?"0px":"32%", 
                 maxHeight: '100%', 
-                minWidth: collapsed?"0px":"35%", 
-                minHeight: '100%' 
+                minWidth: collapsed?"0px":"32%", 
+                minHeight: '100%' ,
               }}
               sx={{
                 opacity: 0.8,
@@ -200,7 +205,7 @@ function MakeCard(
                 // Losing my mind trying to center the buttons with a container so I'm doing 
                 // ml: (100% - uncollapsed width)/2
                 // Not ideal but it works
-                ml: "32.5%",   
+                ml: "34%",   
               }}                
             >
               Show Results
@@ -257,17 +262,22 @@ function MakeCard(
         }
 
         return (
-        <CardActions key={option.optionText}>
+
+        <CardActions sx={{}} key={option.optionText}>
           {/* Added onClick function as addVote */}
+          {/* <Slide in={true} timeout={transitionTime} direction="left" > */}
+
           <Button
             variant="outlined"
             value={option.optionText}
-            onClick={(event) => {AddVote(index)}}
+            onClick={(event) => {setTransition(true); AddVote(index);}}
             style={{ 
-              fontSize: "13px", 
+              fontSize: "14px", 
               maxWidth: collapsed?"40%":"100%", 
-              maxHeight: '100%', minWidth: collapsed?"40%":'100%', 
-              minHeight: '100%'
+              minWidth: collapsed?"40%":"100%", 
+              maxHeight: '100%',
+              minHeight: '100%',
+              fontFamily: 'arial',
             }}
             sx={{
               // The hover/normal colors are swapped to show the option that
@@ -283,27 +293,34 @@ function MakeCard(
           >
             {option.optionText}
           </Button>
+          {/* </Slide> */}
+
           {/* using getPercent which just divides the options's votes by total votes */}
           {/* adjust width of progress bars if they're not supposed to show */}
-          <Box sx={{ width: collapsed? 3 / 4 : 0, boxShadow: 2}} alignItems="center" style={{}} >
-            <LinearProgress 
-            variant="determinate" 
-            value={getPercent(option)} 
-            sx={{ 
-              height:5, 
-              '& .MuiLinearProgress-bar': {
-                  backgroundColor: optionColors[index],
-                  opacity:1
-                },
-            }} 
-            style={{opacity:0.8}} />
-          </Box>
+
+          {/* <Slide in={true} mountOnEnter timeout={transitionTime} direction="left" > */}
+            <Box sx={{ width: collapsed? 3 / 4 : 0, boxShadow: 2}} alignItems="center" style={{}} >
+              <LinearProgress 
+              variant="determinate" 
+              value={getPercent(option)} 
+              sx={{ 
+                height:5, 
+                '& .MuiLinearProgress-bar': {
+                    backgroundColor: optionColors[index],
+                    opacity:1
+                  },
+              }} 
+              style={{opacity:0.8}} />
+            </Box>
+          {/* </Slide> */}
+
           {/* Percentage label at the end of progress bar */}
           <Box sx={{ width: collapsed ? 55 : 0 }}>
             <Typography variant="body2" color="textSecondary">
               {parseFloat(getPercent(option).toPrecision(3))}% 
             </Typography>
           </Box>
+
         </CardActions>
       )}
     })
@@ -322,7 +339,9 @@ function MakeCard(
   const deleteButton = () => {
     if(username == localStorage.getItem("username")){
       return(
-        <IconButton onClick={(event) => (setDeleteDialogOpen({open: true, deleted: false}))}><DeleteIcon/></IconButton>
+        <React.Fragment>
+          <IconButton sx={{}} onClick={(event) => (setDeleteDialogOpen({open: true, deleted: false}))}><DeleteIcon/></IconButton>
+        </React.Fragment>
       )
 
     }
@@ -391,7 +410,7 @@ function MakeCard(
 
   }
 
-  // Alert for when tag is followed
+  // Alert for when a poll is deleted
   const deletedAlert = () => {
     if(deleteDialogOpen.deleted == true){
       return(
@@ -410,7 +429,7 @@ function MakeCard(
 
     if(type == "tag"){
       return(
-        <Dialog open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{}}>
+        <Dialog PaperProps={{ sx: {borderRadius: "25px"} }} open={tagDialogOpen.open} onClose={(event) => setTagDialogOpen({open:false, followed: tagDialogOpen.followed})} sx={{}}>
           <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
             <DialogTitle textAlign="center">{tagFollowMessage().header}</DialogTitle>           
             <Typography textAlign="center" variant="body1">{tagFollowMessage().body}</Typography>
@@ -422,13 +441,12 @@ function MakeCard(
     }
     else if(type == "delete"){
       return(
-        <Dialog open={deleteDialogOpen.open} onClose={(event) => setDeleteDialogOpen({open: false, deleted: deleteDialogOpen.deleted})} sx={{}}>
+        <Dialog  PaperProps={{ sx: { borderRadius: "25px"} }} open={deleteDialogOpen.open} onClose={(event) => setDeleteDialogOpen({open: false, deleted: deleteDialogOpen.deleted})} sx={{}}>
           <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
             
             <DialogTitle textAlign="center">Are you sure you want to delete this poll?</DialogTitle>           
-            {/* <Typography textAlign="center" variant="body1">{tagFollowMessage().body}</Typography> */}
             <br/>
-            <Stack direction="row" sx={{width:"60%", alignSelf:"center", display:"flex",  justifyContent:"space-between"}}>
+            <Stack direction="row" sx={{width:"45%", alignSelf:"center", display:"flex",  justifyContent:"space-between"}}>
               <Button onClick={(event) => {deletePoll(); setDeleteDialogOpen({open: false, deleted: true});}}  size="small" variant="contained" sx={{bgcolor: "#1976d2", alignSelf:"center"}}>Yes</Button>
               <Button onClick={(event) => {setDeleteDialogOpen({open: false, deleted: false})}}  size="small" variant="contained" sx={{bgcolor: "#1976d2", alignSelf:"center"}}>No</Button>
             </Stack>
@@ -458,16 +476,22 @@ function MakeCard(
   }
 
   const tagList = () => {
-        
-    return(
-      tags?.map((tag) => {
-        return(
-        <Button onClick={(event) => {    
-          setTagSelected(tag);
-          setTagDialogOpen({open: true,  followed: false});
-        }} size="small" variant="contained" style={{fontSize: '12px', textTransform:'uppercase'}} sx={{bgcolor:!isFollowing(tag)?'#1976d2' : "green", color:'white', mx:1, my:1, maxHeight:"50%"}} key={tag}>{tagLabel(tag)}</Button>
-      )})
-    )
+    
+    if(tags?.length != 0){
+      return(
+        <Box sx={{ mb:0.5, width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap"}}>
+          {tags?.map((tag) => {
+            return(
+            <Button onClick={(event) => {    
+              setTagSelected(tag);
+              setTagDialogOpen({open: true,  followed: false});
+            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:!isFollowing(tag)?'#1976d2' : "green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tagLabel(tag)}</Button>
+          )})}
+        </Box>
+      )
+    }
+    else
+      return
   };
 
   return (
@@ -484,10 +508,11 @@ function MakeCard(
       >
         <CardContent>
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
-            <Stack alignItems="center" direction="row" gap={0}>
-              <PersonIcon fontSize="medium" />
+            <Stack display="flex" alignItems="center" justifyContent="center" direction="row" gap={0}>
+              <PersonIcon fontSize="medium" sx={{mb:0.6}}/>
               {usernameFriend(username, user_id)}
             </Stack>
+        
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
           </Stack>
           <br/>
@@ -497,38 +522,24 @@ function MakeCard(
           <br/>
         </CardContent>
         
-        {optionList()}
+          {optionList()}
 
-        {/* {commentBox()} */}
-        {/* <br/>
-        <Divider></Divider>
-         */}
-        {/* <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography> */}
-
-        <CardContent sx={{ color: 'blue', display: 'flex', alignItems:"baseline"}}>
-          
-          <Box sx={{ width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap", justifyContent:"center"}}>
-            
+          <CardContent sx={{ color: 'blue', display: 'flex', alignItems:"baseline"}}>
             {tagList()}
-
-          </Box>
           </CardContent>
-
+          
           <Typography alignSelf="center" color="textSecondary" variant="body2">{createdAt}</Typography>
-          <br/>
-          <Box sx={{ width:"100%", display: 'flex', alignItems:"center", justifyContent:"center"}}>
+          <Box sx={{ my:1.5, width:"100%", display: 'flex', alignItems:"center", justifyContent:"center"}}>
             {deleteButton()}
           </Box>
-          <br/>
+                    
           <Divider></Divider>
-
-          <br/>
           {commentBox()}
-
+          <Divider></Divider>
+         
          {getDialog("tag")}
          {getDialog("delete")}
 
-          <br />
       </Card>
       {deletedAlert()}
 
@@ -555,5 +566,5 @@ export default function PollCard(
   let pollId = pollData?.poll_id;
   let createdAt = date.toDateString() + ", " + date.toLocaleTimeString();
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450, alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
 }
