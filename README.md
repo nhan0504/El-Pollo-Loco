@@ -11,6 +11,8 @@ Unless otherwise specified, routes return status `200` or `201` on success, and 
 
 ### Authentication
 
+Code located in `backend/routes/auth.js`.
+
 #### Create User Account 
 
 ```http
@@ -69,6 +71,8 @@ Returns status `401` if client is not logged in upon request. Returns the follow
 }
 ```
 ### User Following
+
+Code located in `backend/routes/users.js`.
 
 #### Get Followers List Of User
 
@@ -130,6 +134,8 @@ Updates client profile to unfollow the user specified by `:user_id`.
 
 ### Poll Tags
 
+Code located in `backend/routes/tags.js`.
+
 #### Follow A Tag (Authenticated)
 
 ```http
@@ -158,6 +164,8 @@ Returns status `404` if the specified tag does not exist or client is not follow
 Returns status `404` if the client is not following any tags. Returns `string[]`.
 
 ### Polls
+
+Code located in `backend/routes/polls`.
 
 #### Get Poll By ID
 ```http
@@ -228,7 +236,7 @@ Posts a comment to the poll specified by `poll_id`.
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `poll_id`      | `int` | **Required**. ID of poll. |
-| `parent_id`      | `int` | **Required**. ID of parent comment. |
+| `parent_id`      | `int` | **Optional**. ID of parent comment. |
 | `comment`      | `string` | **Required**. Content of comment. |
 
 #### Delete Comment By Comment ID (Authenticated)
@@ -239,4 +247,47 @@ Deletes the specified comment.
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `:comment_id`      | `int` | **Required**. ID of comment. |
+
 ### Feeds
+
+Code located in `backend/routes/feed`.
+
+All routes return the following array of objects.
+```
+{
+  poll_id: int,
+  title: string,
+  created_at: timestamp,
+  username: string,
+  user_id: int,
+  vote_count: int,
+  tags: string, //Comma-delimited tags
+  score: int,
+  options: { option_id: int, option_text: string, vote_count: int }[]
+}[]
+```
+All routes take the following URL parameter.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:page_num`      | `int` | **Required**. Page number of feed. |
+
+#### Get Discover Feed By Page
+```http
+  GET /feed/:page_num
+```
+Returns `404` if no polls exist. 
+
+#### Get Friends Feed By Page (Authenticated)
+```http
+  GET /feed/friends/:page_num
+```
+
+#### Get Tags Feed By Page (Authenticated)
+```http
+  GET /feed/tags/:page_num
+```
+
+#### Get Client User Feed By Page (Authenticated)
+```http
+  GET /feed/user/:page_num
+```
