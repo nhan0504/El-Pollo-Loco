@@ -15,7 +15,7 @@ import Alert from '@mui/material/Alert';
 import { AuthContext } from '@/contexts/authContext';
 
 export default function SignIn() {
-  const [alert, setAlert] = useState<boolean>(false);
+  const [errorAlert, setAlert] = useState<boolean>(false);
   const [uid, setUID] = useState(localStorage.setItem("my_user_id", ''))
   const { isAuth, setAuth } = useContext(AuthContext);
   const { push } = useRouter();
@@ -23,6 +23,7 @@ export default function SignIn() {
   useEffect(() => {
     if (isAuth) {
       console.log('AUTH');
+      let userid
 
       // Now that we're authenticated, get user id and set in localStorage
       fetch(`${process.env.BACKEND_URL}/auth/profile`, {
@@ -31,20 +32,46 @@ export default function SignIn() {
       })
         .then((res) => {
           if (res.status === 200) {   
+
             res.json().then((re)=>{
               // alert(re)
+              userid = re.user_id;
               localStorage.setItem("my_user_id", String(re.user_id));
+              localStorage.setItem("feed", "discover");
+
+              fetch(`${process.env.BACKEND_URL}/users/${re.user_id}/following`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    return response.text().then((text) => {
+                      throw new Error(text);
+                    });
+                  } else {
+                    response.json().then((data)=>{
+                    // alert(response.json());
+                    // if(data.length > 0)
+                    
+                    localStorage.setItem("friends", data.following)
+                    
+                    })
+                  }
+                })
+                .catch((error) => {});
+
               push('/discover');
             });       
 
           } else {
             // If it doesn't successfully get the info, set userid to -1
             localStorage.setItem("my_user_id", String(-1));
-            localStorage.setItem("feed", "discover");
           }
         })
         .catch((error) => error.message);
-      // push('/discover');
+        
+      push('/discover');
     }
   }, [isAuth]);
 
@@ -88,7 +115,7 @@ export default function SignIn() {
   return (
     //TODO THEME
     <div>
-      {alert ? (
+      {errorAlert ? (
         <Alert severity="error" onClose={() => setAlert(false)}>
           Username or password incorrect.
         </Alert>

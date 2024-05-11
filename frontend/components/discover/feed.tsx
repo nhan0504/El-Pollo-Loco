@@ -23,21 +23,24 @@ export default function Feed({ pollData, setPollData }: any) {
   const [noPolls, setNoPolls] = useState<boolean>(false);
   const [followedTags, setFollowedTags] = useState<string[]>([]);
   const [currFeed, setCurrentFeed] = useState<string | null>(localStorage?.getItem("feed") != null ? localStorage?.getItem("feed") : 'discover');
+  const [dataChange, setDataChange] = useState<boolean>(false);
   const [page, setPage] = React.useState(1);
   // const [tagSelected, setTagSelected] = useState<string>("");
   // const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
-
 
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
   useEffect(() => {
     localStorage.setItem("feed", String(currFeed));
     getPolls(String(currFeed));
-    getFollowedTags();
+    // getFollowedTags();
   },[page]);
   
-  // Should there be another useEffect that triggers when the virtual page number is changed? Need to get more poll for
-  // infinite scrolling
-
+  useEffect(() => {
+    getPolls(String(currFeed));
+    getFollowedTags();
+    setDataChange(false);
+  }, [dataChange]);
+ 
   async function getPolls(feedType: string) {
     setLoading(true);
     let requestType: string = ""
@@ -45,9 +48,9 @@ export default function Feed({ pollData, setPollData }: any) {
     if(feedType === 'discover')
       requestType =  `/feed/${page}`
     else if(feedType === 'friends')
-      requestType = "/feed/friends/1"
+      requestType = `/feed/friends/${page}`
     else if(feedType === 'following')
-      requestType = "/feed/tags/1"
+      requestType = `/feed/tags/${page}`
     else{
       requestType = `/feed`
     }
@@ -145,7 +148,10 @@ export default function Feed({ pollData, setPollData }: any) {
     setNoPolls(false);    
     localStorage.setItem("feed", currFeed);
     setCurrentFeed(currFeed);
-    getPolls(currFeed);
+    if(page != 1)
+      setPage(1);
+    else
+      getPolls(currFeed);
   };
   
   function FeedButtons() {
@@ -295,7 +301,9 @@ export default function Feed({ pollData, setPollData }: any) {
       let date = new Date(Date.parse(currCard?.created_at));
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} sx={{}} key={i}>
+          
           {PollCard(
+            {setDataChange},
             currCard,
             wasVotedOn(currCard.poll_id),
             followedTags,
@@ -309,19 +317,33 @@ export default function Feed({ pollData, setPollData }: any) {
     return <React.Fragment>{row}</React.Fragment>;
   }
 
+  function getStorageFriends(){
+    let value = localStorage.getItem("friends")
+    return value != null ? value.split(",") : []
+  }
+
+  function getStorageTags(){
+    let value = localStorage.getItem("tags")
+    return value != null ? value.split(",") : []
+  }
+
   function PageBar() {
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
       setPage(value);
     };
-  
-    return (
-    <Box display="flex" justifyContent='center' alignItems="center"> 
-      <Stack spacing={2}>
-        <Pagination count={10} page={page} onChange={handleChange} />
-          <div></div>
-      </Stack>
-    </Box>
-    );
+    
+    if(!noPolls){
+      return (
+      <Box display="flex" justifyContent='center' alignItems="center"> 
+        <Stack spacing={2}>
+          <Pagination count={10} page={page} onChange={handleChange} />
+            <div></div>
+        </Stack>
+      </Box>
+      );
+    }
+    else
+      return
   }
 
 
@@ -344,15 +366,23 @@ export default function Feed({ pollData, setPollData }: any) {
 
     else if(noPolls){
       let message: string = ""
-      if(currFeed == "friends")
-        message = "You don't have any friends yet! Click another user's username to get started."
-      else if(currFeed == "following")
-        message = "You're not following any tags yet. Click a tag on any poll to get started."
+      if(currFeed == "friends"){
+        if(getStorageFriends().length > 0)
+          message = "That's the end of your friends' polls! Click on a username to add more friends."
+        else
+          message = "You don't have any friends yet! Follow other users by clicking on their username."
+      }
+      else if(currFeed == "following"){
+        if(followedTags.length > 0)
+          message = "There are no more polls with your followed tags. Blue tags are ones you haven't followed yet - click to follow them."
+        else
+          message = "You're not following any tags. Click a tag on any poll to get started."
+      }
       else
         message = "Oops! We can't get any polls right now. Try again later."
 
       grid.push(
-        <Card sx={{alignSelf:"center"}}>
+        <Card sx={{alignSelf:"center", width:"100%", display:"flex", justifyContent:"center"}}>
           <CardContent>
             <Typography>{message}</Typography>
           </CardContent>

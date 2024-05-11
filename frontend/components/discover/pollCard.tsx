@@ -33,6 +33,7 @@ type Option = {
 };
 
 function MakeCard(
+  {setDataChange}: any,
   rawData: any,
   tags: Array<string>,
   question: string,
@@ -65,7 +66,6 @@ function MakeCard(
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
-  const [tagsFollowed, setTagsFollowed] = useState<string[]>(followedTags);
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   // Tracks tag dialog open state as well as whether the selected tag was actually followed
@@ -74,19 +74,28 @@ function MakeCard(
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<{open:boolean, deleted:boolean}>({open: false, deleted: false});
   const [tagSelected, setTagSelected] = useState<string>("");
   const [transition, setTransition] = React.useState(false);
+  const [refreshCard, setRefreshCard] = React.useState(false);
+  // const [friendList, setFriendList] = useState<string[]>([]);
   // If the user has voted on this poll, automatically show results
   useEffect(() => {
+    // alert(userId)
     if(voted.option_id != -1){
       ShowResults();
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
 
+  // Triggered by addFriend when a friend is followed/unfollowed
+  useEffect(() => {
+   
+    if(refreshCard){
+      setRefreshCard(false);
+      // If we're on the friends feed, update it after a follow/unfollow by setting dataChange for feed.tsx
+      if(localStorage.getItem("feed") == "friends")
+        setDataChange(true);
+    }
+  }, [refreshCard]);
 
-  useEffect(() =>{
-    tagList();
-  }, [tagSelected])
- 
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
     
@@ -143,7 +152,7 @@ function MakeCard(
             throw new Error(text);
           });
         } else {
-
+          setDataChange(true);
           return response.text();
         }
       })
@@ -168,12 +177,6 @@ function MakeCard(
 
   // colors for options, applied in order
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
-
-  useEffect(() => {
-    optionList();
-    // alert("triggered");
-  }, [transition]);
-
 
   const optionList = () => {
 
@@ -331,7 +334,7 @@ function MakeCard(
 
   const commentBox = () => {
     if (!inCommentBox)
-      return CommentBox(rawData, voted, followedTags)
+      return CommentBox({setDataChange}, rawData, voted, followedTags)
 
     else
       return
@@ -373,7 +376,9 @@ function MakeCard(
           } else {
             // alert(response.text());
             followedTags.push(tagName);
-            setTagSelected(tagSelected + " ");
+            if(localStorage.getItem("feed") == "following")
+              setDataChange(true)
+            setRefreshCard(true)
             return response.text();
           }
         })
@@ -401,7 +406,9 @@ function MakeCard(
           } else {
             // alert(response.text());
             followedTags.splice(followedTags.indexOf(tagName), 1);
-            setTagSelected(tagSelected + " ");
+            if(localStorage.getItem("feed") == "following")
+              setDataChange(true)
+            setRefreshCard(true)
             return response.text();
           }
         })
@@ -511,7 +518,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack display="flex" alignItems="center" justifyContent="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" sx={{mb:0.6}}/>
-              {usernameFriend(username, user_id)}
+              {usernameFriend({setRefreshCard}, username, user_id, localStorage?.getItem("friends")?.split(",")?localStorage?.getItem("friends")?.split(","):[] )}
             </Stack>
         
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
@@ -549,14 +556,18 @@ function MakeCard(
 }
 
 export default function PollCard(
+  {setDataChange}: any,
   pollData: any,
   voted: {poll_id: number, option_id: number},
   followedTags: string[],
   inCommentBox: boolean
 ) {
+  // alert(JSON.stringify(pollData));
   // Process raw poll data to pass to MakeCard
+   
+  
   let date = new Date(Date.parse(pollData?.created_at));
-  let tags = (pollData.tags)?.split(",");
+  let tags = (pollData?.tags)?.split(",");
   let question = pollData?.title;
   let opts = pollData?.options?.map((option: any) => ({
               optionText: option.option_text,
@@ -568,5 +579,5 @@ export default function PollCard(
   let pollId = pollData?.poll_id;
   let createdAt = date.toDateString() + ", " + date.toLocaleTimeString();
   
-  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard(pollData, tags, question, opts, username, userId, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
+  return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard({setDataChange}, pollData, tags, question, opts, username, userId, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
 }

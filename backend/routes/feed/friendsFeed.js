@@ -19,6 +19,7 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
       Polls.title, 
       Polls.created_at, 
       Users.username, 
+      Users.user_id, 
       COUNT(DISTINCT Votes.vote_id) AS vote_count,
       GROUP_CONCAT(DISTINCT AllTags.tag_name ORDER BY AllTags.tag_name SEPARATOR ',') AS tags,
       (

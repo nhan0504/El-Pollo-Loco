@@ -177,7 +177,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
       alert('You cannot create a poll without logging in.');
       push("/auth/login");
     } else {
-      push('/poll_form');
+      setPollFormOpen(true);
     }
   };
 
@@ -291,7 +291,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
               push('/discover');
             }}
           />
-          <Button variant="contained" size="medium" sx={{}} onClick={(event) => setPollFormOpen(true)}>
+          <Button variant="contained" size="medium" sx={{}} onClick={(event) => CreatePoll()}>
             Create Poll&nbsp;
             <AddIcon fontSize="small" />
           </Button>

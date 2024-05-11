@@ -28,7 +28,7 @@ import PollCard from  './pollCard'
 
 
 
-export default function CommentBox(pollData: any, voted: any, followedTags: string[]) {
+export default function CommentBox({setDataChange}:any, pollData: any, voted: any, followedTags: string[]) {
   
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
@@ -78,7 +78,7 @@ export default function CommentBox(pollData: any, voted: any, followedTags: stri
             Comments
           </Typography> */}
           <Typography id="modal-desc" textColor="text.tertiary"> 
-            {Parent(pollData, voted, followedTags)}
+            {Parent({setDataChange}, pollData, voted, followedTags)}
           </Typography>
         </Sheet>
         </ModalDialog>
@@ -87,7 +87,7 @@ export default function CommentBox(pollData: any, voted: any, followedTags: stri
   );
 }
 
-function Parent (pollData: any, voted: any, followedTags: string[]){
+function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: string[]){
   
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
   let [cmts, setCmts] = React.useState([])
@@ -313,7 +313,7 @@ function Parent (pollData: any, voted: any, followedTags: string[]){
     
   }
   
-  function CommentsWPoll(pollData: any, pollId:number, voted:any, followedTags: string[]){
+  function CommentsWPoll({setDataChange}:any, pollData: any, pollId:number, voted:any, followedTags: string[]){
     let { innerWidth: width, innerHeight: height } = window;
     
     width = (width)*0.5
@@ -323,7 +323,7 @@ function Parent (pollData: any, voted: any, followedTags: string[]){
       {/* <Divider variant="fullWidth" style={{ margin: '5px 0' }}/> */}
       <Paper style={{ minHeight: 'fit-content',
         minWidth: width, overflow:"auto"}}>
-            {PollCard(pollData, voted, followedTags, true)}
+            {PollCard({setDataChange}, pollData, voted, followedTags, true)}
             {Comments(pollId, cmts)}
             {AddComment(cmts)}
             
@@ -334,7 +334,7 @@ function Parent (pollData: any, voted: any, followedTags: string[]){
   
 
   
-  return CommentsWPoll(pollData, pollId, voted, followedTags);
+  return CommentsWPoll({setDataChange}, pollData, pollId, voted, followedTags);
 
 
 }
