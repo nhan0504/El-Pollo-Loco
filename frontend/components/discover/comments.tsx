@@ -53,30 +53,22 @@ export default function CommentBox({setDataChange}:any, pollData: any, voted: an
         <ModalDialog >
         <Sheet
           variant="outlined"
-          style={{ overflow: "hidden" }}
+          style={{ overflow: "auto" }}
           sx={{
             display:"flex",
             flexDirection:"column",
             minHeight: 'min-content',
             minWidth: 'min-content',
             overflow: 'auto',
-            borderRadius: 'md',
+            // borderRadius: 'md',
+            border:"0px",
             p: 3,
             boxShadow: '10px, 5px, 5px',
             alignContent:"center"
           }}
         >
           <ModalClose variant="plain" sx={{ m: 1 }} />
-          {/* <Typography
-            component="h2"
-            id="modal-title"
-            level="h4"
-            textColor="inherit"
-            fontWeight="lg"
-            mb={1}
-          >
-            Comments
-          </Typography> */}
+      
           <Typography id="modal-desc" textColor="text.tertiary"> 
             {Parent({setDataChange}, pollData, voted, followedTags)}
           </Typography>
@@ -232,12 +224,22 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
       </React.Fragment>)
     }
     return (
-      <Paper style={{ maxHeight: 400,
-      minWidth: 'min-content', overflow: 'auto' }}>
         <List>
+              {/* <Typography
+            component="h1"
+            id="modal-title"
+            level="h4"
+            textColor="black"
+            fontWeight="lg"
+            mb={1}
+            sx={{mb:5}}
+            style={{textAlign:"center"}}
+          >
+            Comments
+          </Typography>
+          <br/> */}
           {listOfComments}
         </List>
-      </Paper>
     );
   }
 
@@ -321,13 +323,13 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     return (
       <div>
       {/* <Divider variant="fullWidth" style={{ margin: '5px 0' }}/> */}
-      <Paper style={{ minHeight: 'fit-content',
-        minWidth: width, overflow:"auto"}}>
+      {/* <Paper style={{ 
+        minWidth: width, overflow:"auto", display:"flex", flexDirection:"column", justifyContent:"center"}}> */}
             {PollCard({setDataChange}, pollData, voted, followedTags, true)}
             {Comments(pollId, cmts)}
             {AddComment(cmts)}
             
-        </Paper>
+        {/* </Paper> */}
         </div>
     );
   }
