@@ -1,8 +1,31 @@
 ## Usage
 
-1. Start the ExpressJS server with `$ cd backend && npm i && npm start`.
-2. Open a new terminal and start the NextJS server with `$ cd ../frontend && npm i && npm run dev`.
-3. Follow the link in the console output to access the webpage.
+1. Add a file called `.env` with the following contents in the `/backend` directory.
+```
+  DB_HOST=
+  DB_USER=
+  DB_PASSWORD=
+  DB_NAME=
+
+  SESSION_SECRET=super_secret_string
+
+  REQUEST_ORIGIN_URL=http://localhost:3001
+```
+Note that the first four fields will have to be filled with private information. In the `/frontend` directory, make sure that the contents of `next.config.mjs` are
+```
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  env: {
+    BACKEND_URL: 'http://localhost:3000',
+  },
+};
+
+export default nextConfig;
+```
+
+3. Open a new terminal window, `cd` into `/backend`, and run `npm install && npm start` to install dependencies and start the backend server. It should be running on port 3000.
+4. Open a new terminal window, `cd` into `/frontend` and run `npm install && npm start` to install dependencies and start the frontend client. It should be running on port 3001.
+5. Follow the link in the terminal output from step 4 to access the webpage.
 
 
 ## API Documentation
