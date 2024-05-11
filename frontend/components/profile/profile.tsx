@@ -45,7 +45,7 @@ export default function MyProfile() {
   const { isAuth, setAuth } = useContext(AuthContext);
   const [dummyDataChange, setDummyDataChange]= useState([])
   const [loading, setLoading] = useState(true);
-  const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem('tags') ? localStorage.getItem('tags')?.split(",") : []);
+  const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem('tags') ? String(localStorage.getItem('tags'))?.split(",") : []);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
   const [totalPollsVoted, setTotalPollsVoted] = useState<number>(0);
   const [pollData, setPollData] = useState([]);
@@ -53,13 +53,13 @@ export default function MyProfile() {
     username: string,
     user_id: number,
     email: string,
-  }>([]);
+  }>({});
 
-  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(localStorage.getItem("pollsVoted")).length) : 0, []);
+  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(String(localStorage.getItem("pollsVoted"))).length) : 0, []);
   
   async function getPolls() {
     // try{
-      setFollowedTags(localStorage.getItem('tags') != null ? localStorage.getItem('tags')?.split(",") : []);
+      setFollowedTags(localStorage.getItem('tags') != null ? (String(localStorage.getItem('tags'))?.split(",")) : []);
       let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
         method: 'GET',
         credentials: 'include'
@@ -169,7 +169,8 @@ export default function MyProfile() {
       // alert(currCard.tags);
 
       row.push(
-        <Grid item xs={5} style={{ padding: 50 }} key={i}>
+        <Grid item xs={5} justifyContent={"center"}
+        alignItems="center"  key={i}>
           {PollCard(
             {setDummyDataChange},
             currCard,
@@ -192,7 +193,7 @@ export default function MyProfile() {
     if (pollData.length > 0){
       for (let i = 0; i < rows; i++) {
         grid.push(
-          <Grid container item spacing={1} justifyContent="space-around" key={i}>
+          <Grid container item spacing={1} justifyContent="space-between" key={i} alignContent={"center"}>
             {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
             {FormRow(pollData?.slice(i * cols, i * cols + cols))}
           </Grid>
@@ -202,7 +203,7 @@ export default function MyProfile() {
   
     return (
       <React.Fragment>
-        <Grid container spacing={1} sx={{display:"flex", justifyContent:"center"}}>
+        <Grid container spacing={1} sx={{display:"flex", justifyContent:"center", alignContent: "center"}}>
           {grid}
         </Grid>
       </React.Fragment>
@@ -227,8 +228,8 @@ export default function MyProfile() {
   function getTotalVotes(){
 
     let votes = 0;
-    pollData?.map((poll) => {
-      votes += poll?.options?.map((opt) => opt.vote_count).reduce((partialSum: any, a: any) => partialSum + a, 0);
+    pollData?.map((poll: any) => {
+      votes += poll?.options?.map((opt: any) => opt.vote_count).reduce((partialSum: any, a: any) => partialSum + a, 0);
     });
 
     return votes;
@@ -321,15 +322,15 @@ export default function MyProfile() {
 
         </Box>
         
-        <Card sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+        <Card sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", overflow: 'auto'}}>
         <Typography level="title-md">Polls</Typography>
 
         
         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-          
         </CardOverflow>
-
+        
         <CardsTogether /> 
+        
           
         </Card>
       </Stack>
