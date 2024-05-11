@@ -65,7 +65,7 @@ Returns status `401` if client is not logged in upon request. Returns the follow
 {
   username: string,
   email: string,
-  user_id: string
+  user_id: int
 }
 ```
 ### User Following
@@ -86,7 +86,7 @@ Returns the following object.
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `:user_id`      | `string` | **Required**. ID of account. |
+| `:user_id`      | `int` | **Required**. ID of account. |
 
 #### Get Following List Of User
 
@@ -104,7 +104,7 @@ Returns the following object.
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `:user_id`      | `string` | **Required**. ID of account. |
+| `:user_id`      | `int` | **Required**. ID of account. |
 
 #### Follow A User (Authenticated)
 
@@ -115,7 +115,7 @@ Returns status `404` if the client is already following the specified user. Upda
 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `:user_id`      | `string` | **Required**. ID of account to follow. |
+| `:user_id`      | `int` | **Required**. ID of account to follow. |
 
 #### Unfollow A User (Authenticated)
 
@@ -126,7 +126,7 @@ Returns status `404` if the client is not following the specified user prior to 
 Updates client profile to unfollow the user specified by `:user_id`. 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
-| `:user_id`      | `string` | **Required**. ID of account to unfollow. |
+| `:user_id`      | `int` | **Required**. ID of account to unfollow. |
 
 ### Poll Tags
 
@@ -159,4 +159,45 @@ Returns status `404` if the client is not following any tags. Returns `string[]`
 
 ### Polls
 
+#### Get Poll By ID
+```http
+  GET /polls/:poll_id
+```
+Returns status `404` if the specified poll does not exist. Returns the following object.
+```
+{
+  poll_id: int,
+  user_id: int,
+  title: string,
+  created_at: timestamp,
+  options: { option_id: int, option_text: string }[],
+  tags: { tag_id: int, tag_name: string }[]
+}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:poll_id`      | `int` | **Required**. ID of poll. |
+
+#### Post Poll (Authenticated)
+
+```http
+  POST /polls/
+```
+Creates a poll attached to the client's account.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `title`      | `string` | **Required**. Title of poll. |
+| `options`      | `string[]` | **Required**. List of options. |
+| `tags`      | `string[]` | **Required**. List of tags. |
+
+#### Delete Poll (Authenticated)
+
+```http
+  DELETE /polls/:poll_id
+```
+Returns status `404` if the specified poll does not exist prior to the request. Deletes the specified poll.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:poll_id`      | `int` | **Required**. ID of poll. |
 ### Feeds
