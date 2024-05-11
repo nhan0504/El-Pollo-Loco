@@ -337,4 +337,17 @@ TO - DO
 
 ## Future Additions
 
+If we (or you!) in the future decide to expand upon this project, we plan on implementing at least the following:
+
+#### Private Polls
+Users should be able to post polls just to their freinds, and just to the public.
+
+#### Follow Requests
+Users should be able to have a 2 way system whether or not they follow a person, and should decide to accept or deny someone's follow request.
+
+#### Notifications
+As detailed above, users need to be notified when someone follows them. 
+
+#### Forgot Password
+We would like to have an email based forgot password system, where users can reset their password. 
 
