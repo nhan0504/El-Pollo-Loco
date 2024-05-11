@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, setRef } from "@mui/material";
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -30,6 +30,13 @@ const style = {
     const [isFriend, setFreind] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [refresh, setRefresh] = React.useState(false)
+
+    React.useEffect(()=>{ 
+        if(refresh){
+          setRefresh(false)
+        }
+    }, [refresh])
 
     React.useEffect(()=>{
         //console.log(my_user_id)
@@ -45,12 +52,18 @@ const style = {
                       throw new Error(text);
                     });
                   } else {
-                    console.log(response.json())
+                    response.json().then(re=>{
+                      for(let i = 0; i<re.following.length; i++){
+                          if(re.following[i]==username){
+                            setFreind(true)
+                          }
+                      }
+                    })
                   }
                 })
                 .catch((error) => {});
           }
-    }, []);
+    }, [isFriend]);
   
     function handleClick(event: any): void {
           
@@ -59,7 +72,28 @@ const style = {
           //TODO
           //make sure they are logged in first
           if (isAuth){
-            fetch(`${process.env.BACKEND_URL}/users/${user_id}/follow`, {
+            if(isFriend){
+              fetch(`${process.env.BACKEND_URL}/users/${user_id}/unfollow`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    return response.text().then((text) => {
+                      throw new Error(text);
+                    });
+                  } else {
+                    alert("Successfully removed friend!");
+                    setFreind(false);
+                    setOpen(false);
+                    setRefresh(true);
+                  }
+                })
+                .catch((error) => {});
+            }
+            else{
+              fetch(`${process.env.BACKEND_URL}/users/${user_id}/follow`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' }
@@ -73,9 +107,11 @@ const style = {
                     alert("Successfully added friend!");
                     setFreind(true);
                     setOpen(false);
+                    setRefresh(true);
                   }
                 })
                 .catch((error) => {});
+            }
           }
           else{
             alert("You must be logged in in order to add freinds.")
@@ -98,7 +134,7 @@ const style = {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <Typography sx={{textTransform: "none"}}>Add {username} as a friend?</Typography>
+            {isFriend ? <Typography sx={{textTransform: "none"}}>Remove {username} as a friend?</Typography> : <Typography sx={{textTransform: "none"}}>Add {username} as a friend?</Typography>}
             <Button sx={{textTransform: "none", boxShadow: 24,  width: 'auto', height: 'auto', mt: 2 }} onClick={handleClick}>Yes!</Button>
           </Box>
         </Modal>
