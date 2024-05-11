@@ -308,3 +308,33 @@ This folder has all the components for the Feed in Discover, Freinds, and Follow
 
 ### Navigation
 Lastly, we have a nav bar in ```navigation.tsx``` which has the Home button, Profile, and log in/log out. 
+
+
+
+## Design Choice
+
+### Typescript
+We decided to use TS due to its easy integration with fetch requests, and how it merged well with the frontend and backend. Typing added a  layer of specificity we found important. Most of us have used the language before, which meant we were able to write code faster, since it was familiar. 
+
+### React
+
+Sort of the traditional route when developing a frontend, we decided to use React. React came with a lot of tools, such as Effects and State we could leverage to our benefit when developing components that would change. It also helped us write code that was slightly more abstracted. Moreover, due to its popularity, we were able to debug and find solutions faster. 
+
+### SQL
+
+TODO
+
+### UI/UX
+
+In terms of style and design, we decided to use Material UI. This was a great decision, as it came with a lot of pre-implemented features we could just pop into our project. This also allowed us to spend less time on the style while having a clean and nice UX. 
+
+### Next JS
+
+TO-DO say smth ab routing
+
+### Vercel
+TO - DO
+
+## Future Additions
+
+
