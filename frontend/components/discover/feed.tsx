@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Fade from '@mui/material/Fade';
+import PageBar from './pages';
 
 
 // Should cache some info in localStorage potentially, can share across components
@@ -277,6 +278,8 @@ export default function Feed({ pollData, setPollData }: any) {
       return(<Box display='none'></Box>)
   };
 
+
+
   
 
   function FormRow(pollData: any) {
@@ -308,6 +311,8 @@ export default function Feed({ pollData, setPollData }: any) {
 
     return <React.Fragment>{row}</React.Fragment>;
   }
+
+  const pageBar = <Box display="flex" justifyContent='center' alignItems="center">{PageBar()}</Box>;
 
   function CardsTogether() {
     const rows = 3;
@@ -375,6 +380,7 @@ export default function Feed({ pollData, setPollData }: any) {
       <Grow in={true}>
         <Container maxWidth={false}>
           <CardsTogether />
+          {pageBar}
         </Container>
       </Grow>
     </React.Fragment>
