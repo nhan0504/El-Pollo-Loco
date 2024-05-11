@@ -74,7 +74,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
         ? [
             <MenuItem
               onClick={() => {
-                //Redirect to profile.
+                push('/profile');
                 handleMenuClose();
               }}
               key={1}

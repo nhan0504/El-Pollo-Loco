@@ -2,17 +2,42 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const checkAuthenticated = require('../../middleware.js');
+const {checkAuthenticated} = require('../../middleware.js');
 
-router.get('/', checkAuthenticated, function (req, res) {
+router.get('/:pageNum?', checkAuthenticated, function (req, res) {
     const userId = req.user.user_id;
-
+    const pageNum = parseInt(req.params.pageNum, 10) || 1;
+    const offset = (pageNum - 1) * 6;
+  
   pool.query(
-    'SELECT Polls.*, Users.username FROM Polls ' +
-      'JOIN Users ON Polls.user_id = Users.user_id ' +
-      'WHERE Polls.user_id = ? ' +
-      'ORDER BY Polls.created_at DESC LIMIT 6 ',
-      [userId],
+    `SELECT 
+        Polls.poll_id, 
+        Polls.title, 
+        Polls.created_at, 
+        Users.username,
+        Users.user_id, 
+        COUNT(Votes.vote_id) AS vote_count,
+        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags
+    FROM 
+        Polls
+    JOIN 
+        Users ON Polls.user_id = Users.user_id
+    LEFT JOIN 
+        PollsTags ON Polls.poll_id = PollsTags.poll_id
+    LEFT JOIN 
+        Tags ON PollsTags.tag_id = Tags.tag_id
+    LEFT JOIN 
+        Options ON Polls.poll_id = Options.poll_id
+    LEFT JOIN 
+        Votes ON Options.option_id = Votes.option_id
+    WHERE 
+        Polls.user_id = ?
+    GROUP BY 
+        Polls.poll_id
+    ORDER BY 
+        Polls.created_at desc
+    LIMIT 6 OFFSET ?;`,
+    [userId, offset],
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);

@@ -1,11 +1,11 @@
 'use client'
 import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container, Grid, Box } from '@mui/material';
 
 import AspectRatio from '@mui/joy/AspectRatio';
-import Button from '@mui/joy/Button';
+import Button from '@mui/material/Button';
 import Divider from '@mui/joy/Divider';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
@@ -35,6 +35,7 @@ import ListItemText from '@mui/material/ListItemText';
 import PollCard from '../discover/pollCard';
 import FeedButtons from '../discover/feedButtons';
 import { AuthContext } from '@/contexts/authContext';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 export default function MyProfile() {
@@ -43,6 +44,9 @@ export default function MyProfile() {
 
   const { isAuth, setAuth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem('tags') ? localStorage.getItem('tags')?.split(",") : []);
+  const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
+  const [totalPollsVoted, setTotalPollsVoted] = useState<number>(0);
   const [pollData, setPollData] = useState([]);
   const [userData, setUserData] = useState<{
     username: string,
@@ -50,15 +54,25 @@ export default function MyProfile() {
     email: string,
   }>([]);
 
+  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(localStorage.getItem("pollsVoted")?.length) : 0, []);
+  
   async function getPolls() {
     // try{
-      let response = await fetch(`${process.env.BACKEND_URL}/feed/user`, {
+      setFollowedTags(localStorage.getItem('tags') != null ? localStorage.getItem('tags')?.split(",") : []);
+      let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
         method: 'GET',
         credentials: 'include'
       });
       let data = await response.json();
       if (response.ok) {
         //alert(JSON.stringify(data));
+
+        // Directly pass in the list of poll ids - can't use states
+        // since they aren't set until the function exits
+        await getVoted(data.map((poll: any) => {
+          return poll.poll_id;
+        }));
+
         setPollData(data);
 
         // Once we've successfully fetched the user info, load page components
@@ -104,7 +118,45 @@ export default function MyProfile() {
       getUser();
   }, []);
 
+   // Pass it the list of poll ids of 6 polls that were just fetched
+   async function getVoted(polls: any) {
+    try{
+      let response = await fetch(`${process.env.BACKEND_URL}/polls/vote/voted`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      let data = await response.json();
+      if (response.ok) {
+        
+        // Filter out any polls that the user voted on that aren't in this batch of
+        // polls
+        // May need to alter this approach or even have another state that holds
+        // this filtered list while keeping the original complete list. Otherwise
+        // we have to keep fetching the complete list every time more polls are
+        // loaded w/ infinite scroll
+        localStorage.setItem('pollsVoted', JSON.stringify(data));
+        setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
+      }
+      else{
+        setPollsVoted([{poll_id: -1, option_id: -1}]);
+      }
+    }
+    catch (error) {
+
+      setPollsVoted([{poll_id: -1, option_id: -1}]);
+    }
+  }
+
+  // Needed a way to directly pass the "voted" state into PollCard
+  function wasVotedOn(poll_id: number){
+    // See if the poll with poll_id was voted on by comparing to pollsVoted list
+    let index = pollsVoted.findIndex((poll) => poll.poll_id === poll_id);
+    let voted = index > -1 ? pollsVoted[index] : {poll_id: poll_id, option_id: -1};
+    return voted;
+  }
+
   function FormRow(pollData: any) {
+
     // Not the state pollData, but a parameter that contains 1 or 2 polls
     let row = [];
 
@@ -113,18 +165,15 @@ export default function MyProfile() {
       // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
       let currCard = pollData[i];
       let loaded = true;
+      // alert(currCard.tags);
 
       row.push(
         <Grid item xs={5} style={{ padding: 50 }} key={i}>
           {PollCard(
-            [''],
-            currCard?.title,
-            currCard?.options?.map((option: any) => ({
-              optionText: option.option_text,
-              votes: option.vote_count,
-              option_id: option.option_id,
-            })),
-            currCard?.username,
+            currCard,
+            wasVotedOn(currCard.poll_id),
+            followedTags,
+            false
           )}
         </Grid>,
       );
@@ -134,8 +183,8 @@ export default function MyProfile() {
   }
 
   function CardsTogether() {
-    const rows = 3;
-    const cols = 2;
+    const rows = 6;
+    const cols = 1;
     let grid = [];
 
     if (pollData.length > 0){
@@ -151,7 +200,7 @@ export default function MyProfile() {
   
     return (
       <React.Fragment>
-        <Grid container spacing={1}>
+        <Grid container spacing={1} sx={{display:"flex", justifyContent:"center"}}>
           {grid}
         </Grid>
       </React.Fragment>
@@ -162,6 +211,14 @@ export default function MyProfile() {
 
       return <Typography level="body-sm">You haven't made any polls yet. Click the "Create Poll" button to get started!</Typography>
 
+    }
+
+    else if (loading){
+      return(
+      <Box display="flex" justifyContent="center">
+          <CircularProgress></CircularProgress>
+        </Box>
+      )
     }
   }
 
@@ -175,51 +232,23 @@ export default function MyProfile() {
     return votes;
   }
 
+  function tagList(){
 
-  const [bio, setBio] = useState<string>("Write your bio here!");
-  const [isEditing, setEditing] = useState<boolean>(false);
+    return(
+    <Box sx={{mb:0.5, width:"490px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
-  const editableBio = () => {
-
-    // need to make sure the two components are aligned
-    if (isEditing) {
-      return(
-        <Textarea 
-          value={bio}
-          onChange={(event) => setBio(event.target.value)}
-          endDecorator={
-            <Box sx={{display: "flex"}}>
-              <Typography level="body-xs" sx={{ ml: 'auto' }}>
-                {bio.length} character(s)
-              </Typography>
-              <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-              <Button size="sm" variant="outlined" color="neutral">
-                  Cancel
-              </Button>
-              <Button 
-                onClick={(event) => (setEditing(false))}
-                sx={{ ml: 'auto' }}
-                size="sm" variant="solid">
-                  Save
-              </Button>
-            </CardActions>
-            </Box>
-          }
-        >
-        </Textarea>
-      )
-    }
-    else{
-
-      return(
-
-        <Typography onClick={(event) => (setEditing(true))}>{bio}</Typography>
-
-      )
-    }
+      {followedTags?.map((tag) => {
+          return(
+          <Button onClick={(event) => {    
+          }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
+        )})}
+        </Box>
+    )
   }
 
-  return (loading? <div>...Loading</div>:
+  return (loading? <Box display="flex" justifyContent="center">
+  <CircularProgress></CircularProgress>
+</Box>:
     <Box sx={{ flex: 1, width: '100%' }}>
       <Box
         sx={{
@@ -254,44 +283,40 @@ export default function MyProfile() {
             
           </Stack>
           
-        <Box sx={{display:"flex", flexDirection:"row", justifyContent: "center", alignItems:"center"}}>
+        <Box sx={{display:"flex", flexDirection:"row", alignItems:"baseline", justifyContent: "center"}}>
         
-          <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
+          {/* <Stack direction="row" spacing={3} sx={{display:"flex", width:"100%", alignSelf:"center", alignContent:"baseline", alignItems:"baseline"}}> */}
+            <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
+              
+              <Typography level="title-md">Poll Stats</Typography>
+              <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
             
-            <Typography level="title-md">Poll Stats</Typography>
-            <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-          
-          </CardOverflow>
-  
-            <List sx={{display: "flex", flexDirection: "column"}}>
-              <ListItem disablePadding>
-                <Typography>{pollData.length} polls created</Typography>
-              </ListItem>
-              <ListItem disablePadding>
-                <Typography>{getTotalVotes()} people have voted on their polls</Typography>
-              </ListItem>
-
-
-            </List>
-          {/* I think it would be nice to have a bio here, but we'd need another database table to save it... */}
-          {/* <Box sx={{ mb: 1 }}>
-            <Typography level="title-md">Bio</Typography>
-            
-            {editableBio()}
-          </Box> */}
-          </Card>
-
-          <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
-            <Typography level="title-md">Friends</Typography>
-            <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-          
-          </CardOverflow>
-  
-            <List sx={{display: "flex", flexDirection: "column"}}>
+            </CardOverflow>
     
+              <List sx={{display: "flex", flexDirection: "column"}}>
+                <ListItem disablePadding>
+                  <Typography>{pollData.length} polls created</Typography>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Typography>{getTotalVotes()} people have voted on their polls</Typography>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Typography>Voted {totalPollsVoted} total times</Typography>
+                </ListItem>
 
-            </List>
-          </Card>
+
+              </List>
+        
+            </Card>
+
+            <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent:"center", m:2}}>
+              <Typography level="title-md">Followed Tags</Typography>
+              <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
+            </CardOverflow>
+              {tagList()}
+            </Card>
+          {/* </Stack> */}
+
         </Box>
         
         <Card sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>

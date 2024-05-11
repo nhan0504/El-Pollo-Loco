@@ -95,7 +95,7 @@ export default function Feed({ pollData, setPollData }: any) {
       let data = await response.json();
       if (response.ok) {
         setFollowedTags(data);
-        localStorage.setItem("tags", JSON.stringify(data));
+        localStorage.setItem("tags", data);
       }
       else{
         setPollsVoted([{poll_id: -1, option_id: -1}]);
