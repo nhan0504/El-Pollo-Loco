@@ -54,7 +54,7 @@ export default function MyProfile() {
     email: string,
   }>([]);
 
-  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(localStorage.getItem("pollsVoted")?.length) : 0, []);
+  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(localStorage.getItem("pollsVoted")).length) : 0, []);
   
   async function getPolls() {
     // try{
@@ -113,9 +113,9 @@ export default function MyProfile() {
   }
 
   useEffect(() => {
-    
-      getPolls();
-      getUser();
+  
+    getPolls();
+    getUser();
   }, []);
 
    // Pass it the list of poll ids of 6 polls that were just fetched
@@ -183,8 +183,8 @@ export default function MyProfile() {
   }
 
   function CardsTogether() {
-    const rows = 6;
-    const cols = 1;
+    const rows = 3;
+    const cols = 2;
     let grid = [];
 
     if (pollData.length > 0){
@@ -271,7 +271,7 @@ export default function MyProfile() {
           py: { xs: 2, md: 3 },
         }}
       >
-        <Box sx={{mb: 1 }}>
+        <Box sx={{ }}>
             <Typography level="title-md">{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
@@ -283,7 +283,7 @@ export default function MyProfile() {
             
           </Stack>
           
-        <Box sx={{display:"flex", flexDirection:"row", alignItems:"baseline", justifyContent: "center"}}>
+        <Box sx={{display:"flex", flexDirection:"row", alignItems:"baseline", alignContente:"baseline", justifyContent: "center"}}>
         
           {/* <Stack direction="row" spacing={3} sx={{display:"flex", width:"100%", alignSelf:"center", alignContent:"baseline", alignItems:"baseline"}}> */}
             <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
@@ -298,7 +298,7 @@ export default function MyProfile() {
                   <Typography>{pollData.length} polls created</Typography>
                 </ListItem>
                 <ListItem disablePadding>
-                  <Typography>{getTotalVotes()} people have voted on their polls</Typography>
+                  <Typography>{getTotalVotes()} total votes on their polls</Typography>
                 </ListItem>
                 <ListItem disablePadding>
                   <Typography>Voted {totalPollsVoted} total times</Typography>
@@ -309,7 +309,7 @@ export default function MyProfile() {
         
             </Card>
 
-            <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", justifyContent:"center", m:2}}>
+            <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
               <Typography level="title-md">Followed Tags</Typography>
               <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
             </CardOverflow>

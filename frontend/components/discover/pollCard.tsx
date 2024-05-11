@@ -64,7 +64,7 @@ function MakeCard(
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
-  const [tagsFollowed, setTagsFollowed] = useState<string[]>(followedTags);
+  const[refresh, setRefresh] = useState(false);
   // A state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
   // Tracks tag dialog open state as well as whether the selected tag was actually followed
@@ -82,10 +82,15 @@ function MakeCard(
   }, []);
 
 
-  useEffect(() =>{
-    tagList();
-  }, [tagSelected])
+  // useEffect(() =>{
+  //   tagList();
+  // }, [tagSelected])
  
+  useEffect(() => {
+    if (refresh)
+      setRefresh(false);
+  },[refresh])
+
   // pass in an index of the current option being voted on so we don't have to map through the whole list
   const AddVote = (ind: number) => {
     
@@ -142,7 +147,6 @@ function MakeCard(
             throw new Error(text);
           });
         } else {
-
           return response.text();
         }
       })
@@ -372,7 +376,8 @@ function MakeCard(
           } else {
             // alert(response.text());
             followedTags.push(tagName);
-            setTagSelected(tagSelected + " ");
+            // setTagSelected(tagSelected + " ");
+            setRefresh(true);
             return response.text();
           }
         })
@@ -400,7 +405,8 @@ function MakeCard(
           } else {
             // alert(response.text());
             followedTags.splice(followedTags.indexOf(tagName), 1);
-            setTagSelected(tagSelected + " ");
+            // setTagSelected(tagSelected + " ");
+            setRefresh(true);
             return response.text();
           }
         })
@@ -476,7 +482,7 @@ function MakeCard(
   }
 
   const tagList = () => {
-    
+
     if(tags?.length != 0){
       return(
         <Box sx={{ mb:0.5, width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap"}}>
