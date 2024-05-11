@@ -169,7 +169,7 @@ export default function MyProfile() {
       // alert(currCard.tags);
 
       row.push(
-        <Grid item xs={5} justifyContent={"center"}
+        <Grid item xs={6} justifyContent={"center"}
         alignItems="center"  key={i}>
           {PollCard(
             {setDummyDataChange},
@@ -193,7 +193,7 @@ export default function MyProfile() {
     if (pollData.length > 0){
       for (let i = 0; i < rows; i++) {
         grid.push(
-          <Grid container item spacing={1} justifyContent="space-between" key={i} alignContent={"center"}>
+          <Grid container item spacing={1} justifyContent="center" key={i} alignContent={"center"}>
             {/* Give FormRow 2 polls (or 1 if there's only 1 left) at a time to form the row */}
             {FormRow(pollData?.slice(i * cols, i * cols + cols))}
           </Grid>
@@ -203,7 +203,7 @@ export default function MyProfile() {
   
     return (
       <React.Fragment>
-        <Grid container spacing={1} sx={{display:"flex", justifyContent:"center", alignContent: "center"}}>
+        <Grid container spacing={10} sx={{display:"flex", justifyContent:"center", alignContent: "center"}}>
           {grid}
         </Grid>
       </React.Fragment>
@@ -265,17 +265,19 @@ export default function MyProfile() {
         
       </Box>
       <Stack
-        spacing={4}
+        spacing={2}
         sx={{
           display: 'flex',
           maxWidth: '1000px',
           mx: 'auto',
           px: { xs: 2, md: 6 },
           py: { xs: 2, md: 3 },
+          // justifyContent:"center",
+          alignItems:"center"
         }}
       >
         <Box sx={{ }}>
-            <Typography level="title-md">{userData.username}'s Profile Page</Typography>
+            <Typography level="h3" sx={{p:1.5, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
             direction="row"
@@ -304,7 +306,7 @@ export default function MyProfile() {
                   <Typography>{getTotalVotes()} total votes on their polls</Typography>
                 </ListItem>
                 <ListItem disablePadding>
-                  <Typography>Voted {totalPollsVoted} total times</Typography>
+                  <Typography>Voted {totalPollsVoted} times</Typography>
                 </ListItem>
 
 
@@ -312,7 +314,7 @@ export default function MyProfile() {
         
             </Card>
 
-            <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
+            <Card sx={{minWidth: "55%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
               <Typography level="title-md">Followed Tags</Typography>
               <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
             </CardOverflow>
@@ -322,10 +324,9 @@ export default function MyProfile() {
 
         </Box>
         
-        <Card sx={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", overflow: 'auto'}}>
-        <Typography level="title-md">Polls</Typography>
+        <Card sx={{width:"950px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+        <Typography level="title-md">Your Polls</Typography>
 
-        
         <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
         </CardOverflow>
         
