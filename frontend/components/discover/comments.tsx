@@ -225,11 +225,11 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     }
     return (
         <List>
-              {/* <Typography
+              <Typography
             component="h1"
             id="modal-title"
             level="h4"
-            textColor="black"
+            textColor="inherit"
             fontWeight="lg"
             mb={1}
             sx={{mb:5}}
@@ -237,7 +237,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
           >
             Comments
           </Typography>
-          <br/> */}
+          <br/>
           {listOfComments}
         </List>
     );
