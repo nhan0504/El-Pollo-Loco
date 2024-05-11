@@ -75,6 +75,7 @@ function MakeCard(
   const [tagSelected, setTagSelected] = useState<string>("");
   const [transition, setTransition] = React.useState(false);
   const [refreshCard, setRefreshCard] = React.useState(false);
+  const [tagChange, setTagChange] = useState(false);
   // const [friendList, setFriendList] = useState<string[]>([]);
   // If the user has voted on this poll, automatically show results
   useEffect(() => {
@@ -91,8 +92,10 @@ function MakeCard(
     if(refreshCard){
       setRefreshCard(false);
       // If we're on the friends feed, update it after a follow/unfollow by setting dataChange for feed.tsx
-      if(localStorage.getItem("feed") == "friends")
+      if(localStorage.getItem("feed") == "friends" && !tagChange)
         setDataChange(true);
+      else
+        setTagChange(false)
     }
   }, [refreshCard]);
 
@@ -378,6 +381,7 @@ function MakeCard(
             followedTags.push(tagName);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
+            setTagChange(true)
             setRefreshCard(true)
             return response.text();
           }
@@ -408,6 +412,7 @@ function MakeCard(
             followedTags.splice(followedTags.indexOf(tagName), 1);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
+            setTagChange(true)
             setRefreshCard(true)
             return response.text();
           }
@@ -567,6 +572,8 @@ export default function PollCard(
    
   
   let date = new Date(Date.parse(pollData?.created_at));
+  let adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000)
+
   let tags = (pollData?.tags)?.split(",");
   let question = pollData?.title;
   let opts = pollData?.options?.map((option: any) => ({
@@ -577,7 +584,7 @@ export default function PollCard(
   let username = pollData?.username;
   let userId = pollData?.user_id;
   let pollId = pollData?.poll_id;
-  let createdAt = date.toDateString() + ", " + date.toLocaleTimeString();
+  let createdAt = adjustedDate.toDateString() + ", " + adjustedDate.toLocaleTimeString();
   
   return <Box sx={{ minWidth: 450, maxWidth: 450,  alignSelf:"center"}}>{MakeCard({setDataChange}, pollData, tags, question, opts, username, userId, pollId, createdAt, voted, followedTags, inCommentBox)}</Box>;
 }

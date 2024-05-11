@@ -11,6 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Fade from '@mui/material/Fade';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 
 // Should cache some info in localStorage potentially, can share across components
@@ -262,7 +263,7 @@ export default function Feed({ pollData, setPollData }: any) {
     
     if(followedTags?.length != 0 && currFeed == "following"){
       return(
-        <Stack direction="row" sx={{ mb:0.5, pt:5, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
+        <Stack direction="row" sx={{ mb:0.5, pt:7, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
 
         <Typography noWrap style={{}} variant="h6" sx={{width:"min-content", color: "black"}}>You are following</Typography>
         {/* border:"1px solid black",  */}
@@ -281,6 +282,29 @@ export default function Feed({ pollData, setPollData }: any) {
       return(<Box display='none'></Box>)
   };
 
+  const friendList = () => {
+    let friends = getStorageFriends();
+
+    if(friends?.length != 0 && currFeed == "friends"){
+      return(
+        <Stack direction="row" sx={{ mb:0.5, pt:7, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
+
+        <Typography noWrap style={{}} variant="h6" sx={{width:"min-content", color: "black"}}>You are friends with</Typography>
+        {/* border:"1px solid black",  */}
+        <Box sx={{ ml: 1.5, mb:0.5, width:"550px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
+
+          {friends?.map((friend) => {
+            return(
+            <Button onClick={(event) => {    
+            }}  size="medium"variant="outlined" style={{fontSize: '14px', textTransform:'none'}} sx={{mx:1, my:0.6, maxHeight:"45%"}} key={friend}>{friend}&nbsp;<FavoriteIcon sx={{ fontSize: '20px' }}/></Button>
+          )})}
+        </Box>
+        </Stack>
+      )
+    }
+    else
+      return(<Box display='none'></Box>)
+  }
 
 
   
@@ -416,6 +440,9 @@ export default function Feed({ pollData, setPollData }: any) {
         </Box>
         <Fade in={currFeed == "following"}>
           {tagList()}
+        </Fade>
+        <Fade in={currFeed == "friends"}>
+          {friendList()}
         </Fade>
       </Stack>
       <Grow in={true}>
