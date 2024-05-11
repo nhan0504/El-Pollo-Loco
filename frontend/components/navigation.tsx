@@ -81,15 +81,15 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
             >
               Profile
             </MenuItem>,
-            <MenuItem
-              onClick={() => {
-                //Redirect to account.
-                handleMenuClose();
-              }}
-              key={2}
-            >
-              My Account
-            </MenuItem>,
+            // <MenuItem
+            //   onClick={() => {
+            //     //Redirect to account.
+            //     handleMenuClose();
+            //   }}
+            //   key={2}
+            // >
+            //   My Account
+            // </MenuItem>,
             <MenuItem
               onClick={() => {
                 fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
