@@ -200,4 +200,43 @@ Returns status `404` if the specified poll does not exist prior to the request. 
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `:poll_id`      | `int` | **Required**. ID of poll. |
+
+#### Get Comments By Poll ID
+```http
+  GET /polls/comments/:poll_id
+```
+Returns the following object.
+```
+{
+  username: string,
+  user_id: int,
+  comment_id: int,
+  parent_id: int,
+  comment: string
+}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:poll_id`      | `int` | **Required**. ID of poll. |
+
+#### Post Comment (Authenticated)
+```http
+  POST /polls/comments/
+```
+Posts a comment to the poll specified by `poll_id`.
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `poll_id`      | `int` | **Required**. ID of poll. |
+| `parent_id`      | `int` | **Required**. ID of parent comment. |
+| `comment`      | `string` | **Required**. Content of comment. |
+
+#### Delete Comment By Comment ID (Authenticated)
+```http
+  GET /polls/comments/:comment_id
+```
+Deletes the specified comment.
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `:comment_id`      | `int` | **Required**. ID of comment. |
 ### Feeds
