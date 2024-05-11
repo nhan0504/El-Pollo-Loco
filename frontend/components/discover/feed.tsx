@@ -271,7 +271,10 @@ export default function Feed({ pollData, setPollData }: any) {
           {followedTags?.map((tag) => {
             return(
             <Button onClick={(event) => {    
-            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
+            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%",
+            ":hover": {
+              backgroundColor: "green",
+            },}} key={tag}>{tag} ✓</Button>
           )})}
         </Box>
         </Stack>

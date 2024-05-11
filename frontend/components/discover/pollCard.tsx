@@ -134,6 +134,7 @@ function MakeCard(
               totalVotes: cardData.totalVotes + 1,
               opts: cardData.opts,
             });
+
             return response.text();
           }
         })
@@ -447,7 +448,12 @@ function MakeCard(
             <DialogTitle textAlign="center">{tagFollowMessage().header}</DialogTitle>           
             <Typography textAlign="center" variant="body1">{tagFollowMessage().body}</Typography>
             <br/>
-            <Button onClick={(event) => {!isFollowing(tagSelected) ? followTag(tagSelected) : unfollowTag(tagSelected)}}  size="small" variant="contained" sx={{bgcolor: !isFollowing(tagSelected) ? "#1976d2" : "green", alignSelf:"center"}}>{tagLabel(tagSelected)}</Button>
+            <Button onClick={(event) => {!isFollowing(tagSelected) ? followTag(tagSelected) : unfollowTag(tagSelected)}}  size="small" variant="contained" 
+              sx={{
+                bgcolor: !isFollowing(tagSelected) ? "#1976d2" : "green", alignSelf:"center",
+                ":hover": {
+                  backgroundColor: !isFollowing(tagSelected) ? "#1976d2" : "green",
+                },}}>{tagLabel(tagSelected)}</Button>
           </DialogContent>
         </Dialog>
       )
@@ -498,7 +504,11 @@ function MakeCard(
             <Button onClick={(event) => {    
               setTagSelected(tag);
               setTagDialogOpen({open: true,  followed: false});
-            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:!isFollowing(tag)?'#1976d2' : "green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tagLabel(tag)}</Button>
+            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{
+              bgcolor:!isFollowing(tag)?'#1976d2' : "green", color:'white', mx:1, my:0.6, maxHeight:"45%",
+              ":hover": {
+                backgroundColor: !isFollowing(tag) ? "#1976d2" : "green",
+              },}} key={tag}>{tagLabel(tag)}</Button>
           )})}
         </Box>
       )
