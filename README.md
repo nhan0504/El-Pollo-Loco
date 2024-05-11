@@ -240,3 +240,24 @@ Deletes the specified comment.
 | :-------- | :------- | :-------------------------------- |
 | `:comment_id`      | `int` | **Required**. ID of comment. |
 ### Feeds
+
+
+### Frontend 
+The frontend is split into components, which match up with routing as supported by Next.JS. This project relied on Material UI for components such as a Card, Button, Page Bar, Login, etc. 
+
+#### Auth
+Signin.tsx has the login components. Likewise, Signup has the login components. Each of them rely on AuthContext, which is a context at the Contexts folder that is passed into each component that needs to know if the user is signed in or not. 
+
+#### Discover
+
+This folder has all the components for the Feed in Discover, Freinds, and Following. The parent file is ```feed.tsx``` which calls the rest of the files. Each PollCard has a username of who made it (```addFreind.tsx```), a comment box (```comments.tsx```). When the comments are open, we load ```pollCardNoComments.tsx```. To search, we use ```search.tsx```, and to create a poll, we use ```PollForm.tsx```. The buttons on the feed are in ```feedButtons.tsx```. 
+
+#### Profile
+```profile.tsx``` renders the profile page. This shows user stats (how many polls made, how many votes, etc.) and any polls a user made. 
+
+#### Navigation
+Lastly, we have a nav bar in ```navigation.tsx``` which has the Home button, Profile, and log in/log out. 
+
+
+####
+To run the frontend locally, navigate to the frontend folder, and run ```npm run dev```. 
