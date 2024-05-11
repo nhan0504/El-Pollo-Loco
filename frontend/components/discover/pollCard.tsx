@@ -507,6 +507,8 @@ function MakeCard(
       return
   };
 
+  let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
+
   return (
     <React.Fragment>
       <Card
@@ -526,7 +528,7 @@ function MakeCard(
               {usernameFriend({setRefreshCard}, username, user_id, localStorage?.getItem("friends")?.split(",")?localStorage?.getItem("friends")?.split(","):[] )}
             </Stack>
         
-            <Typography sx={{}} variant="subtitle2" color="textSecondary">{cardData.totalVotes} votes</Typography>
+            <Typography sx={{}} variant="subtitle2" color="textSecondary">{voteMessage}</Typography>
           </Stack>
           <br/>
           <Typography variant="h5" component="div" align="center">
