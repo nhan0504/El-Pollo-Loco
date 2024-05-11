@@ -26,6 +26,7 @@ export default function Feed({ pollData, setPollData }: any) {
   const [currFeed, setCurrentFeed] = useState<string | null>(localStorage?.getItem("feed") != null ? localStorage?.getItem("feed") : 'discover');
   const [dataChange, setDataChange] = useState<boolean>(false);
   const [page, setPage] = React.useState(1);
+  
   // const [tagSelected, setTagSelected] = useState<string>("");
   // const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
 
@@ -97,7 +98,7 @@ export default function Feed({ pollData, setPollData }: any) {
       let data = await response.json();
       if (response.ok) {
         setFollowedTags(data);
-        localStorage.setItem("tags", JSON.stringify(data));
+        localStorage.setItem("tags", data);
       }
       else{
         setPollsVoted([{poll_id: -1, option_id: -1}]);
@@ -118,12 +119,10 @@ export default function Feed({ pollData, setPollData }: any) {
       let data = await response.json();
       if (response.ok) {
         
+        // Set total list of polls voted on
+        localStorage.setItem('pollsVoted', JSON.stringify(data));
         // Filter out any polls that the user voted on that aren't in this batch of
         // polls
-        // May need to alter this approach or even have another state that holds
-        // this filtered list while keeping the original complete list. Otherwise
-        // we have to keep fetching the complete list every time more polls are
-        // loaded w/ infinite scroll
         setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
       }
       else{

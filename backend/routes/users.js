@@ -4,6 +4,8 @@ var router = express.Router();
 const pool = require('../db.js');
 const { checkAuthenticated } = require('../middleware.js');
 
+// const checkAuthenticated = require('../middleware.js');
+
 router.get('/:userId', function (req, res) {
   const userId = req.params.userId;
   pool.query('SELECT * FROM Users WHERE user_id = ?', [userId], (error, results) => {
@@ -47,7 +49,6 @@ router.delete('/:userId', function (req, res) {
     }
   });
 });
-
 /////////////////////////////////////////////
 
 // FOLLOW/UNFOLLOW ENDPOINTS
@@ -162,5 +163,6 @@ router.delete('/:userId/unfollow/', checkAuthenticated, function (req, res) {
     }
   });
 });
+
 
 module.exports = router;

@@ -489,7 +489,7 @@ function MakeCard(
   }
 
   const tagList = () => {
-    
+
     if(tags?.length != 0){
       return(
         <Box sx={{ mb:0.5, width:"100%", color: 'blue', display: 'flex', alignItems:"center", flexWrap:"wrap"}}>
