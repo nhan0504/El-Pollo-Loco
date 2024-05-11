@@ -365,8 +365,16 @@ export default function Feed({ pollData, setPollData }: any) {
       </Box>
       );
     }
-    else
-      return
+    else{
+      return (
+        <Box display="flex" justifyContent='center' alignItems="center"> 
+          <Stack spacing={2}>
+            <Pagination count={10} page={page} onChange={handleChange} />
+              <div></div>
+          </Stack>
+        </Box>
+        );
+    }
   }
 
 
@@ -405,7 +413,7 @@ export default function Feed({ pollData, setPollData }: any) {
         message = "Oops! We can't get any polls right now. Try again later."
 
       grid.push(
-        <Card sx={{alignSelf:"center", width:"100%", display:"flex", justifyContent:"center"}}>
+        <Card sx={{mt: 5, mb:3, alignSelf:"center", width:"100%", display:"flex", justifyContent:"center"}}>
           <CardContent>
             <Typography>{message}</Typography>
           </CardContent>

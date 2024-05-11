@@ -43,6 +43,7 @@ export default function MyProfile() {
   const { push } = useRouter();
 
   const { isAuth, setAuth } = useContext(AuthContext);
+  const [dummyDataChange, setDummyDataChange]= useState([])
   const [loading, setLoading] = useState(true);
   const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem('tags') ? localStorage.getItem('tags')?.split(",") : []);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
@@ -170,6 +171,7 @@ export default function MyProfile() {
       row.push(
         <Grid item xs={5} style={{ padding: 50 }} key={i}>
           {PollCard(
+            {setDummyDataChange},
             currCard,
             wasVotedOn(currCard.poll_id),
             followedTags,
