@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { Container, Grid, Box } from '@mui/material';
+import { Container, Grid, Box, Pagination } from '@mui/material';
 import PollCard from './pollCard';
 import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -11,7 +11,6 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Fade from '@mui/material/Fade';
-import PageBar from './pages';
 
 
 // Should cache some info in localStorage potentially, can share across components
@@ -24,19 +23,17 @@ export default function Feed({ pollData, setPollData }: any) {
   const [noPolls, setNoPolls] = useState<boolean>(false);
   const [followedTags, setFollowedTags] = useState<string[]>([]);
   const [currFeed, setCurrentFeed] = useState<string | null>(localStorage?.getItem("feed") != null ? localStorage?.getItem("feed") : 'discover');
+  const [page, setPage] = React.useState(1);
   // const [tagSelected, setTagSelected] = useState<string>("");
   // const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
 
-  // Need to keep track of how many "pages" have been loaded (how many batches of 6) so we can keep getting older
-  // polls by passing in the page num to GET request. Pages not zero indexed.
-  const [virtualPage, setVirtualPage] = useState<number>(2);
 
   // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
   useEffect(() => {
     localStorage.setItem("feed", String(currFeed));
     getPolls(String(currFeed));
     getFollowedTags();
-  },[]);
+  },[page]);
   
   // Should there be another useEffect that triggers when the virtual page number is changed? Need to get more poll for
   // infinite scrolling
@@ -46,13 +43,13 @@ export default function Feed({ pollData, setPollData }: any) {
     let requestType: string = ""
 
     if(feedType === 'discover')
-      requestType = "/feed"
+      requestType =  `/feed/${page}`
     else if(feedType === 'friends')
       requestType = "/feed/friends/1"
     else if(feedType === 'following')
       requestType = "/feed/tags/1"
     else{
-      requestType = "/feed"
+      requestType = `/feed`
     }
 
     try{
@@ -312,7 +309,21 @@ export default function Feed({ pollData, setPollData }: any) {
     return <React.Fragment>{row}</React.Fragment>;
   }
 
-  const pageBar = <Box display="flex" justifyContent='center' alignItems="center">{PageBar()}</Box>;
+  function PageBar() {
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+    };
+  
+    return (
+    <Box display="flex" justifyContent='center' alignItems="center"> 
+      <Stack spacing={2}>
+        <Pagination count={10} page={page} onChange={handleChange} />
+          <div></div>
+      </Stack>
+    </Box>
+    );
+  }
+
 
   function CardsTogether() {
     const rows = 3;
@@ -380,7 +391,7 @@ export default function Feed({ pollData, setPollData }: any) {
       <Grow in={true}>
         <Container maxWidth={false}>
           <CardsTogether />
-          {pageBar}
+          {PageBar()}
         </Container>
       </Grow>
     </React.Fragment>
