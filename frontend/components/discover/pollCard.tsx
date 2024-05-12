@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import { ButtonGroup, IconButton, Modal } from '@mui/material';
+import {IconButton} from '@mui/material';
 import { useContext, useState, useEffect, useMemo} from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import Stack from '@mui/material/Stack';
@@ -18,12 +18,10 @@ import usernameFriend from './addFriend'
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import Divider from '@mui/material/Divider';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Slide from '@mui/material/Slide';
 
 
 type Option = {
@@ -535,7 +533,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack display="flex" alignItems="center" justifyContent="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" sx={{mb:0.6}}/>
-              {usernameFriend({setRefreshCard}, username, user_id, localStorage?.getItem("friends")?.split(",")?localStorage?.getItem("friends")?.split(","):[] )}
+              {usernameFriend({setRefreshCard}, username, user_id, localStorage.getItem("friends")?.split(",") || [])}
             </Stack>
         
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{voteMessage}</Typography>

@@ -143,7 +143,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   //error={emailFormatError}
-                  error={emailFormatError, existingError}
+                  error={existingError}
                   id="email"
                   label="Email Address"
                   name="email"

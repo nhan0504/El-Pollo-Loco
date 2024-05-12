@@ -11,11 +11,7 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
-import Autocomplete from '@mui/material/Autocomplete';
 import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 // To do in this file - remove any of my hardcoded width/height 
@@ -199,15 +195,15 @@ function PollForm() {
     }
   }
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: any) => {
 
     setPressed(event);
   }
 
-  function tagChips(pollData){
+  function tagChips(pollData: any){
     
     return(
-        pollData.tags?.map((tag, index) => (
+        pollData.tags?.map((tag: any, index: any) => (
         
           <Chip 
             label={
