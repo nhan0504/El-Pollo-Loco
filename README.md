@@ -1,8 +1,31 @@
 ## Usage
 
-1. Start the ExpressJS server with `$ cd backend && npm i && npm start`.
-2. Open a new terminal and start the NextJS server with `$ cd ../frontend && npm i && npm run dev`.
-3. Follow the link in the console output to access the webpage.
+1. Add a file called `.env` with the following contents in the `/backend` directory.
+```
+  DB_HOST=
+  DB_USER=
+  DB_PASSWORD=
+  DB_NAME=
+
+  SESSION_SECRET=super_secret_string
+
+  REQUEST_ORIGIN_URL=http://localhost:3001
+```
+Note that the first four fields will have to be filled with private information. In the `/frontend` directory, make sure that the contents of `next.config.mjs` are
+```
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  env: {
+    BACKEND_URL: 'http://localhost:3000',
+  },
+};
+
+export default nextConfig;
+```
+
+3. Open a new terminal window, `cd` into `/backend`, and run `npm install && npm start` to install dependencies and start the backend server. It should be running on port 3000.
+4. Open a new terminal window, `cd` into `/frontend` and run `npm install && npm start` to install dependencies and start the frontend client. It should be running on port 3001.
+5. Follow the link in the terminal output from step 4 to access the webpage.
 
 
 ## API Documentation
@@ -297,11 +320,11 @@ Returns `404` if no polls exist.
 The frontend is split into components, which match up with routing as supported by Next.JS. This project relied on Material UI for components such as a Card, Button, Page Bar, Login, etc. 
 
 ### Auth
-Signin.tsx has the login components. Likewise, Signup has the login components. Each of them rely on AuthContext, which is a context at the Contexts folder that is passed into each component that needs to know if the user is signed in or not. 
+Signin.tsx has the login components. Likewise, Signup has the sign up components. Each of them rely on AuthContext, which is a context at the Contexts folder that is passed into each component that needs to know if the user is signed in or not. 
 
 ### Discover
 
-This folder has all the components for the Feed in Discover, Freinds, and Following. The parent file is ```feed.tsx``` which calls the rest of the files. Each PollCard has a username of who made it (```addFreind.tsx```), a comment box (```comments.tsx```). When the comments are open, we load ```pollCardNoComments.tsx```. To search, we use ```search.tsx```, and to create a poll, we use ```PollForm.tsx```. The buttons on the feed are in ```feedButtons.tsx```. 
+This folder has all the components for the Feed in Discover, Freinds, and Following. The parent file is ```feed.tsx``` which calls the rest of the files. Each PollCard has a username of who made it (```addFriend.tsx```), a comment box (```comments.tsx```). When the comments are open, we load ```pollCardNoComments.tsx```. To search, we use ```search.tsx```, and to create a poll, we use ```PollForm.tsx```. The buttons on the feed are in ```feedButtons.tsx```. 
 
 ### Profile
 ```profile.tsx``` renders the profile page. This shows user stats (how many polls made, how many votes, etc.) and any polls a user made. 
@@ -317,15 +340,12 @@ Lastly, we have a nav bar in ```navigation.tsx``` which has the Home button, Pro
 We decided to use TS due to its easy integration with fetch requests, and how it merged well with the frontend and backend. Typing added a  layer of specificity we found important. Most of us have used the language before, which meant we were able to write code faster, since it was familiar. 
 
 ### React
-
 Sort of the traditional route when developing a frontend, we decided to use React. React came with a lot of tools, such as Effects and State we could leverage to our benefit when developing components that would change. It also helped us write code that was slightly more abstracted. Moreover, due to its popularity, we were able to debug and find solutions faster. 
 
 ### SQL
-
 TODO
 
 ### UI/UX
-
 In terms of style and design, we decided to use Material UI. This was a great decision, as it came with a lot of pre-implemented features we could just pop into our project. This also allowed us to spend less time on the style while having a clean and nice UX. 
 
 ### Next JS
@@ -340,14 +360,19 @@ TO - DO
 If we (or you!) in the future decide to expand upon this project, we plan on implementing at least the following:
 
 #### Private Polls
-Users should be able to post polls just to their freinds, and just to the public.
+Users should be able to post polls just to their friends, and or to the whole public.
 
 #### Follow Requests
 Users should be able to have a 2 way system whether or not they follow a person, and should decide to accept or deny someone's follow request.
 
 #### Notifications
-As detailed above, users need to be notified when someone follows them. 
+As detailed above, users need to be notified when someone follows them, or when someone likes or comments on one of their polls.
+
+#### Search
+Users should be able to use the search bar to find polls or other users based on their search query.
+
+#### Settings
+It would enhance the user experience to have a settings page where users could set notification settings, use dark mode, and save other various preferences.
 
 #### Forgot Password
 We would like to have an email based forgot password system, where users can reset their password. 
-

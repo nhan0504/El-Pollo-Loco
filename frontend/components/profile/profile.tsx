@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Grid, Box } from '@mui/material';
 
 import Button from '@mui/material/Button';
+import Divider from '@mui/joy/Divider';
 import Stack from '@mui/joy/Stack';
+import Grow from '@mui/material/Grow';
 import Typography from '@mui/joy/Typography';
 import Card from '@mui/joy/Card';
 import CardOverflow from '@mui/joy/CardOverflow';
@@ -236,6 +238,7 @@ export default function MyProfile() {
   return (loading? <Box display="flex" justifyContent="center">
   <CircularProgress></CircularProgress>
 </Box>:
+<Grow in={true}>
     <Box sx={{ flex: 1, width: '100%' }}>
       <Box
         sx={{
@@ -261,7 +264,7 @@ export default function MyProfile() {
         }}
       >
         <Box sx={{ }}>
-            <Typography level="h3" sx={{p:1.5, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
+            <Typography level="h3" sx={{py:1.5, px:2, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
             direction="row"
@@ -320,5 +323,6 @@ export default function MyProfile() {
         </Card>
       </Stack>
     </Box>
+    </Grow>
   );
 }
