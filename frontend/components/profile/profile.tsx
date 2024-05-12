@@ -62,10 +62,13 @@ export default function MyProfile() {
 
         setPollData(data);
 
+        await getUser();
         // Once we've successfully fetched the user info, load page components
         // Doing it like this because the username needs to be ready before we load
         // but polls don't necessarily have to be there right away
         if(userData.username != "")
+          setLoading(false);
+
           setLoading(false);
       }
       else{
@@ -100,9 +103,9 @@ export default function MyProfile() {
   }
 
   useEffect(() => {
-  
+    // getUser();
     getPolls();
-    getUser();
+    
   }, []);
 
    // Pass it the list of poll ids of 6 polls that were just fetched
