@@ -267,7 +267,7 @@ export default function MyProfile() {
         }}
       >
         <Box sx={{ }}>
-            <Typography level="h3" sx={{py:1.5, px:2, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
+            <Typography level="h3" sx={{py:1.5, px:2}}>{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
             direction="row"
