@@ -342,8 +342,8 @@ We decided to use TS due to its easy integration with fetch requests, and how it
 ### React
 Sort of the traditional route when developing a frontend, we decided to use React. React came with a lot of tools, such as Effects and State we could leverage to our benefit when developing components that would change. It also helped us write code that was slightly more abstracted. Moreover, due to its popularity, we were able to debug and find solutions faster. 
 
-### SQL
-TODO
+### MySQL
+There were a few reasons why we chose MySQL. Firstly, it was a easily configurable relational database system which was perfect for the features in our app. Secondly, some of the team members were familiar with it so it made it a more enticing option over other relational database systems.
 
 ### UI/UX
 In terms of style and design, we decided to use Material UI. This was a great decision, as it came with a lot of pre-implemented features we could just pop into our project. This also allowed us to spend less time on the style while having a clean and nice UX. 
