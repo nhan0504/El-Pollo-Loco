@@ -7,21 +7,9 @@ import { Container, Grid, Box } from '@mui/material';
 import AspectRatio from '@mui/joy/AspectRatio';
 import Button from '@mui/material/Button';
 import Divider from '@mui/joy/Divider';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
-import FormHelperText from '@mui/joy/FormHelperText';
-import Input from '@mui/joy/Input';
-import IconButton from '@mui/joy/IconButton';
-import Textarea from '@mui/joy/Textarea';
 import Stack from '@mui/joy/Stack';
-import Select from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
+import Grow from '@mui/material/Grow';
 import Typography from '@mui/joy/Typography';
-import Tabs from '@mui/joy/Tabs';
-import TabList from '@mui/joy/TabList';
-import Tab, { tabClasses } from '@mui/joy/Tab';
-import Breadcrumbs from '@mui/joy/Breadcrumbs';
-import Link from '@mui/joy/Link';
 import Card from '@mui/joy/Card';
 import CardActions from '@mui/joy/CardActions';
 import CardOverflow from '@mui/joy/CardOverflow';
@@ -252,6 +240,7 @@ export default function MyProfile() {
   return (loading? <Box display="flex" justifyContent="center">
   <CircularProgress></CircularProgress>
 </Box>:
+<Grow in={true}>
     <Box sx={{ flex: 1, width: '100%' }}>
       <Box
         sx={{
@@ -277,7 +266,7 @@ export default function MyProfile() {
         }}
       >
         <Box sx={{ }}>
-            <Typography level="h3" sx={{p:1.5, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
+            <Typography level="h3" sx={{py:1.5, px:2, border:"2px solid black"}}>{userData.username}'s Profile Page</Typography>
           </Box>          
           <Stack
             direction="row"
@@ -336,5 +325,6 @@ export default function MyProfile() {
         </Card>
       </Stack>
     </Box>
+    </Grow>
   );
 }
