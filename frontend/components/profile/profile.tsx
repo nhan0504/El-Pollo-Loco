@@ -41,10 +41,15 @@ export default function MyProfile() {
     email: '' 
     });
 
-  useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(String(localStorage.getItem("pollsVoted"))).length) : 0, []);
+  // useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(String(localStorage.getItem("pollsVoted"))).length) : 0, []);
   
+  useEffect(() => {
+    getPolls();
+    
+  }, []);
+
   async function getPolls() {
-    // try{
+    try{
       setFollowedTags(localStorage.getItem('tags') != null ? (String(localStorage.getItem('tags'))?.split(",")) : []);
       let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
         method: 'GET',
@@ -60,24 +65,27 @@ export default function MyProfile() {
           return poll.poll_id;
         }));
 
-        setPollData(data);
-
         await getUser();
         // Once we've successfully fetched the user info, load page components
         // Doing it like this because the username needs to be ready before we load
         // but polls don't necessarily have to be there right away
-        if(userData.username != "")
-          setLoading(false);
+        setPollData(data);
 
-          setLoading(false);
+        setLoading(false);
       }
       else{
 
       }
-    // }
-    // catch (error){
-    //   push('auth/login')
-    // }
+    }
+    catch (error){
+      // push('auth/login')
+      setPollData([])
+      await getVoted([]);
+
+      await getUser();
+      setLoading(false);
+
+    }
   }
 
   async function getUser() {
@@ -102,12 +110,6 @@ export default function MyProfile() {
     }
   }
 
-  useEffect(() => {
-    // getUser();
-    getPolls();
-    
-  }, []);
-
    // Pass it the list of poll ids of 6 polls that were just fetched
    async function getVoted(polls: any) {
     try{
@@ -120,11 +122,9 @@ export default function MyProfile() {
         
         // Filter out any polls that the user voted on that aren't in this batch of
         // polls
-        // May need to alter this approach or even have another state that holds
-        // this filtered list while keeping the original complete list. Otherwise
-        // we have to keep fetching the complete list every time more polls are
-        // loaded w/ infinite scroll
+
         localStorage.setItem('pollsVoted', JSON.stringify(data));
+        setTotalPollsVoted(data.length);
         setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
       }
       else{

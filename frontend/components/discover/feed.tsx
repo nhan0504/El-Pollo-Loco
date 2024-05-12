@@ -101,10 +101,11 @@ export default function Feed({ pollData, setPollData }: any) {
         localStorage.setItem("tags", data);
       }
       else{
-        setPollsVoted([{poll_id: -1, option_id: -1}]);
+        setFollowedTags([]);
       }
     }
     catch (error) {
+      setFollowedTags([]);
 
     }
   }
@@ -121,6 +122,7 @@ export default function Feed({ pollData, setPollData }: any) {
         
         // Set total list of polls voted on
         localStorage.setItem('pollsVoted', JSON.stringify(data));
+        // alert(JSON.stringify(data))
         // Filter out any polls that the user voted on that aren't in this batch of
         // polls
         setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));

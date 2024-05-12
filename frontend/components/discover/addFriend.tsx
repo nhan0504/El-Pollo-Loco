@@ -66,7 +66,7 @@ const style = {
                     // remove friend from local friends list
                     friendList.splice(friendList.indexOf(username), 1);
                     // Important - set localStorage to new friendList right away
-                    localStorage.setItem("friends", friendList.join(","))
+                    friendList.length > 0 ? localStorage.setItem("friends", friendList.splice(friendList.indexOf(username), 1).join(",")) : localStorage.removeItem("friends")
                     setOpen(false);
                     setRefresh(true);
                     setRefreshCard(true);

@@ -96,15 +96,8 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     // A function that increment 👆🏻 the previous state like here 
     // is better than directly setting `setValue(value + 1)`
   }
-  let [canComment, setCanComment]  = React.useState("false")
-  canComment = String(localStorage.getItem("username"))
-  if (isAuth==false){
-    //alert("you cannot comment wo loggin in")
-  }
-  else{
-    //setCanComment(canCmt)
-  }
-  
+  const [canComment, setCanComment]  = React.useState(false)
+  // canComment = String(localStorage.getItem("username"))
 
   const CommentGetter = useEffect(()=>{
 
@@ -125,11 +118,21 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
             re = (re.map((obj: any)=>obj.user_id))
             re = re.filter((item: number, index: number) => re.indexOf(item) === index);
             userids = re
+
+            if (!isAuth){
+              //alert("you cannot comment wo loggin in")
+              setCanComment(false)
+          
+            }
+            else{
+              setCanComment(true)
+            }
+            
             return re
           });
         }
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => error.message);
       
   }, [])
 
@@ -248,7 +251,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     let [currComment, setCurrComment] = React.useState("")
     const forceUpdate = useForceUpdate();
     
-    if (canComment!="false"){
+    if (canComment){
         return (
           <React.Fragment>
             <Paper style={{ padding: "20px 10px"}} elevation={3}>

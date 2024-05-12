@@ -24,7 +24,7 @@ export default function Profile() {
     );
   }
 
-   if(windowLoaded)
+  if(windowLoaded)
     return getProfile();
   }
   

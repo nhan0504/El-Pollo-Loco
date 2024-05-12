@@ -86,7 +86,7 @@ function PollForm() {
           });
         }
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => error.message);
 
     // push('/discover');
     window.location.reload();

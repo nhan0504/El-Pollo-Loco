@@ -516,6 +516,12 @@ function MakeCard(
   };
 
   let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
+  let friendList
+
+  if(localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
+    friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
+  else
+    friendList = []
 
   return (
     <React.Fragment>
@@ -533,7 +539,7 @@ function MakeCard(
           <Stack alignItems="center" direction="row" gap={0} justifyContent="space-between">
             <Stack display="flex" alignItems="center" justifyContent="center" direction="row" gap={0}>
               <PersonIcon fontSize="medium" sx={{mb:0.6}}/>
-              {usernameFriend({setRefreshCard}, username, user_id, localStorage.getItem("friends")?.split(",") || [])}
+              {usernameFriend({setRefreshCard}, username, user_id, friendList)}
             </Stack>
         
             <Typography sx={{}} variant="subtitle2" color="textSecondary">{voteMessage}</Typography>

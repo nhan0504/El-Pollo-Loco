@@ -52,9 +52,8 @@ export default function SignIn() {
                   } else {
                     response.json().then((data)=>{
                     // alert(response.json());
-                    // if(data.length > 0)
-                    
-                    localStorage.setItem("friends", data.following)
+                    if(data.length > 0)
+                      localStorage.setItem("friends", data.following)
                     
                     })
                   }
