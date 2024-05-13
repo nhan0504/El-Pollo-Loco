@@ -39,12 +39,14 @@ export default function Feed({ pollData, setPollData }: any) {
   
   useEffect(() => {
     getPolls(String(currFeed));
-    getFollowedTags();
+    // getFollowedTags();
     setDataChange(false);
   }, [dataChange]);
- 
+
   async function getPolls(feedType: string) {
     setLoading(true);
+    await getFollowedTags();
+
     let requestType: string = ""
 
     if(feedType === 'discover')
@@ -106,7 +108,7 @@ export default function Feed({ pollData, setPollData }: any) {
     }
     catch (error) {
       setFollowedTags([]);
-
+      localStorage.removeItem("tags");
     }
   }
 

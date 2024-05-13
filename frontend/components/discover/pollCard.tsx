@@ -380,6 +380,9 @@ function MakeCard(
             followedTags.push(tagName);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
+
+            localStorage.setItem("tags", followedTags.join(","))
+
             setTagChange(true)
             setRefreshCard(true)
             return response.text();
@@ -411,6 +414,8 @@ function MakeCard(
             followedTags.splice(followedTags.indexOf(tagName), 1);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
+
+            localStorage.setItem("tags", followedTags.join(","))
             setTagChange(true)
             setRefreshCard(true)
             return response.text();

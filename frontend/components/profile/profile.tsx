@@ -27,7 +27,7 @@ export default function MyProfile() {
   const { isAuth, setAuth } = useContext(AuthContext);
   const [dummyDataChange, setDummyDataChange]= useState([])
   const [loading, setLoading] = useState(true);
-  const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem('tags') ? String(localStorage.getItem('tags'))?.split(",") : []);
+  const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem("tags") ? String(localStorage.getItem("tags"))?.split(",") : []);
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
   const [totalPollsVoted, setTotalPollsVoted] = useState<number>(0);
   const [pollData, setPollData] = useState([]);
@@ -48,6 +48,7 @@ export default function MyProfile() {
     //   push('auth/login');
     // }
     // else{
+
       getPolls();
     // }
     
@@ -58,7 +59,7 @@ export default function MyProfile() {
     //   push('auth/login');
     // }
     try{
-      setFollowedTags(localStorage.getItem('tags') != null ? (String(localStorage.getItem('tags'))?.split(",")) : []);
+      setFollowedTags(localStorage.getItem("tags") != null ? (String(localStorage.getItem("tags"))?.split(",")) : []);
       let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
         method: 'GET',
         credentials: 'include'
@@ -86,10 +87,7 @@ export default function MyProfile() {
       }
     }
     catch (error){
-      // push('auth/login')
-      if(!isAuth){
-        push('auth/login')
-      }
+
       setPollData([])
       await getVoted([]);
 
@@ -237,16 +235,25 @@ export default function MyProfile() {
 
   function tagList(){
 
-    return(
-    <Box sx={{mb:0.5, width:"490px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
+    if(followedTags.length != 0 || loading)
+      return(
+      <Box sx={{mb:0.5, width:"490px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
-      {followedTags?.map((tag) => {
-          return(
-          <Button onClick={(event) => {    
-          }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
-        )})}
-        </Box>
-    )
+        {followedTags?.map((tag) => {
+            return(
+            <Button onClick={(event) => {    
+            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
+          )})}
+          </Box>
+      )
+    else if(followedTags.length == 0 && !loading){
+      return (
+      // <Box sx={{ display: 'flex', flexDirection:"column", alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
+
+        <Typography level="body-sm" style={{textAlign:"center"}}>You haven't followed any tags yet.<br/>Click on blue poll tags to follow your favorites.</Typography>
+      //  </Box>
+      )
+    }
   }
 
   return (loading || !isAuth ? <Box display="flex" justifyContent="center">
@@ -304,10 +311,10 @@ export default function MyProfile() {
                   <Typography>{pollData.length} polls created</Typography>
                 </ListItem>
                 <ListItem disablePadding>
-                  <Typography>{getTotalVotes()} total votes on their polls</Typography>
+                  <Typography>{getTotalVotes()} total {getTotalVotes() != 1 ? "votes" : "vote"} on their polls</Typography>
                 </ListItem>
                 <ListItem disablePadding>
-                  <Typography>Voted {totalPollsVoted} times</Typography>
+                  <Typography>Voted {totalPollsVoted} {totalPollsVoted != 1 ? "times" : "time"}</Typography>
                 </ListItem>
 
 
