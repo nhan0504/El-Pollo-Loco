@@ -5,20 +5,23 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import { AuthContext } from "@/contexts/authContext";
 import { useContext } from "react";
 
 const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 200,
+    // position: 'absolute' as 'absolute',
+    // top: '50%',
+    // left: '50%',
+    // transform: 'translate(-50%, -50%)',
+    // width: 200,
     bgcolor: 'background.paper',
-    border: '1px solid #000',
-    boxShadow: 24,
+    // border: '1px solid #000',
+    // boxShadow: 24,
     p: 1,
-    borderRadius: 1
+    borderRadius: 1,
   };
   
   // The key to all cards changing at once is passing in a regular friendList variable given by the parent, pollCard, and 
@@ -46,7 +49,8 @@ const style = {
     }, [refresh])
   
     function handleClick(event: any): void {
-          
+      setOpen(false);
+
              //setFreind is just a flag to tell the frontend what type of heart to render
           //here we will actually make a freind in the db   
           if (isAuth){
@@ -62,12 +66,14 @@ const style = {
                       throw new Error(text);
                     });
                   } else {
-                    alert("Successfully removed friend!");
+                    setOpen(false);
+
+                    // alert("Successfully removed friend!");
                     // remove friend from local friends list
+
                     friendList.splice(friendList.indexOf(username), 1);
                     // Important - set localStorage to new friendList right away
                     friendList.length > 0 ? localStorage.setItem("friends", friendList.splice(friendList.indexOf(username), 1).join(",")) : localStorage.removeItem("friends")
-                    setOpen(false);
                     setRefresh(true);
                     setRefreshCard(true);
                   }
@@ -86,12 +92,14 @@ const style = {
                       throw new Error(text);
                     });
                   } else {
-                    alert("Successfully added friend!");
+                    setOpen(false);
+
+                    // alert("Successfully added friend!");
                     // add friend to local friends list
+
                     friendList.push(username)
                     // Important - set localStorage to new friendList right away
                     localStorage.setItem("friends", friendList.join(","))
-                    setOpen(false);
                     setRefresh(true);
                     setRefreshCard(true);
                   }
@@ -109,6 +117,17 @@ const style = {
       return friendList.includes(username);
     }
     
+    const dialogMessage = () => {
+      return(
+        { header: isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?",
+          body: isFriend() ? "Their polls will no longer appear on your Friends feed." : "Their polls will appear on your Friends feed."
+        }
+      )
+    }
+
+    let dialogTitle = isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?"
+    let dialogBody = isFriend() ? "Their polls will no longer appear on your Friends feed." : "Their polls will appear on your Friends feed."
+    
     return (
       <div>
         <Button sx={{textTransform: "none"}}onClick={handleOpen}><Typography variant="subtitle2"> 
@@ -117,16 +136,23 @@ const style = {
             <div>{isFriend() ? <FavoriteIcon sx={{ fontSize: '20px' }}/> :  <FavoriteBorderIcon sx={{ fontSize: '20px' }}/>}</div>
         </Stack>
         </Typography></Button>
-        <Modal
+        <Dialog
           open={open}
           onClose={handleClose}
-          aria-describedby="modal-modal-description"
+          PaperProps={{ sx: { borderRadius: "25px"} }}
+          // aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            {isFriend() ? <Typography sx={{textTransform: "none"}}>Remove {username} as a friend?</Typography> : <Typography sx={{textTransform: "none"}}>Add {username} as a friend?</Typography>}
-            <Button sx={{textTransform: "none", boxShadow: 24,  width: 'auto', height: 'auto', mt: 2 }} onClick={handleClick}>Yes!</Button>
-          </Box>
-        </Modal>
+          <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+
+            <DialogTitle style={{textAlign:"center"}}>
+            {dialogMessage().header}
+            </DialogTitle>
+
+            <Typography sx={{}} style={{textAlign:"center"}}>{dialogMessage().body}</Typography>
+            <Button variant="contained" sx={{textTransform: "none", boxShadow: 24,  width: 'auto', height: 'auto', mt: 2 }} onClick={handleClick}>{isFriend() ? "Remove" : "Add"}</Button>
+          
+            </DialogContent>
+        </Dialog>
       </div>
     );
   }

@@ -44,11 +44,19 @@ export default function MyProfile() {
   // useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(String(localStorage.getItem("pollsVoted"))).length) : 0, []);
   
   useEffect(() => {
-    getPolls();
+    // if(!isAuth){
+    //   push('auth/login');
+    // }
+    // else{
+      getPolls();
+    // }
     
   }, []);
 
   async function getPolls() {
+    // if(!isAuth){
+    //   push('auth/login');
+    // }
     try{
       setFollowedTags(localStorage.getItem('tags') != null ? (String(localStorage.getItem('tags'))?.split(",")) : []);
       let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
@@ -79,6 +87,9 @@ export default function MyProfile() {
     }
     catch (error){
       // push('auth/login')
+      if(!isAuth){
+        push('auth/login')
+      }
       setPollData([])
       await getVoted([]);
 
@@ -238,7 +249,7 @@ export default function MyProfile() {
     )
   }
 
-  return (loading? <Box display="flex" justifyContent="center">
+  return (loading || !isAuth ? <Box display="flex" justifyContent="center">
   <CircularProgress></CircularProgress>
 </Box>:
 <Grow in={true}>

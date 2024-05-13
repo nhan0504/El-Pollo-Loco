@@ -518,7 +518,7 @@ function MakeCard(
   let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
   let friendList
 
-  if(localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
+  if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
     friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
   else
     friendList = []

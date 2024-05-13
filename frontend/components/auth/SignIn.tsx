@@ -52,7 +52,7 @@ export default function SignIn() {
                   } else {
                     response.json().then((data)=>{
                     // alert(response.json());
-                    if(data.length > 0)
+                    if(data.following.length > 0)
                       localStorage.setItem("friends", data.following)
                     
                     })

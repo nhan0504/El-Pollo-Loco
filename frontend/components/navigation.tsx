@@ -81,15 +81,6 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
             >
               Profile
             </MenuItem>,
-            // <MenuItem
-            //   onClick={() => {
-            //     //Redirect to account.
-            //     handleMenuClose();
-            //   }}
-            //   key={2}
-            // >
-            //   My Account
-            // </MenuItem>,
             <MenuItem
               onClick={() => {
                 fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
@@ -97,10 +88,10 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
                   credentials: 'include',
                 })
                   .then((res) => {
-                    handleMenuClose();
                     setAuth(false);
                     localStorage.clear()
-                    window.location.reload();
+                    handleMenuClose();
+                      window.location.reload();
                   })
                   .catch();
               }}
@@ -206,17 +197,6 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
         <Typography>
           <Button variant="text" onClick={(event) => (push("/auth/signup"))}>Sign Up</Button>
         </Typography>
-        {/* <Link underline="none" href="/auth/login">
-          <Typography variant="body1">Log In</Typography>
-        </Link>
-        <Typography color="black" variant="body1">&nbsp;&nbsp;or&nbsp;&nbsp;</Typography>
-
-        <Link underline="none" href="/auth/signup">
-          <Typography variant="body1">Sign Up</Typography>
-        </Link>
-         */}
-
-
         </Box>
       )
 
