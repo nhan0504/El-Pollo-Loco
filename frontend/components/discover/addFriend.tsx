@@ -73,7 +73,7 @@ const style = {
 
                     friendList.splice(friendList.indexOf(username), 1);
                     // Important - set localStorage to new friendList right away
-                    friendList.length > 0 ? localStorage.setItem("friends", friendList.splice(friendList.indexOf(username), 1).join(",")) : localStorage.removeItem("friends")
+                    friendList.length > 0 ? localStorage.setItem("friends", friendList.join(",")) : localStorage.removeItem("friends")
                     setRefresh(true);
                     setRefreshCard(true);
                   }
