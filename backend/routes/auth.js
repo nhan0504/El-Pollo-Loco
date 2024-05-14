@@ -129,7 +129,7 @@ router.post('/signup', function (req, res) {
                   res.status(500).send('Error creating new user');
                   return;
                 } else {
-                  res.send(`User created successfully`);
+                  res.status(201).send(`User created successfully`);
                 }
               },
             );
