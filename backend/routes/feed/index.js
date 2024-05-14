@@ -13,7 +13,7 @@ router.get('/:pageNum?', function (req, res) {
   const offset = (pageNum - 1) * 6;
 
   // Weights for discover algorithm
-  const dateWeight = -15;
+  const dateWeight = -2;
   const voteWeight = 1;
 
   pool.query(
@@ -26,7 +26,7 @@ router.get('/:pageNum?', function (req, res) {
         COUNT(Votes.vote_id) AS vote_count,
         GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags,
         (
-            DATEDIFF(CURDATE(), Polls.created_at) * ? + 
+            TIMESTAMPDIFF(HOUR, Polls.created_at, NOW()) * ? + 
             COUNT(Votes.vote_id) * ?
         ) AS score
     FROM 
