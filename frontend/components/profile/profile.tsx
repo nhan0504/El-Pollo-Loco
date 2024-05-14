@@ -240,10 +240,12 @@ export default function MyProfile() {
       <Box sx={{mb:0.5, width:"490px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
         {followedTags?.map((tag) => {
-            return(
-            <Button onClick={(event) => {    
-            }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
-          )})}
+            if(tag != ""){
+              return(
+              <Button onClick={(event) => {    
+              }} size="small" variant="contained" style={{fontSize: '11px', textTransform:'uppercase'}} sx={{bgcolor:"green", color:'white', mx:1, my:0.6, maxHeight:"45%"}} key={tag}>{tag} ✓</Button>
+            )}
+          })}
           </Box>
       )
     else if(followedTags.length == 0 && !loading){
@@ -308,7 +310,7 @@ export default function MyProfile() {
     
               <List sx={{display: "flex", flexDirection: "column"}}>
                 <ListItem disablePadding>
-                  <Typography>{pollData.length} polls created</Typography>
+                  <Typography>{pollData.length} {pollData.length != 1 ? "polls" : "poll"} created</Typography>
                 </ListItem>
                 <ListItem disablePadding>
                   <Typography>{getTotalVotes()} total {getTotalVotes() != 1 ? "votes" : "vote"} on their polls</Typography>

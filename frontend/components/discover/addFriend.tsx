@@ -12,14 +12,8 @@ import { AuthContext } from "@/contexts/authContext";
 import { useContext } from "react";
 
 const style = {
-    // position: 'absolute' as 'absolute',
-    // top: '50%',
-    // left: '50%',
-    // transform: 'translate(-50%, -50%)',
-    // width: 200,
+
     bgcolor: 'background.paper',
-    // border: '1px solid #000',
-    // boxShadow: 24,
     p: 1,
     borderRadius: 1,
   };
