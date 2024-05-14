@@ -355,6 +355,17 @@ TO-DO say smth ab routing
 ### Vercel
 TO - DO
 
+## Bugs/Limitations
+
+#### Creating a poll with tags
+Tags do not show up on polls until they have already been entered once into the database (i.e. a new tag not already in the database will not show up the first time a user tries to attach it to a poll).
+
+#### Profiles
+Users can only see their own profile, and not those of other users.
+
+#### Tag/Friend lists on feeds
+The tag and friend lists at the top of the Following and Friend feeds respectively cannot be used to unfollow tags or unfriend users - this can only be done from poll cards.
+
 ## Future Additions
 
 If we (or you!) in the future decide to expand upon this project, we plan on implementing at least the following:
