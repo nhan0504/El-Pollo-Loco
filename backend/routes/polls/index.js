@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const checkAuthenticated = require('../../middleware.js');
+const { checkAuthenticated } = require('../../middleware.js');
 
 const voteRouter = require('./vote');
 const commentRouter = require('./comment');
@@ -17,8 +17,7 @@ router.get('/:pollId', function (req, res) {
       return;
     }
     if (pollResults.length === 0) {
-      res.status(404).send('Poll not found');
-      return;
+      return res.status(404).send('Poll not found');
     }
 
     pool.query('SELECT option_id, option_text FROM Options WHERE poll_id = ?', [pollId], (error, optionsResults) => {
@@ -78,7 +77,14 @@ router.post('/', checkAuthenticated, async (req, res) => {
         return;
       }
 
-      res.status(201).send(`Poll created successfully with ID ${pollId}`);
+      const newPoll = {
+        poll_id: pollId,
+        title: title,
+        tags: tags,
+        options: options
+      };
+
+      res.status(201).json(newPoll);
     }
   );
 });
@@ -101,7 +107,7 @@ function insertOption(pollId, options) {
 function insertTag(pollId, tags) {
   for (const tagName of tags) {
     let tagId;
-
+    
     pool.query('SELECT tag_id FROM Tags WHERE tag_name = ?', [tagName], (error, result) => {
       if (error) {
         console.log('Error getting existing tag', error);

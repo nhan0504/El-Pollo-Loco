@@ -14,6 +14,7 @@ var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 var pollsRouter = require('./routes/polls');
 var feedRouter = require('./routes/feed');
+var tagsRouter = require('./routes/tags');
 //--------------------------------------
 
 var app = express();
@@ -23,6 +24,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', process.env.REQUEST_ORIGIN_URL);
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, DELETE, POST, HEAD, OPTIONS');
   next();
 });
 
@@ -53,6 +55,7 @@ app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/polls', pollsRouter);
 app.use('/feed', feedRouter);
+app.use('/tags', tagsRouter);
 //---------------------------------------
 
 // catch 404 and forward to error handler

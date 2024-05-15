@@ -7,7 +7,7 @@ const pool = require('../../db.js');
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query(
-    'SELECT comment_id, user_id, parent_id, comment FROM Comments WHERE poll_id = ?',
+    'SELECT Users.username, Users.user_id, comment_id, parent_id, comment FROM Comments JOIN Users ON Comments.user_id = Users.user_id WHERE poll_id = ?',
     [pollId],
     (error, results) => {
       if (error) {
@@ -23,17 +23,25 @@ router.get('/:pollId', function (req, res) {
 //POST a new comment
 router.post('/', function (req, res) {
   const userId = req.user.user_id;
-  const commentData = req.body;
+  const {pollId, parentId, comment} = req.body;
   pool.query(
     'INSERT INTO Comments (user_id, poll_id, parent_id, comment) VALUES (?, ?, ?, ?)',
-    [userId, commentData.poll_id, commentData.parent_id, commentData.comment],
+    [userId, pollId, parentId, comment],
     (error, results) => {
       if (error) {
         console.error(`Error creating new comment`, error);
         res.status(500).send('Error creating new comment');
         return;
       }
-      res.send('Created comment');
+
+      const newComment = {
+        comment_id: results.insertId,
+        poll_id: pollId,
+        parent_id: parentId,
+        comment: comment
+      };
+
+      res.status(201).json(newComment);
     },
   );
 });

@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -17,17 +18,23 @@ import HomeIcon from '@mui/icons-material/Home';
 import SearchComponent from './discover/search';
 import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/authContext';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import PollForm from './discover/pollForm';
 
 export default function PrimarySearchAppBar({ setPollData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { isAuth, setAuth } = useContext(AuthContext);
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
+
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [pollFormOpen, setPollFormOpen] = useState<boolean>(false);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -67,7 +74,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
         ? [
             <MenuItem
               onClick={() => {
-                //Redirect to profile.
+                push('/profile');
                 handleMenuClose();
               }}
               key={1}
@@ -76,23 +83,15 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
             </MenuItem>,
             <MenuItem
               onClick={() => {
-                //Redirect to account.
-                handleMenuClose();
-              }}
-              key={2}
-            >
-              My Account
-            </MenuItem>,
-            <MenuItem
-              onClick={() => {
                 fetch(`${[process.env.BACKEND_URL]}/auth/logout`, {
                   method: 'POST',
                   credentials: 'include',
                 })
                   .then((res) => {
-                    handleMenuClose();
                     setAuth(false);
-                    //push("/auth/login");
+                    localStorage.clear()
+                    handleMenuClose();
+                      window.location.reload();
                   })
                   .catch();
               }}
@@ -141,14 +140,14 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      {/* <MenuItem>
         <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -169,53 +168,50 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
       alert('You cannot create a poll without logging in.');
       push("/auth/login");
     } else {
-      push('/poll_form');
+      setPollFormOpen(true);
     }
   };
 
-  return (
-    <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
-      <AppBar position="static" sx={{ bgcolor: 'white', color: 'blue' }}>
-        <Toolbar>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
-          <Typography
-            //variant="h6"
-            noWrap
-            component="div"
-            sx={{ p: 1, mr: 3, display: { xs: 'none', sm: 'block' } }}
-          >
-            El Pollo Loco
-          </Typography>
-          <HomeIcon
-            cursor="pointer"
-            fontSize="large"
-            sx={{ mr: 4 }}
-            onClick={() => {
-              push('/discover');
-            }}
-          />
-          <Button variant="contained" size="medium" onClick={CreatePoll}>
-            Create Poll&nbsp;
-            <AddIcon fontSize="small" />
-          </Button>
+  function pollFormDialog() {
 
-          <SearchComponent setPollData={setPollData} />
+    return(
+    <Dialog PaperProps={{ style:{ }, sx: {m:0, p:0, maxHeight:800, position:"absolute", top:15 } }} open={pollFormOpen} onClose={(event) => setPollFormOpen(false)} sx={{m:0, p:0, }}>
+      {/* <DialogContent sx={{maxWidth: 350, maxHeight:500, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}} style={{ overflow:"auto" }}> */}
+        {PollForm()}   
+      {/* </DialogContent> */}
+    </Dialog>
+    )
+  }
 
-          <Box sx={{ flexGrow: 1 }} />
+  const endMenuButtons = () => {
+
+    if (isAuth == false){
+
+      return(
+        <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
+        {/* Need to make sure the correct buttons are chosen before nav render */}
+        <Typography>
+          <Button variant="text" onClick={(event) => {push("/auth/login")}}>Log in</Button>
+        </Typography>
+        <Typography variant="body2" alignSelf="center">/</Typography>
+        <Typography>
+          <Button variant="text" onClick={(event) => (push("/auth/signup"))}>Sign Up</Button>
+        </Typography>
+        </Box>
+      )
+
+    }
+
+    else{
+      return(
+        <React.Fragment>
+          {/* show notificatiions for poll likes and comments */}
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+            {/* <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="large"
               edge="end"
@@ -240,6 +236,54 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
               <MoreIcon />
             </IconButton>
           </Box>
+        </React.Fragment>
+      )
+    }
+  }
+
+  return (
+    <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
+      <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2' , mb:3}}>
+        <Toolbar>
+          {/* <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton> */}
+          <Typography
+            //variant="h6"
+            color="inherit"
+            noWrap
+            component="div"
+            sx={{ p: 1, mr: 3, display: { xs: 'none', sm: 'block' } }}
+          >
+            El Pollo Loco
+          </Typography>
+          <HomeIcon
+            cursor="pointer"
+            fontSize="large"
+            sx={{ mr: 4 }}
+            onClick={() => {
+              push('/discover');
+            }}
+          />
+          <Button variant="contained" size="medium" sx={{}} onClick={(event) => CreatePoll()}>
+            Create Poll&nbsp;
+            <AddIcon fontSize="small" />
+          </Button>
+          {pollFormDialog()}
+
+          <SearchComponent setPollData={setPollData} />
+
+
+          <Box sx={{ flexGrow: 1 }} />
+          {endMenuButtons()}
+
+          
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
