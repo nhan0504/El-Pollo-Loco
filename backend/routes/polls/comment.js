@@ -23,17 +23,25 @@ router.get('/:pollId', function (req, res) {
 //POST a new comment
 router.post('/', function (req, res) {
   const userId = req.user.user_id;
-  const commentData = req.body;
+  const {pollId, parentId, comment} = req.body;
   pool.query(
     'INSERT INTO Comments (user_id, poll_id, parent_id, comment) VALUES (?, ?, ?, ?)',
-    [userId, commentData.poll_id, commentData.parent_id, commentData.comment],
+    [userId, pollId, parentId, comment],
     (error, results) => {
       if (error) {
         console.error(`Error creating new comment`, error);
         res.status(500).send('Error creating new comment');
         return;
       }
-      res.send('Created comment');
+
+      const newComment = {
+        comment_id: results.insertId,
+        poll_id: pollId,
+        parent_id: parentId,
+        comment: comment
+      };
+
+      res.status(201).json(newComment);
     },
   );
 });

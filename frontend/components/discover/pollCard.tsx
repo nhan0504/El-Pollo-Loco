@@ -47,20 +47,40 @@ function MakeCard(
   const [user_id, setUserId] = React.useState(userId)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
-  const [cardData, setCardData] = useState({
-    totalVotes: opts?.map((opt: { votes: any; }) => opt.votes).reduce((partialSum: any, a: any) => partialSum + a, 0),
-    opts: [...opts?.map((opt: { optionText: any; votes: any; option_id: any; }) => {
-      return {
-        optionText: opt.optionText,
-        votes: opt.votes,
-        option_id: opt.option_id,
-      };
-    }), {optionText: "Show Results",
-         votes: 0,
-         option_id: -1
-  }],
-    tags: tags,
-    comments: 0,
+  // const [cardData, setCardData] = useState({
+  //   totalVotes: opts?.map((opt: { votes: any; }) => opt.votes).reduce((partialSum: any, a: any) => partialSum + a, 0),
+  //   opts: [...opts?.map((opt: { optionText: any; votes: any; option_id: any; }) => {
+  //     return {
+  //       optionText: opt.optionText,
+  //       votes: opt.votes,
+  //       option_id: opt.option_id,
+  //     };
+  //   }), {optionText: "Show Results",
+  //        votes: 0,
+  //        option_id: -1
+  // }],
+  //   tags: tags,
+  //   comments: 0,
+  // });
+
+  const [cardData, setCardData] = useState(() => {
+    // Initialize totalVotes only if opts is defined, otherwise default to 0
+    const totalVotes = opts ? opts.reduce((partialSum, opt) => partialSum + opt.votes, 0) : 0;
+  
+    // Initialize opts array only if opts is defined, otherwise default to an array with just the 'Show Results' option
+    const optsArray = opts ? opts.map(opt => ({
+      optionText: opt.optionText,
+      votes: opt.votes,
+      option_id: opt.option_id,
+    })) : [];
+    optsArray.push({ optionText: "Show Results", votes: 0, option_id: -1 });
+  
+    return {
+      totalVotes,
+      opts: optsArray,
+      tags: tags,
+      comments: 0,
+    };
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
@@ -521,12 +541,22 @@ function MakeCard(
   };
 
   let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
-  let friendList
+  let friendList: string[] = []
+  const friendsRaw = localStorage.getItem("friends");
 
-  if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
-    friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
-  else
-    friendList = []
+  if (friendsRaw !== null) {
+    const friendsArray = friendsRaw.split(",");
+  
+    if (friendsArray.length > 0 && friendsArray[0] != "") {
+      friendList = friendsArray;
+    }
+  }
+  // let friendList
+
+  // if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
+  //   friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
+  // else
+  //   friendList = []
 
   return (
     <React.Fragment>
