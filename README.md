@@ -9,13 +9,19 @@
 
   SESSION_SECRET=super_secret_string
 
+  //Change this if the frontend is running on a different url
   REQUEST_ORIGIN_URL=http://localhost:3001
+
+  //For testing purpose
+  TESTUSER=<your account username>
+  TESTPASS=<your account password>
 ```
 Note that the first four fields will have to be filled with private information. In the `/frontend` directory, make sure that the contents of `next.config.mjs` are
 ```
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
+    //Change this if backend is running on a different port
     BACKEND_URL: 'http://localhost:3000',
   },
 };
@@ -23,9 +29,9 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-3. Open a new terminal window, `cd` into `/backend`, and run `npm install && npm start` to install dependencies and start the backend server. It should be running on port 3000.
-4. Open a new terminal window, `cd` into `/frontend` and run `npm install && npm start` to install dependencies and start the frontend client. It should be running on port 3001.
-5. Follow the link in the terminal output from step 4 to access the webpage.
+1. Open a new terminal window, `cd` into `/backend`, and run `npm install && npm start` to install dependencies and start the backend server. The default port it will be running on is 3000.
+2. Open a new terminal window, `cd` into `/frontend` and run `npm install && npm start` to install dependencies and start the frontend client. The default port it will be running on is 3000. However, in package.json we have set the port to 3001 because port 300 is used by backend 
+3. Go to http://localhost:3001/discover to access the webpage.
 
 
 ## API Documentation
@@ -349,11 +355,13 @@ There were a few reasons why we chose MySQL. Firstly, it was a easily configurab
 In terms of style and design, we decided to use Material UI. This was a great decision, as it came with a lot of pre-implemented features we could just pop into our project. This also allowed us to spend less time on the style while having a clean and nice UX. 
 
 ### Next JS
-
-TO-DO say smth ab routing
+We use Next.js because it allows us to create API routes alongside with our React components. It's a popular framework to work with React to build web application because of serverside rendering making web app load faster
 
 ### Vercel
-TO - DO
+This is a platform for hosting created by the creators of Nex.js. Therefore, we chose this platform for hosting as it's compatible and easy to host the our frontend created with Next.js
+
+### Heroku
+We decided to use Heroku to host the backend as it's free for student and also easy to use.
 
 ## Bugs/Limitations
 
@@ -380,10 +388,18 @@ Users should be able to have a 2 way system whether or not they follow a person,
 As detailed above, users need to be notified when someone follows them, or when someone likes or comments on one of their polls.
 
 #### Search
-Users should be able to use the search bar to find polls or other users based on their search query.
+Users should be able to use the search bar to search for other users. Right now user are only able to search for poll based on the poll title.
+
 
 #### Settings
 It would enhance the user experience to have a settings page where users could set notification settings, use dark mode, and save other various preferences.
 
 #### Forgot Password
 We would like to have an email based forgot password system, where users can reset their password. 
+
+#### Frontend testing
+We would like to add test for the frontend. Right now we only have unit test for backend endpoint
+
+## Testing
+- To start the unit test for backend run  `cd backend && npm test`
+- Make sure to add your account credential in the `.env` file as the test will be using this account to test the endpoint that require authentication
