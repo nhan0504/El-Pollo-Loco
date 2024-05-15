@@ -521,12 +521,22 @@ function MakeCard(
   };
 
   let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
-  let friendList
+  let friendList: string[] = []
+  const friendsRaw = localStorage.getItem("friends");
 
-  if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
-    friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
-  else
-    friendList = []
+  if (friendsRaw !== null) {
+    const friendsArray = friendsRaw.split(",");
+  
+    if (friendsArray.length > 0 && friendsArray[0] != "") {
+      friendList = friendsArray;
+    }
+  }
+  // let friendList
+
+  // if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
+  //   friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
+  // else
+  //   friendList = []
 
   return (
     <React.Fragment>
