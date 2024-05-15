@@ -77,7 +77,14 @@ router.post('/', checkAuthenticated, async (req, res) => {
         return;
       }
 
-      res.status(201).send(`Poll created successfully with ID ${pollId}`);
+      const newPoll = {
+        poll_id: pollId,
+        title: title,
+        tags: tags,
+        options: options
+      };
+
+      res.status(201).json(newPoll);
     }
   );
 });
