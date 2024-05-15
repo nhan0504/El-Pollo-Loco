@@ -105,12 +105,9 @@ router.get('/title/:titleName', function (req, res) {
     res.json(result);
   });
 });
-<<<<<<< HEAD
-=======
 
 router.use('/user', userFeed);
 router.use('/tags', tagsFeed);
 router.use('/friends', friendsFeed);
 
->>>>>>> 9628e48da50473a3756009679d08eab72724d740
 module.exports = router;
