@@ -63,24 +63,18 @@ function MakeCard(
   //   comments: 0,
   // });
 
-  const [cardData, setCardData] = useState(() => {
-    // Initialize totalVotes only if opts is defined, otherwise default to 0
-    const totalVotes = opts ? opts.reduce((partialSum, opt) => partialSum + opt.votes, 0) : 0;
-  
-    // Initialize opts array only if opts is defined, otherwise default to an array with just the 'Show Results' option
-    const optsArray = opts ? opts.map(opt => ({
-      optionText: opt.optionText,
-      votes: opt.votes,
-      option_id: opt.option_id,
-    })) : [];
-    optsArray.push({ optionText: "Show Results", votes: 0, option_id: -1 });
-  
-    return {
-      totalVotes,
-      opts: optsArray,
-      tags: tags,
-      comments: 0,
-    };
+  const [cardData, setCardData] = useState({
+    totalVotes: opts?.reduce((partialSum, opt) => partialSum + opt.votes, 0) || 0,
+    opts: [
+      ...(opts ? opts.map(opt => ({
+        optionText: opt.optionText,
+        votes: opt.votes,
+        option_id: opt.option_id,
+      })) : []),
+      { optionText: "Show Results", votes: 0, option_id: -1 }
+    ],
+    tags: tags,
+    comments: 0,
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
