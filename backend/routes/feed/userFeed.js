@@ -2,20 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
+const {checkAuthenticated} = require('../../middleware.js');
 
-const userFeed = require('./userFeed.js');
-const tagsFeed = require('./tagsFeed.js');
-const friendsFeed = require('./friendsFeed.js');
-
-router.get('/:pageNum?', function (req, res) {
-
-  const pageNum = parseInt(req.params.pageNum, 10) || 1;
-  const offset = (pageNum - 1) * 6;
-
-  // Weights for discover algorithm
-  const dateWeight = -2;
-  const voteWeight = 1;
-
+router.get('/:pageNum?', checkAuthenticated, function (req, res) {
+    const userId = req.user.user_id;
+    const pageNum = parseInt(req.params.pageNum, 10) || 1;
+    const offset = (pageNum - 1) * 6;
+  
   pool.query(
     `SELECT 
         Polls.poll_id, 
@@ -24,11 +17,7 @@ router.get('/:pageNum?', function (req, res) {
         Users.username,
         Users.user_id, 
         COUNT(Votes.vote_id) AS vote_count,
-        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags,
-        (
-            TIMESTAMPDIFF(HOUR, Polls.created_at, NOW()) * ? + 
-            COUNT(Votes.vote_id) * ?
-        ) AS score
+        GROUP_CONCAT(DISTINCT Tags.tag_name ORDER BY Tags.tag_name SEPARATOR ',') AS tags
     FROM 
         Polls
     JOIN 
@@ -41,12 +30,14 @@ router.get('/:pageNum?', function (req, res) {
         Options ON Polls.poll_id = Options.poll_id
     LEFT JOIN 
         Votes ON Options.option_id = Votes.option_id
+    WHERE 
+        Polls.user_id = ?
     GROUP BY 
         Polls.poll_id
     ORDER BY 
-        score DESC
+        Polls.created_at desc
     LIMIT 6 OFFSET ?;`,
-    [dateWeight, voteWeight, offset],
+    [userId, offset],
     (error, results) => {
       if (error) {
         console.error('Error fetching polls', error);
@@ -92,22 +83,5 @@ router.get('/:pageNum?', function (req, res) {
     },
   );
 });
-
-//Get poll by title
-router.get('/title/:titleName', function (req, res) {
-  const query = `%${req.params.titleName}%`;
-  pool.query('SELECT * from Polls WHERE title LIKE ?', [query], (error, result) => {
-    if (error) {
-      console.log(`Error getting poll containing ${query} in the title`);
-      res.status(500).send('Error searching for poll')
-    }
-
-    res.json(result);
-  });
-});
-
-router.use('/user', userFeed);
-router.use('/tags', tagsFeed);
-router.use('/friends', friendsFeed);
 
 module.exports = router;
