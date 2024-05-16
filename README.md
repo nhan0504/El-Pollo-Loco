@@ -363,7 +363,7 @@ This is a platform for hosting created by the creators of Nex.js. Therefore, we 
 ### Heroku
 We decided to use Heroku to host the backend as it's free for students and easy to use.
 
-## Bugs/Limitations
+## Bugs and Limitations
 
 #### Creating a poll with tags
 Tags do not show up on polls until they have already been entered once into the database (i.e. a new tag not already in the database will not show up the first time a user tries to attach it to a poll).
