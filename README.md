@@ -358,10 +358,10 @@ In terms of style and design, we decided to use Material UI. This was a great de
 We use Next.js because it allows us to create API routes alongside with our React components. It's a popular framework to work with React to build web application because of serverside rendering making web app load faster
 
 ### Vercel
-This is a platform for hosting created by the creators of Nex.js. Therefore, we chose this platform for hosting as it's compatible and easy to host the our frontend created with Next.js
+This is a platform for hosting created by the creators of Nex.js. Therefore, we chose this platform for hosting as it's compatible and easy to host our frontend created with Next.js
 
 ### Heroku
-We decided to use Heroku to host the backend as it's free for student and also easy to use.
+We decided to use Heroku to host the backend as it's free for students and easy to use.
 
 ## Bugs/Limitations
 
