@@ -232,7 +232,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                   } else {
                   }
                 })
-                .catch((error) => alert(error.message));
+                .catch((error) => error.message);
                 //data needs to be object
 
             cmts.push(

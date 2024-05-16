@@ -62,9 +62,7 @@ const style = {
                   } else {
                     setOpen(false);
 
-                    // alert("Successfully removed friend!");
                     // remove friend from local friends list
-
                     friendList.splice(friendList.indexOf(username), 1);
                     // Important - set localStorage to new friendList right away
                     friendList.length > 0 ? localStorage.setItem("friends", friendList.join(",")) : localStorage.removeItem("friends")
@@ -88,9 +86,7 @@ const style = {
                   } else {
                     setOpen(false);
 
-                    // alert("Successfully added friend!");
                     // add friend to local friends list
-
                     friendList.push(username)
                     // Important - set localStorage to new friendList right away
                     localStorage.setItem("friends", friendList.join(","))
@@ -111,7 +107,8 @@ const style = {
     const isFriend = () =>  {
       return friendList.includes(username);
     }
-    //the rendering of the dialog
+
+    // messagge for adding/removing friend
     const dialogMessage = () => {
       return(
         { header: isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?",
@@ -119,10 +116,7 @@ const style = {
         }
       )
     }
-    //these  pop up when you add/remove a freind 
-    let dialogTitle = isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?"
-    let dialogBody = isFriend() ? "Their polls will no longer appear on your Friends feed." : "Their polls will appear on your Friends feed."
-    
+   
     return (
       <div>
         <Button sx={{textTransform: "none"}}onClick={handleOpen}><Typography variant="subtitle2"> 
@@ -135,7 +129,6 @@ const style = {
           open={open}
           onClose={handleClose}
           PaperProps={{ sx: { borderRadius: "25px"} }}
-          // aria-describedby="modal-modal-description"
         >
           <DialogContent sx={{maxWidth: 350, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
 
