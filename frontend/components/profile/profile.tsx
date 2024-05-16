@@ -19,16 +19,24 @@ import PollCard from '../discover/pollCard';
 import { AuthContext } from '@/contexts/authContext';
 import CircularProgress from '@mui/material/CircularProgress';
 
+// This file contains the profile for the current logged in user which shows poll stats,
+// followed tags, and any polls created by the user.
+// Limitations: no pagination (yet) so only the first 6 polls will show up
+// Some duplicate code from feed.tsx
 
 export default function MyProfile() {
 
   const { push } = useRouter();
 
   const { isAuth, setAuth } = useContext(AuthContext);
+  // Passed to poll cards - on the real feed they can soft refresh when polls are deleted, not set up here
   const [dummyDataChange, setDummyDataChange]= useState([])
   const [loading, setLoading] = useState(true);
+  // Tags are placed in local storage at login and in feed.tsx when there are changes
   const [followedTags, setFollowedTags] = useState<string[]>(localStorage.getItem("tags") ? String(localStorage.getItem("tags"))?.split(",") : []);
+  // List of polls the user voted for
   const [pollsVoted, setPollsVoted] = useState<{poll_id: number, option_id: number}[]>([]);
+  // Number of polls the user has voted for
   const [totalPollsVoted, setTotalPollsVoted] = useState<number>(0);
   const [pollData, setPollData] = useState([]);
   const [userData, setUserData] = useState<{
@@ -40,24 +48,13 @@ export default function MyProfile() {
     user_id: -1,
     email: '' 
     });
-
-  // useMemo(() => localStorage.getItem("pollsVoted") != null ? setTotalPollsVoted(JSON.parse(String(localStorage.getItem("pollsVoted"))).length) : 0, []);
   
   useEffect(() => {
-    // if(!isAuth){
-    //   push('auth/login');
-    // }
-    // else{
-
-      getPolls();
-    // }
-    
+      getPolls();    
   }, []);
 
   async function getPolls() {
-    // if(!isAuth){
-    //   push('auth/login');
-    // }
+    
     try{
       setFollowedTags(localStorage.getItem("tags") != null ? (String(localStorage.getItem("tags"))?.split(",")) : []);
       let response = await fetch(`${process.env.BACKEND_URL}/feed/user/1`, {
@@ -66,7 +63,6 @@ export default function MyProfile() {
       });
       let data = await response.json();
       if (response.ok) {
-        //alert(JSON.stringify(data));
 
         // Directly pass in the list of poll ids - can't use states
         // since they aren't set until the function exits
@@ -105,13 +101,9 @@ export default function MyProfile() {
       });
       let data = await response.json();
       if (response.ok) {
-        // alert(JSON.stringify(data));
         setUserData(data);
-        // setLoading(false);
       }
       else{
-        // alert(JSON.stringify(data));
-
       }
     }
     catch (error){
@@ -131,7 +123,6 @@ export default function MyProfile() {
         
         // Filter out any polls that the user voted on that aren't in this batch of
         // polls
-
         localStorage.setItem('pollsVoted', JSON.stringify(data));
         setTotalPollsVoted(data.length);
         setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
@@ -161,10 +152,8 @@ export default function MyProfile() {
 
     for (let i = 0; i < pollData.length; i++) {
       // We can't pop off polls from the list since they need to stay in memory to rerender
-      // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
+      // If we needed to remove a poll from the list, we would use setPollData with pollData.filter
       let currCard = pollData[i];
-      let loaded = true;
-      // alert(currCard.tags);
 
       row.push(
         <Grid item xs={6} justifyContent={"center"}
@@ -198,7 +187,6 @@ export default function MyProfile() {
           );
       }
     
-  
     return (
       <React.Fragment>
         <Grid container spacing={10} sx={{display:"flex", justifyContent:"center", alignContent: "center"}}>
@@ -250,10 +238,8 @@ export default function MyProfile() {
       )
     else if(followedTags.length == 0 && !loading){
       return (
-      // <Box sx={{ display: 'flex', flexDirection:"column", alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
         <Typography level="body-sm" style={{textAlign:"center"}}>You haven't followed any tags yet.<br/>Click on blue poll tags to follow your favorites.</Typography>
-      //  </Box>
       )
     }
   }
@@ -272,7 +258,6 @@ export default function MyProfile() {
         }}
       >
         
-        
       </Box>
       <Stack
         spacing={2}
@@ -282,7 +267,6 @@ export default function MyProfile() {
           mx: 'auto',
           px: { xs: 2, md: 6 },
           py: { xs: 2, md: 3 },
-          // justifyContent:"center",
           alignItems:"center"
         }}
       >
@@ -300,7 +284,6 @@ export default function MyProfile() {
           
         <Box sx={{display:"flex", flexDirection:"row", alignItems:"baseline", alignContente:"baseline", justifyContent: "center"}}>
         
-          {/* <Stack direction="row" spacing={3} sx={{display:"flex", width:"100%", alignSelf:"center", alignContent:"baseline", alignItems:"baseline"}}> */}
             <Card sx={{minWidth: "40%", minHeight: "150px", display: "flex", flexDirection: "column", m:2}}>
               
               <Typography level="title-md">Poll Stats</Typography>
@@ -319,7 +302,6 @@ export default function MyProfile() {
                   <Typography>Voted {totalPollsVoted} {totalPollsVoted != 1 ? "times" : "time"}</Typography>
                 </ListItem>
 
-
               </List>
         
             </Card>
@@ -330,7 +312,6 @@ export default function MyProfile() {
             </CardOverflow>
               {tagList()}
             </Card>
-          {/* </Stack> */}
 
         </Box>
         

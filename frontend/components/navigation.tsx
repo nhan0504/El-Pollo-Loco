@@ -5,8 +5,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import AddIcon from '@mui/icons-material/Add';
@@ -20,17 +18,16 @@ import { useRouter } from 'next/navigation';
 import { AuthContext } from '@/contexts/authContext';
 import { useContext, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import PollForm from './discover/pollForm';
 
+
+// This function is a nav bar template from Material UI with some small additions and removals
 export default function PrimarySearchAppBar({ setPollData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { isAuth, setAuth } = useContext(AuthContext);
   const { push, refresh } = useRouter();
-
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -140,14 +137,6 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {/* <MenuItem>
-        <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem> */}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -173,12 +162,9 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
   };
 
   function pollFormDialog() {
-
     return(
     <Dialog PaperProps={{ style:{ }, sx: {m:0, p:0, maxHeight:800, position:"absolute", top:15 } }} open={pollFormOpen} onClose={(event) => setPollFormOpen(false)} sx={{m:0, p:0, }}>
-      {/* <DialogContent sx={{maxWidth: 350, maxHeight:500, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}} style={{ overflow:"auto" }}> */}
         {PollForm()}   
-      {/* </DialogContent> */}
     </Dialog>
     )
   }
@@ -199,19 +185,12 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
         </Typography>
         </Box>
       )
-
     }
 
     else{
       return(
         <React.Fragment>
-          {/* show notificatiions for poll likes and comments */}
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            {/* <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton> */}
             <IconButton
               size="large"
               edge="end"
@@ -245,17 +224,7 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
     <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
       <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2' , mb:3}}>
         <Toolbar>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
           <Typography
-            //variant="h6"
             color="inherit"
             noWrap
             component="div"
@@ -278,7 +247,6 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
           {pollFormDialog()}
 
           <SearchComponent setPollData={setPollData} />
-
 
           <Box sx={{ flexGrow: 1 }} />
           {endMenuButtons()}
