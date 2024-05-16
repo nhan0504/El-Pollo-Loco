@@ -1,4 +1,5 @@
 ## Usage
+This project requires NodeJS version 17 or later to run. You can install it from https://nodejs.org/en/download/package-manager.
 
 1. Add a file called `.env` with the following contents in the `/backend` directory.
 
@@ -18,7 +19,7 @@
   TESTPASS=<your account password>
 ```
 
-Note that the first four fields will have to be filled with private information. In the `/frontend` directory, make sure that the contents of `next.config.mjs` are
+Note that the first four fields will have to be filled with private information (you can ask one of the developers for that info). In the `/frontend` directory, make sure that the contents of `next.config.mjs` are
 
 ```
 /** @type {import('next').NextConfig} */
