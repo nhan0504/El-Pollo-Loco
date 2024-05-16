@@ -405,3 +405,8 @@ We would like to add test for the frontend. Right now we only have unit test for
 ## Testing
 - To start the unit test for backend run  `cd backend && npm test`
 - Make sure to add your account credential in the `.env` file as the test will be using this account to test the endpoint that require authentication
+
+## Attributions
+#### Email Format Verification
+We used a regular expression for email format verification on Signup from Stack Overflow:
+https://stackoverflow.com/questions/54916150/how-to-make-this-email-validation-regex-from-regular-expressions-info-work-in-ja
