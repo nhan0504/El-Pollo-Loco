@@ -1,3 +1,7 @@
+## Git repo
+
+https://github.com/nhan0504/El-Pollo-Loco
+
 ## Usage
 This project requires NodeJS version 17 or later to run. You can install it from https://nodejs.org/en/download/package-manager.
 
