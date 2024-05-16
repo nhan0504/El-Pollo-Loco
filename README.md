@@ -410,3 +410,7 @@ We would like to add test for the frontend. Right now we only have unit test for
 #### Email Format Verification
 We used a regular expression for email format verification on Signup from Stack Overflow:
 https://stackoverflow.com/questions/54916150/how-to-make-this-email-validation-regex-from-regular-expressions-info-work-in-ja
+
+#### Navigation bar
+Our navigation bar is an altered version of this Material UI template:
+https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
