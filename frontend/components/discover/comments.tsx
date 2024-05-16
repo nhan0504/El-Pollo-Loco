@@ -29,7 +29,7 @@ import PollCard from  './pollCard'
 
 
 export default function CommentBox({setDataChange}:any, pollData: any, voted: any, followedTags: string[]) {
-  
+  //keeps track of whether the modal is open or not
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
   return (
@@ -79,11 +79,13 @@ export default function CommentBox({setDataChange}:any, pollData: any, voted: an
   );
 }
 
+
 function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: string[]){
+  //same colors as option colors in pollCard
   
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
-  let [cmts, setCmts] = React.useState([])
-  let [userids, setUserIds] = React.useState([])
+  let [cmts, setCmts] = React.useState([]) 
+  let [userids, setUserIds] = React.useState([]) //need user ids to say who is voting 
   let [optionVotes, setOptionVotes] = React.useState([])
   let [colorPairs, setColorPairs] = React.useState(new Map<number, string>());
   const { isAuth, setAuth } = useContext(AuthContext);
@@ -96,7 +98,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     // A function that increment 👆🏻 the previous state like here 
     // is better than directly setting `setValue(value + 1)`
   }
-  const [canComment, setCanComment]  = React.useState(false)
+  const [canComment, setCanComment]  = React.useState(false) //sets whether ppl can comment
   // canComment = String(localStorage.getItem("username"))
 
   const CommentGetter = useEffect(()=>{
@@ -136,62 +138,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
       
   }, [])
 
-  // const GetVotes = useEffect(()=>{
-  //   if (optionVotes.length == 0){
-  //   fetch(`${process.env.BACKEND_URL}/polls/vote/${pollId}`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //     headers: { 'Content-Type': 'application/json' }
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         return response.text().then((text) => {
-  //           throw new Error(text);
-  //         });
-  //       } else {
-  //         response.json().then((re)=>{
-  //           // alert(re)
-  //           setOptionVotes(re.map((obj: any)=>(obj.option_id)))
-  //         });
-  //       }
-  //     })
-  //     .catch((error) => {});}
-    
-  // })
-
-
-  //  const OptionsToColors: any = useEffect(()=>{
-  //   let voters: any[][] = [];
-  //   optionVotes?.map(async (opt: number, ind: number)=>{
-  //     await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
-  //       method: 'GET',
-  //       credentials: 'include',
-  //       headers: { 'Content-Type': 'application/json' }
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           return response.text().then((text) => {
-  //             throw new Error(text);
-  //           });
-  //         } else {
-  //           response.json().then((re)=>{
-  //             // alert(re)
-              
-  //             let start: any[] = []
-  //             let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
-  //             for(let j = 0; j<ret.length; j++){
-  //                 colorPairs.set(ret[j], optionColors[ind]);
-                
-  //             }
-  //             voters.push(ret);
-  //           });
-  //         }
-  //       })
-  //       .catch((error) => {});
-  
-  //   })
-  // })
-
+ 
   
   function Comment(data: any, color: any) {
     //need to save the current comment id
@@ -220,6 +167,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
         {Comment(cmts[0], colorPairs.get(cmts[0].user_id))}
       </React.Fragment>);
     }
+    //add all the comments and thier colors as well
     for (let i = 1; i < cmts.length; i++) {
       listOfComments.push(<React.Fragment>
         <Divider variant="fullWidth" style={{ margin: '5px 0' }}/>
@@ -248,7 +196,8 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
 
   
   function AddComment(this: any, cmts: any){
-    let [currComment, setCurrComment] = React.useState("")
+    //this function allows a user to write their own comment
+    let [currComment, setCurrComment] = React.useState("") // default comment is empty string
     const forceUpdate = useForceUpdate();
     
     if (canComment){
@@ -276,7 +225,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                 body: JSON.stringify({
 
                     "poll_id": pollId,
-                    "parent_id": null,
+                    "parent_id": null, //we have not implemented replies, if they replied to a comment, this would be the id of the comment that they replied to
                     "comment": currComment
                 
                 })
@@ -294,7 +243,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
 
             cmts.push(
               {
-                "username": canComment, //need to figire out how to lget the logged in user wo fetching
+                "username": canComment, //who is currently logged in
                 "comment_id": null, //for now this is null, it should be changed
                 "parent_id": null,
                 "comment": currComment
@@ -345,6 +294,7 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
 }
 
 function NoComments(){
+  //if there are no comments 
   return (
     <Paper style={{ padding: "40px 20px" }}>
     <Grid container spacing={2} >
