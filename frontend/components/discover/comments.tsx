@@ -230,8 +230,6 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                       throw new Error(text);
                     });
                   } else {
-                    alert(pollId)
-
                   }
                 })
                 .catch((error) => alert(error.message));
