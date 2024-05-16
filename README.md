@@ -413,4 +413,5 @@ https://stackoverflow.com/questions/54916150/how-to-make-this-email-validation-r
 
 #### Navigation bar
 Our navigation bar is an altered version of this Material UI template:
+
 https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
