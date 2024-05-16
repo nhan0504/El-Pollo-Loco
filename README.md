@@ -371,6 +371,9 @@ Tags do not show up on polls until they have already been entered once into the 
 #### Profiles
 Users can only see their own profile, and not those of other users.
 
+#### Search
+The search function returns polls with a similar title to the query, but the poll cards are missing options, tags, and creator username.
+
 #### Tag/Friend lists on feeds
 The tag and friend lists at the top of the Following and Friend feeds respectively cannot be used to unfollow tags or unfriend users - this can only be done from poll cards.
 
@@ -389,7 +392,6 @@ As detailed above, users need to be notified when someone follows them, or when 
 
 #### Search
 Users should be able to use the search bar to search for other users. Right now user are only able to search for poll based on the poll title.
-
 
 #### Settings
 It would enhance the user experience to have a settings page where users could set notification settings, use dark mode, and save other various preferences.
