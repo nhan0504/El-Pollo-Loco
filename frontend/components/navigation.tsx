@@ -21,6 +21,7 @@ import Dialog from '@mui/material/Dialog';
 import PollForm from './discover/pollForm';
 
 // This function is a nav bar template from Material UI with some small additions and removals
+// https://mui.com/material-ui/react-app-bar/#app-bar-with-a-primary-search-field
 export default function PrimarySearchAppBar({ setPollData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);

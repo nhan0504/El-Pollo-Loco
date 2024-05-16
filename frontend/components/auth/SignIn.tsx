@@ -31,9 +31,9 @@ export default function SignIn() {
         credentials: 'include',
       })
         .then((res) => {
-          if (res.status === 200) {
-            res.json().then((re) => {
-              // alert(re)
+          if (res.status === 200) {   
+
+            res.json().then((re)=>{
               userid = re.user_id;
               localStorage.setItem('my_user_id', String(re.user_id));
               localStorage.setItem('feed', 'discover');
@@ -49,11 +49,11 @@ export default function SignIn() {
                       throw new Error(text);
                     });
                   } else {
-                    response.json().then((data) => {
-                      // alert(response.json());
-                      if (data.following.length > 0)
-                        localStorage.setItem('friends', data.following);
-                    });
+                    response.json().then((data)=>{
+                    if(data.following.length > 0)
+                      localStorage.setItem("friends", data.following)
+                    
+                    })
                   }
                 })
                 .catch((error) => {});
@@ -107,7 +107,6 @@ export default function SignIn() {
   };
 
   return (
-    //TODO THEME
     <div>
       {errorAlert ? (
         <Alert severity="error" onClose={() => setAlert(false)}>
