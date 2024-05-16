@@ -230,11 +230,9 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                       throw new Error(text);
                     });
                   } else {
-                    alert(pollId)
-
                   }
                 })
-                .catch((error) => alert(error.message));
+                .catch((error) => error.message);
                 //data needs to be object
 
             cmts.push(
