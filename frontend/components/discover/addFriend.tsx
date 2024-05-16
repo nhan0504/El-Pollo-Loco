@@ -45,8 +45,8 @@ const style = {
     function handleClick(event: any): void {
       setOpen(false);
 
-             //setFreind is just a flag to tell the frontend what type of heart to render
-          //here we will actually make a freind in the db   
+             //setFreind is just a flag to tell the frontend what type of heart/text to render
+          //here we will actually make/remove a freind in the db   
           if (isAuth){
             if(isFriend()){
               fetch(`${process.env.BACKEND_URL}/users/${user_id}/unfollow`, {
@@ -102,6 +102,7 @@ const style = {
             }
           }
           else{
+            //doesn't  redirect to login
             alert("You must be logged in in order to add freinds.")
           }
       }
@@ -110,7 +111,7 @@ const style = {
     const isFriend = () =>  {
       return friendList.includes(username);
     }
-    
+    //the rendering of the dialog
     const dialogMessage = () => {
       return(
         { header: isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?",
@@ -118,7 +119,7 @@ const style = {
         }
       )
     }
-
+    //these  pop up when you add/remove a freind 
     let dialogTitle = isFriend() ? "Remove " + username + " as a friend?" : "Add " + username + " as a friend?"
     let dialogBody = isFriend() ? "Their polls will no longer appear on your Friends feed." : "Their polls will appear on your Friends feed."
     
