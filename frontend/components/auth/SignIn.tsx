@@ -34,7 +34,6 @@ export default function SignIn() {
           if (res.status === 200) {   
 
             res.json().then((re)=>{
-              // alert(re)
               userid = re.user_id;
               localStorage.setItem("my_user_id", String(re.user_id));
               localStorage.setItem("feed", "discover");
@@ -51,7 +50,6 @@ export default function SignIn() {
                     });
                   } else {
                     response.json().then((data)=>{
-                    // alert(response.json());
                     if(data.following.length > 0)
                       localStorage.setItem("friends", data.following)
                     
