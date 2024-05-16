@@ -78,9 +78,7 @@ function PollForm() {
             throw new Error(text);
           });
         } else {
-          return response.text().then((text) => {
-            console.log(text);
-          });
+          return response.text().then((text) => {});
         }
       })
       .catch((error) => error.message);

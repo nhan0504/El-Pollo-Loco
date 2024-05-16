@@ -100,7 +100,6 @@ function insertOption(pollId, options) {
     [optionsData],
     (error, result) => {
       if (error) {
-        console.log(`Error adding option`, error);
         return 1;
       }
     },
@@ -114,7 +113,6 @@ function insertTag(pollId, tags) {
 
     pool.query('SELECT tag_id FROM Tags WHERE tag_name = ?', [tagName], (error, result) => {
       if (error) {
-        console.log('Error getting existing tag', error);
         return 1;
       }
       if (result.length != 0) {
@@ -122,7 +120,6 @@ function insertTag(pollId, tags) {
       } else {
         pool.query('INSERT INTO Tags(tag_name) VALUES (?)', [tagName], (error, result) => {
           if (error) {
-            console.log('Error inserting tag', error);
             return 1;
           }
           tagId = result.insertId;
@@ -134,7 +131,6 @@ function insertTag(pollId, tags) {
         [tagId, pollId],
         (error, results) => {
           if (error) {
-            console.log(error);
             return 1;
           }
         },

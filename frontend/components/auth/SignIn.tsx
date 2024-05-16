@@ -22,7 +22,6 @@ export default function SignIn() {
 
   useEffect(() => {
     if (isAuth) {
-      console.log('AUTH');
       let userid;
 
       // Now that we're authenticated, get user id and set in localStorage
