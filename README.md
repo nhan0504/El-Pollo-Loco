@@ -377,6 +377,9 @@ The search function returns polls with a similar title to the query, but the pol
 #### Tag/Friend lists on feeds
 The tag and friend lists at the top of the Following and Friend feeds respectively cannot be used to unfollow tags or unfriend users - this can only be done from poll cards.
 
+#### Local storage 
+If the server is stopped while a user is logged in, some information like followed tags and friends will remain in the browser's local storage and appear on poll feeds the next time it's started, even though the user is logged out. The user must log out before stopping the server to properly clear out the local storage.
+
 ## Future Additions
 
 If we (or you!) in the future decide to expand upon this project, we plan on implementing at least the following:
