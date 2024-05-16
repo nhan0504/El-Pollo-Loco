@@ -15,6 +15,7 @@ router.get('/:pageNum?', function (req, res) {
   const dateWeight = -2;
   const voteWeight = 1;
 
+  // Will get 6 polls using the weight-based algorithm, along with all associated info for each poll
   pool.query(
     `SELECT 
         Polls.poll_id, 
@@ -56,6 +57,7 @@ router.get('/:pageNum?', function (req, res) {
         res.status(404).send('No polls found');
         return;
       }
+      // Get options using a promise to improve performance
       const pollsPromises = results.map(
         (poll) =>
           new Promise((resolve, reject) => {

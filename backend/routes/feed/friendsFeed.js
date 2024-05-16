@@ -13,6 +13,7 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
   const dateWeight = -15;
   const voteWeight = 1;
 
+  // Will get 6 polls using the weight-based algorithm, along with all associated info for each poll
   pool.query(
     `SELECT 
       Polls.poll_id, 
@@ -59,6 +60,7 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
         return;
       }
 
+      // Get options and put them into a promise to improve performance
       const pollsPromises = pollResults.map(
         (poll) =>
           new Promise((resolve, reject) => {

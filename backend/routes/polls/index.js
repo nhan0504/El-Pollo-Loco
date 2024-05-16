@@ -7,7 +7,7 @@ const { checkAuthenticated } = require('../../middleware.js');
 const voteRouter = require('./vote');
 const commentRouter = require('./comment');
 
-// GET
+// GET a poll based on pollId
 router.get('/:pollId', function (req, res) {
   const pollId = req.params.pollId;
   pool.query('SELECT * FROM Polls WHERE poll_id = ?', [pollId], (error, pollResults) => {
@@ -53,7 +53,7 @@ router.get('/:pollId', function (req, res) {
   });
 });
 
-// POST
+// Create a poll
 router.post('/', checkAuthenticated, async (req, res) => {
   const { title, options, tags } = req.body;
   const userId = req.user.user_id;
