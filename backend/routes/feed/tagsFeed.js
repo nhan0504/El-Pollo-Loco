@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const {checkAuthenticated} = require('../../middleware.js');
+const { checkAuthenticated } = require('../../middleware.js');
 
 router.get('/:pageNum?', checkAuthenticated, function (req, res) {
   const userId = req.user.user_id;
@@ -12,7 +12,6 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
   // Weights for algorithm
   const dateWeight = -15;
   const voteWeight = 1;
-
 
   pool.query(
     `SELECT 
@@ -62,26 +61,29 @@ router.get('/:pageNum?', checkAuthenticated, function (req, res) {
         return;
       }
 
-      const pollsPromises = pollResults.map(poll => new Promise((resolve, reject) => {
-        pool.query(
-          `SELECT Options.option_id, Options.option_text, COUNT(Votes.vote_id) AS vote_count 
+      const pollsPromises = pollResults.map(
+        (poll) =>
+          new Promise((resolve, reject) => {
+            pool.query(
+              `SELECT Options.option_id, Options.option_text, COUNT(Votes.vote_id) AS vote_count 
           FROM Options 
           LEFT JOIN Votes ON Options.option_id = Votes.option_id 
           WHERE Options.poll_id = ? 
           GROUP BY Options.option_id`,
-          [poll.poll_id],
-          (error, optionsResults) => {
-            if (error) {
-              reject(`Error fetching options for poll ${poll.poll_id}`);
-            } else {
-              resolve({
-                ...poll,
-                options: optionsResults,
-              });
-            }
-          },
-        );
-      }));
+              [poll.poll_id],
+              (error, optionsResults) => {
+                if (error) {
+                  reject(`Error fetching options for poll ${poll.poll_id}`);
+                } else {
+                  resolve({
+                    ...poll,
+                    options: optionsResults,
+                  });
+                }
+              },
+            );
+          }),
+      );
 
       Promise.all(pollsPromises)
         .then((polls) => {

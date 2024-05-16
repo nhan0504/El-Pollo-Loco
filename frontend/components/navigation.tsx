@@ -20,7 +20,6 @@ import { useContext, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import PollForm from './discover/pollForm';
 
-
 // This function is a nav bar template from Material UI with some small additions and removals
 export default function PrimarySearchAppBar({ setPollData }: any) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -86,9 +85,9 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
                 })
                   .then((res) => {
                     setAuth(false);
-                    localStorage.clear()
+                    localStorage.clear();
                     handleMenuClose();
-                      window.location.reload();
+                    window.location.reload();
                   })
                   .catch();
               }}
@@ -155,40 +154,55 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
   const CreatePoll = () => {
     if (isAuth == false) {
       alert('You cannot create a poll without logging in.');
-      push("/auth/login");
+      push('/auth/login');
     } else {
       setPollFormOpen(true);
     }
   };
 
   function pollFormDialog() {
-    return(
-    <Dialog PaperProps={{ style:{ }, sx: {m:0, p:0, maxHeight:800, position:"absolute", top:15 } }} open={pollFormOpen} onClose={(event) => setPollFormOpen(false)} sx={{m:0, p:0, }}>
-        {PollForm()}   
-    </Dialog>
-    )
+    return (
+      <Dialog
+        PaperProps={{
+          style: {},
+          sx: { m: 0, p: 0, maxHeight: 800, position: 'absolute', top: 15 },
+        }}
+        open={pollFormOpen}
+        onClose={(event) => setPollFormOpen(false)}
+        sx={{ m: 0, p: 0 }}
+      >
+        {PollForm()}
+      </Dialog>
+    );
   }
 
   const endMenuButtons = () => {
-
-    if (isAuth == false){
-
-      return(
-        <Box sx={{ display: { xs: 'none', md: 'flex'} }}>
-        {/* Need to make sure the correct buttons are chosen before nav render */}
-        <Typography>
-          <Button variant="text" onClick={(event) => {push("/auth/login")}}>Log in</Button>
-        </Typography>
-        <Typography variant="body2" alignSelf="center">/</Typography>
-        <Typography>
-          <Button variant="text" onClick={(event) => (push("/auth/signup"))}>Sign Up</Button>
-        </Typography>
+    if (isAuth == false) {
+      return (
+        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          {/* Need to make sure the correct buttons are chosen before nav render */}
+          <Typography>
+            <Button
+              variant="text"
+              onClick={(event) => {
+                push('/auth/login');
+              }}
+            >
+              Log in
+            </Button>
+          </Typography>
+          <Typography variant="body2" alignSelf="center">
+            /
+          </Typography>
+          <Typography>
+            <Button variant="text" onClick={(event) => push('/auth/signup')}>
+              Sign Up
+            </Button>
+          </Typography>
         </Box>
-      )
-    }
-
-    else{
-      return(
+      );
+    } else {
+      return (
         <React.Fragment>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton
@@ -216,13 +230,13 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
             </IconButton>
           </Box>
         </React.Fragment>
-      )
+      );
     }
-  }
+  };
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: 'white' }}>
-      <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2' , mb:3}}>
+      <AppBar position="static" sx={{ bgcolor: 'white', color: '#1976d2', mb: 3 }}>
         <Toolbar>
           <Typography
             color="inherit"
@@ -250,8 +264,6 @@ export default function PrimarySearchAppBar({ setPollData }: any) {
 
           <Box sx={{ flexGrow: 1 }} />
           {endMenuButtons()}
-
-          
         </Toolbar>
       </AppBar>
       {renderMobileMenu}

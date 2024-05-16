@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 const pool = require('../../db.js');
-const {checkAuthenticated} = require('../../middleware.js');
+const { checkAuthenticated } = require('../../middleware.js');
 
 router.get('/:pageNum?', checkAuthenticated, function (req, res) {
-    const userId = req.user.user_id;
-    const pageNum = parseInt(req.params.pageNum, 10) || 1;
-    const offset = (pageNum - 1) * 6;
-  
+  const userId = req.user.user_id;
+  const pageNum = parseInt(req.params.pageNum, 10) || 1;
+  const offset = (pageNum - 1) * 6;
+
   pool.query(
     `SELECT 
         Polls.poll_id, 

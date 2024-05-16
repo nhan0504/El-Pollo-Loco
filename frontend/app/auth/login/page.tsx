@@ -14,12 +14,11 @@ export default function Login() {
         <SignIn />
       </div>
     );
-  }
+  };
 
   useEffect(() => {
-    setWindowLoaded(true);    
-  },[])
+    setWindowLoaded(true);
+  }, []);
 
-  if(windowLoaded)
-    return getSignIn();
+  if (windowLoaded) return getSignIn();
 }

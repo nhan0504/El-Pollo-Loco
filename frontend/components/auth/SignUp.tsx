@@ -42,10 +42,10 @@ export default function SignUp() {
     //  Validate email format (regular expression)
     const validateEmail = (email: FormDataEntryValue | null) => {
       return String(email)
-          .toLowerCase()
-          .match(
-              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          );
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        );
     };
     if (!validateEmail(email)) {
       setEmailFormatError(true);
@@ -73,7 +73,7 @@ export default function SignUp() {
             setExistingError(false);
             setAlert(false);
             push('/auth/login');
-          } else if (res.status === 409){
+          } else if (res.status === 409) {
             setExistingError(true);
             setAlert(true);
           } else {
@@ -160,7 +160,9 @@ export default function SignUp() {
                   label="Username"
                   name="username"
                   autoComplete="Username"
-                  helperText={existingError ? 'Username or email address already exists.' : undefined}
+                  helperText={
+                    existingError ? 'Username or email address already exists.' : undefined
+                  }
                 />
               </Grid>
               <Grid item xs={12}>

@@ -1,5 +1,5 @@
 const supertest = require('supertest');
-const app = require('../app'); 
+const app = require('../app');
 
 describe('Votes Endpoints', () => {
   let agent = supertest.agent(app);
@@ -14,20 +14,15 @@ describe('Votes Endpoints', () => {
 
   it('should add a new vote', async () => {
     const voteData = {
-      option_id: 88
+      option_id: 88,
     };
 
-    const response = await agent
-      .post('/polls/vote')
-      .send(voteData)
-      .expect(201);
+    const response = await agent.post('/polls/vote').send(voteData).expect(201);
 
     createdVoteId = response.body.voteId;
   });
 
   it('should undo a vote', async () => {
-    await agent
-      .delete(`/polls/vote/${createdVoteId}`)
-      .expect(200);
+    await agent.delete(`/polls/vote/${createdVoteId}`).expect(200);
   });
 });

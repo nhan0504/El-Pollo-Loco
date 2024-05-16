@@ -1,4 +1,4 @@
-var pool = require("./db");
+var pool = require('./db');
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -10,9 +10,13 @@ function checkAuthenticated(req, res, next) {
 function checkValidToken(req, res, next) {
   const token = req.params.token;
 
-  pool.query('SELECT * FROM ForgotPassword WHERE token = ?', [ token ], (err, results) => {
-    if (err) { return res.status(500).send("Internal database error. Try again"); }
-    if (results.length == 0) { return res.status(401).send("Invalid token.") }
+  pool.query('SELECT * FROM ForgotPassword WHERE token = ?', [token], (err, results) => {
+    if (err) {
+      return res.status(500).send('Internal database error. Try again');
+    }
+    if (results.length == 0) {
+      return res.status(401).send('Invalid token.');
+    }
     return next();
   });
 }

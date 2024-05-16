@@ -8,7 +8,6 @@ const tagsFeed = require('./tagsFeed.js');
 const friendsFeed = require('./friendsFeed.js');
 
 router.get('/:pageNum?', function (req, res) {
-
   const pageNum = parseInt(req.params.pageNum, 10) || 1;
   const offset = (pageNum - 1) * 6;
 
@@ -99,7 +98,7 @@ router.get('/title/:titleName', function (req, res) {
   pool.query('SELECT * from Polls WHERE title LIKE ?', [query], (error, result) => {
     if (error) {
       console.log(`Error getting poll containing ${query} in the title`);
-      res.status(500).send('Error searching for poll')
+      res.status(500).send('Error searching for poll');
     }
 
     res.json(result);

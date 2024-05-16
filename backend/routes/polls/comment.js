@@ -23,7 +23,7 @@ router.get('/:pollId', function (req, res) {
 //POST a new comment
 router.post('/', function (req, res) {
   const userId = req.user.user_id;
-  const {pollId, parentId, comment} = req.body;
+  const { pollId, parentId, comment } = req.body;
   pool.query(
     'INSERT INTO Comments (user_id, poll_id, parent_id, comment) VALUES (?, ?, ?, ?)',
     [userId, pollId, parentId, comment],
@@ -38,7 +38,7 @@ router.post('/', function (req, res) {
         comment_id: results.insertId,
         poll_id: pollId,
         parent_id: parentId,
-        comment: comment
+        comment: comment,
       };
 
       res.status(201).json(newComment);

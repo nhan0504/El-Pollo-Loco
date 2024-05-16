@@ -9,15 +9,17 @@ export default function Form() {
       <div>
         <PrimarySearchAppBar />
         <br />
-        <div style={{
+        <div
+          style={{
             display: 'flex',
             flexGrow: 1,
             justifyContent: 'center',
             flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-            <CreatePoll />
-          </div>
+            alignItems: 'center',
+          }}
+        >
+          <CreatePoll />
+        </div>
       </div>
     </main>
   );

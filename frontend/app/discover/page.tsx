@@ -17,13 +17,11 @@ export default function Navigation() {
         <Feed pollData={pollData} setPollData={setPollData} />
       </div>
     );
-  }
+  };
 
   useEffect(() => {
-    setWindowLoaded(true);    
-  },[])
+    setWindowLoaded(true);
+  }, []);
 
-  if(windowLoaded)
-    return getDiscoverFeed();
-
+  if (windowLoaded) return getDiscoverFeed();
 }

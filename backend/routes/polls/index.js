@@ -20,32 +20,36 @@ router.get('/:pollId', function (req, res) {
       return res.status(404).send('Poll not found');
     }
 
-    pool.query('SELECT option_id, option_text FROM Options WHERE poll_id = ?', [pollId], (error, optionsResults) => {
-      if (error) {
-        console.error(`Error fetching options for poll ${pollId}`, error);
-        res.status(500).send('Error fetching poll options');
-        return;
-      }
-
-      pool.query(
-        'SELECT Tags.tag_id, tag_name FROM Tags JOIN PollsTags ON Tags.tag_id = PollsTags.tag_id WHERE PollsTags.poll_id = ?',
-        [pollId],
-        (error, tagsResults) => {
-          if (error) {
-            console.error(`Error fetching tags for poll ${pollId}`, error);
-            res.status(500).send('Error fetching poll tags');
-            return;
-          }
-
-          const pollWithStats = {
-            ...pollResults[0],
-            options: optionsResults,
-            tags: tagsResults,
-          };
-          res.json(pollWithStats);
+    pool.query(
+      'SELECT option_id, option_text FROM Options WHERE poll_id = ?',
+      [pollId],
+      (error, optionsResults) => {
+        if (error) {
+          console.error(`Error fetching options for poll ${pollId}`, error);
+          res.status(500).send('Error fetching poll options');
+          return;
         }
-      );
-    });
+
+        pool.query(
+          'SELECT Tags.tag_id, tag_name FROM Tags JOIN PollsTags ON Tags.tag_id = PollsTags.tag_id WHERE PollsTags.poll_id = ?',
+          [pollId],
+          (error, tagsResults) => {
+            if (error) {
+              console.error(`Error fetching tags for poll ${pollId}`, error);
+              res.status(500).send('Error fetching poll tags');
+              return;
+            }
+
+            const pollWithStats = {
+              ...pollResults[0],
+              options: optionsResults,
+              tags: tagsResults,
+            };
+            res.json(pollWithStats);
+          },
+        );
+      },
+    );
   });
 });
 
@@ -81,11 +85,11 @@ router.post('/', checkAuthenticated, async (req, res) => {
         poll_id: pollId,
         title: title,
         tags: tags,
-        options: options
+        options: options,
       };
 
       res.status(201).json(newPoll);
-    }
+    },
   );
 });
 
@@ -99,7 +103,7 @@ function insertOption(pollId, options) {
         console.log(`Error adding option`, error);
         return 1;
       }
-    }
+    },
   );
   return 0;
 }
@@ -107,7 +111,7 @@ function insertOption(pollId, options) {
 function insertTag(pollId, tags) {
   for (const tagName of tags) {
     let tagId;
-    
+
     pool.query('SELECT tag_id FROM Tags WHERE tag_name = ?', [tagName], (error, result) => {
       if (error) {
         console.log('Error getting existing tag', error);
@@ -133,7 +137,7 @@ function insertTag(pollId, tags) {
             console.log(error);
             return 1;
           }
-        }
+        },
       );
     });
   }
