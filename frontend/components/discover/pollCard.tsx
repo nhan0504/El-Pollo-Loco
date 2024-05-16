@@ -23,13 +23,18 @@ import CheckIcon from '@mui/icons-material/Check';
 import Divider from '@mui/material/Divider';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+// Here we take poll card data passed in by the feed and assemble a single poll
+// card. Each poll card keeps track of its total votes, votes on each option,
+// which option the user has voted for, tags, and more.
 
+// object type for each poll option
 type Option = {
   optionText: string;
   votes: number;
   option_id: number;
 };
 
+// creates poll card component to be added into a row and displayed on the feed
 function MakeCard(
   {setDataChange}: any,
   rawData: any,
@@ -47,22 +52,6 @@ function MakeCard(
   const [user_id, setUserId] = React.useState(userId)
   const { push } = useRouter();
   const { isAuth, setAuth } = useContext(AuthContext);
-  // const [cardData, setCardData] = useState({
-  //   totalVotes: opts?.map((opt: { votes: any; }) => opt.votes).reduce((partialSum: any, a: any) => partialSum + a, 0),
-  //   opts: [...opts?.map((opt: { optionText: any; votes: any; option_id: any; }) => {
-  //     return {
-  //       optionText: opt.optionText,
-  //       votes: opt.votes,
-  //       option_id: opt.option_id,
-  //     };
-  //   }), {optionText: "Show Results",
-  //        votes: 0,
-  //        option_id: -1
-  // }],
-  //   tags: tags,
-  //   comments: 0,
-  // });
-
   const [cardData, setCardData] = useState({
     totalVotes: opts?.reduce((partialSum, opt) => partialSum + opt.votes, 0) || 0,
     opts: [
@@ -78,32 +67,34 @@ function MakeCard(
   });
 
   const [hasVoted, setHasVoted] = useState<{voted: boolean, option_id: number}>({voted: false, option_id: -1});
-  // A state for whether the options are collapsed, showing results
+  
+  // a state for whether the options are collapsed, showing results
   const [collapsed, setCollapsed] = useState<boolean>(false)
-  // Tracks tag dialog open state as well as whether the selected tag was actually followed
+  
+  // tracks tag dialog open state as well as whether the selected tag was actually followed
   const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
-  // Tracks the poll deletion dialog open state as well as whether a poll was actually deleted
+  
+  // tracks the poll deletion dialog open state as well as whether a poll was actually deleted
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<{open:boolean, deleted:boolean}>({open: false, deleted: false});
   const [tagSelected, setTagSelected] = useState<string>("");
   const [transition, setTransition] = React.useState(false);
   const [refreshCard, setRefreshCard] = React.useState(false);
   const [tagChange, setTagChange] = useState(false);
-  // const [friendList, setFriendList] = useState<string[]>([]);
-  // If the user has voted on this poll, automatically show results
+
+  // passing an empty array to useEffect causes it to run once (or twice with strict Hooks) on page load
   useEffect(() => {
-    // alert(userId)
+    // if the user has voted on this poll, automatically show results
     if(voted.option_id != -1){
       ShowResults();
       setHasVoted({voted: true, option_id: voted.option_id});
     }
   }, []);
 
-  // Triggered by addFriend when a friend is followed/unfollowed
+  // triggered by addFriend when a friend is followed/unfollowed
   useEffect(() => {
-   
     if(refreshCard){
       setRefreshCard(false);
-      // If we're on the friends feed, update it after a follow/unfollow by setting dataChange for feed.tsx
+      // if we're on the friends feed, soft refresh it after a follow/unfollow by setting dataChange for feed.tsx
       if(localStorage.getItem("feed") == "friends" && !tagChange)
         setDataChange(true);
       else
@@ -151,10 +142,10 @@ function MakeCard(
           }
         })
         .catch((error) => error.message);
-      
     }
   };
 
+  // delete poll (button only available if the poll was made by the logged in user)
   function deletePoll() {
 
     fetch(`${process.env.BACKEND_URL}/polls/` + pollId, {
@@ -168,6 +159,7 @@ function MakeCard(
             throw new Error(text);
           });
         } else {
+          // soft refresh poll feed
           setDataChange(true);
           return response.text();
         }
@@ -184,7 +176,7 @@ function MakeCard(
     setCollapsed(true);
   }
   
-  // Calculate percentage of votes for an option
+  // calculate percentage of votes for an option
   const getPercent = (option: { optionText: string; votes: number }) => {
     if (cardData.totalVotes === 0) {
       return 0;
@@ -194,10 +186,8 @@ function MakeCard(
   // colors for options, applied in order
   let optionColors = ["blue", "red", "#65d300", "pink", "#ebe74d", "purple", "cyan", "yellow", "brown"]
 
+  // list of poll options
   const optionList = () => {
-
-    // let transitionTime = 600;
-    // let transitionTrigger = !transition ? true : false;
 
     let optList = cardData.opts?.map((option, index) => {
       
@@ -234,7 +224,7 @@ function MakeCard(
         )
       }
       else{
-        // Different button styles depending on state of poll/option
+        // different button styles depending on state of poll/option
         const styles = () => ({
           thisOptionVoted: {
               ":hover": {
@@ -284,9 +274,6 @@ function MakeCard(
         return (
 
         <CardActions sx={{}} key={option.optionText}>
-          {/* Added onClick function as addVote */}
-          {/* <Slide in={true} timeout={transitionTime} direction="left" > */}
-
           <Button
             variant="outlined"
             value={option.optionText}
@@ -300,7 +287,6 @@ function MakeCard(
               fontFamily: 'arial',
             }}
             sx={{
-              // The hover/normal colors are swapped to show the option that
               ":hover": style[':hover'],
               color:style.color,
               bgcolor:style.bgcolor,
@@ -313,12 +299,8 @@ function MakeCard(
           >
             {option.optionText}
           </Button>
-          {/* </Slide> */}
 
-          {/* using getPercent which just divides the options's votes by total votes */}
           {/* adjust width of progress bars if they're not supposed to show */}
-
-          {/* <Slide in={true} mountOnEnter timeout={transitionTime} direction="left" > */}
             <Box sx={{ width: collapsed? 3 / 4 : 0, boxShadow: 2}} alignItems="center" style={{}} >
               <LinearProgress 
               variant="determinate" 
@@ -332,7 +314,6 @@ function MakeCard(
               }} 
               style={{opacity:0.8}} />
             </Box>
-          {/* </Slide> */}
 
           {/* Percentage label at the end of progress bar */}
           <Box sx={{ width: collapsed ? 55 : 0 }}>
@@ -348,6 +329,7 @@ function MakeCard(
     return optList;
   }
 
+  // only return the comment button if the current poll is not in a comment box
   const commentBox = () => {
     if (!inCommentBox)
       return CommentBox({setDataChange}, rawData, voted, followedTags)
@@ -356,6 +338,7 @@ function MakeCard(
       return
   }
 
+  // only shows up if the poll was created by the logged in user
   const deleteButton = () => {
     if(username == localStorage.getItem("username")){
       return(
@@ -369,14 +352,13 @@ function MakeCard(
     else return
   }
 
-  // Need to use tags endpoint to send POST request w/ tag id, but we don't have tags ids right now
+  // follow a tag
   function followTag(tagName: string){
     setTagDialogOpen({open: false, followed: true});
     if (isAuth == false) {
       alert('You cannot follow tags without logging in. Redirecting to login page.');
       push('/auth/login');
     } else {
-      // alert("following tag")
       fetch(`${process.env.BACKEND_URL}/tags/follow/` + tagName, {
         method: 'POST',
         credentials: 'include',
@@ -390,7 +372,6 @@ function MakeCard(
               throw new Error(text);
             });
           } else {
-            // alert(response.text());
             followedTags.push(tagName);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
@@ -406,13 +387,13 @@ function MakeCard(
     }
   }
 
+  // unfollow a tag
   function unfollowTag(tagName: string){
     setTagDialogOpen({open: false, followed: false});
     if (isAuth == false) {
       alert('You cannot follow tags without logging in. Redirecting to login page.');
       push('/auth/login');
     } else {
-      // alert("following tag")
       fetch(`${process.env.BACKEND_URL}/tags/unfollow/` + tagName, {
         method: 'DELETE',
         credentials: 'include',
@@ -424,7 +405,6 @@ function MakeCard(
               throw new Error(text);
             });
           } else {
-            // alert(response.text());
             followedTags.splice(followedTags.indexOf(tagName), 1);
             if(localStorage.getItem("feed") == "following")
               setDataChange(true)
@@ -437,11 +417,9 @@ function MakeCard(
         })
         .catch((error) => error.message); 
     }
-
-
   }
 
-  // Alert for when a poll is deleted
+  // alert for when a poll is deleted (only really necessary on the profile where polls don't soft refresh automatically)
   const deletedAlert = () => {
     if(deleteDialogOpen.deleted == true){
       return(
@@ -456,6 +434,28 @@ function MakeCard(
       return
   }
 
+  // change tag dialog based on whether the user is following the selected tag or not
+  const tagFollowMessage = () => {
+    
+    return {
+      header: isFollowing(tagSelected) ? "Would you like to unfollow this tag?" : "Would you like to follow this tag?", 
+      body: isFollowing(tagSelected) ?'Polls tagged with "' + tagSelected + '" will no longer appear on your Following feed.' : 'Polls tagged with "' + tagSelected + '" will appear on your Following feed.', 
+    }
+  }
+
+  // return if user is following given tag
+  const isFollowing = (tagName: string) => {
+
+    return followedTags.includes(tagName);
+  }
+
+  // change tag label based on follow state
+  const tagLabel = (tagName: string) => {
+    return isFollowing(tagName) ? tagName + " ✓" : tagName + " +";
+  }
+
+
+  // get either the tag following/unfollowing dialog, or the poll deletion dialog
   const getDialog = (type: string) => {
 
     if(type == "tag"){
@@ -494,23 +494,7 @@ function MakeCard(
       return
   }
 
-  const tagFollowMessage = () => {
-    
-    return {
-      header: isFollowing(tagSelected) ? "Would you like to unfollow this tag?" : "Would you like to follow this tag?", 
-      body: isFollowing(tagSelected) ?'Polls tagged with "' + tagSelected + '" will no longer appear on your Following feed.' : 'Polls tagged with "' + tagSelected + '" will appear on your Following feed.', 
-    }
-  }
-
-  const isFollowing = (tagName: string) => {
-
-    return followedTags.includes(tagName);
-  }
-
-  const tagLabel = (tagName: string) => {
-    return isFollowing(tagName) ? tagName + " ✓" : tagName + " +";
-  }
-
+  // list of tags for poll card
   const tagList = () => {
 
     if(tags?.length != 0){
@@ -535,6 +519,8 @@ function MakeCard(
   };
 
   let voteMessage: string = cardData.totalVotes > 1 ?  cardData.totalVotes + " votes" : cardData.totalVotes + " vote"
+  
+  // get friend list to pass to usernameFriend - this way, all poll cards update the heart button when a friend is followed/unfollowed
   let friendList: string[] = []
   const friendsRaw = localStorage.getItem("friends");
 
@@ -545,12 +531,6 @@ function MakeCard(
       friendList = friendsArray;
     }
   }
-  // let friendList
-
-  // if(localStorage.getItem("friends") != null && localStorage.getItem("friends")?.split(",") && localStorage.getItem("friends")?.split(",").length > 0)
-  //   friendList = localStorage.getItem("friends")?.split(",")[0] != "" ? localStorage.getItem("friends")?.split(",") : []
-  // else
-  //   friendList = []
 
   return (
     <React.Fragment>
@@ -612,13 +592,10 @@ export default function PollCard(
   followedTags: string[],
   inCommentBox: boolean
 ) {
-  // alert(JSON.stringify(pollData));
+
   // Process raw poll data to pass to MakeCard
-   
-  
   let date = new Date(Date.parse(pollData?.created_at));
   let adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000)
-
   let tags = (pollData?.tags)?.split(",");
   let question = pollData?.title;
   let opts = pollData?.options?.map((option: any) => ({

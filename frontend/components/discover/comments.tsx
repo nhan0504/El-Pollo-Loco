@@ -115,16 +115,13 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
           });
         } else {
           response.json().then((re)=>{
-            // alert(re)
             setCmts(re)
             re = (re.map((obj: any)=>obj.user_id))
             re = re.filter((item: number, index: number) => re.indexOf(item) === index);
             userids = re
 
             if (!isAuth){
-              //alert("you cannot comment wo loggin in")
               setCanComment(false)
-          
             }
             else{
               setCanComment(true)
@@ -137,67 +134,6 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
       .catch((error) => error.message);
       
   }, [])
-
-  // These functions implement the currently unused feature that sets the comment author's username to the color of the
-  // option they voted for. It's not being used due to how many fetch requests it requires per poll card - we did not
-  // have time to change the endpoint and make it more optimized
-
-  // const GetVotes = useEffect(()=>{
-  //   if (optionVotes.length == 0){
-  //   fetch(`${process.env.BACKEND_URL}/polls/vote/${pollId}`, {
-  //     method: 'GET',
-  //     credentials: 'include',
-  //     headers: { 'Content-Type': 'application/json' }
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         return response.text().then((text) => {
-  //           throw new Error(text);
-  //         });
-  //       } else {
-  //         response.json().then((re)=>{
-  //           // alert(re)
-  //           setOptionVotes(re.map((obj: any)=>(obj.option_id)))
-  //         });
-  //       }
-  //     })
-  //     .catch((error) => {});}
-    
-  // })
-
-
-  //  const OptionsToColors: any = useEffect(()=>{
-  //   let voters: any[][] = [];
-  //   optionVotes?.map(async (opt: number, ind: number)=>{
-  //     await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
-  //       method: 'GET',
-  //       credentials: 'include',
-  //       headers: { 'Content-Type': 'application/json' }
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           return response.text().then((text) => {
-  //             throw new Error(text);
-  //           });
-  //         } else {
-  //           response.json().then((re)=>{
-  //             // alert(re)
-              
-  //             let start: any[] = []
-  //             let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
-  //             for(let j = 0; j<ret.length; j++){
-  //                 colorPairs.set(ret[j], optionColors[ind]);
-                
-  //             }
-  //             voters.push(ret);
-  //           });
-  //         }
-  //       })
-  //       .catch((error) => {});
-  
-  //   })
-  // })
-
 
   function Comment(data: any, color: any) {
     //need to save the current comment id
@@ -282,8 +218,8 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
 
-                    "poll_id": pollId,
-                    "parent_id": null, //we have not implemented replies, if they replied to a comment, this would be the id of the comment that they replied to
+                    "pollId": pollId,
+                    "parentId": null, //we have not implemented replies, if they replied to a comment, this would be the id of the comment that they replied to
                     "comment": currComment
                 
                 })
@@ -294,6 +230,8 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
                       throw new Error(text);
                     });
                   } else {
+                    alert(pollId)
+
                   }
                 })
                 .catch((error) => alert(error.message));
