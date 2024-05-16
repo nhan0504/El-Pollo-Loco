@@ -358,18 +358,21 @@ In terms of style and design, we decided to use Material UI. This was a great de
 We use Next.js because it allows us to create API routes alongside with our React components. It's a popular framework to work with React to build web application because of serverside rendering making web app load faster
 
 ### Vercel
-This is a platform for hosting created by the creators of Nex.js. Therefore, we chose this platform for hosting as it's compatible and easy to host the our frontend created with Next.js
+This is a platform for hosting created by the creators of Nex.js. Therefore, we chose this platform for hosting as it's compatible and easy to host our frontend created with Next.js
 
 ### Heroku
-We decided to use Heroku to host the backend as it's free for student and also easy to use.
+We decided to use Heroku to host the backend as it's free for students and easy to use.
 
-## Bugs/Limitations
+## Bugs and Limitations
 
 #### Creating a poll with tags
 Tags do not show up on polls until they have already been entered once into the database (i.e. a new tag not already in the database will not show up the first time a user tries to attach it to a poll).
 
 #### Profiles
 Users can only see their own profile, and not those of other users.
+
+#### Search
+The search function returns polls with a similar title to the query, but the poll cards are missing options, tags, and creator username.
 
 #### Tag/Friend lists on feeds
 The tag and friend lists at the top of the Following and Friend feeds respectively cannot be used to unfollow tags or unfriend users - this can only be done from poll cards.
@@ -389,7 +392,6 @@ As detailed above, users need to be notified when someone follows them, or when 
 
 #### Search
 Users should be able to use the search bar to search for other users. Right now user are only able to search for poll based on the poll title.
-
 
 #### Settings
 It would enhance the user experience to have a settings page where users could set notification settings, use dark mode, and save other various preferences.
