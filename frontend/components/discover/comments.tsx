@@ -27,9 +27,10 @@ import { ModalDialog } from '@mui/joy';
 import PollCard from  './pollCard'
 
 
-
 export default function CommentBox({setDataChange}:any, pollData: any, voted: any, followedTags: string[]) {
-  //keeps track of whether the modal is open or not
+  // all parameters are passed to the poll card in the comment box
+
+//keeps track of whether the modal is open or not
   const [open, setOpen] = React.useState<boolean>(false);
   let comments = NoComments()
   return (
@@ -60,7 +61,6 @@ export default function CommentBox({setDataChange}:any, pollData: any, voted: an
             minHeight: 'min-content',
             minWidth: 'min-content',
             overflow: 'auto',
-            // borderRadius: 'md',
             border:"0px",
             p: 3,
             boxShadow: '10px, 5px, 5px',
@@ -138,8 +138,67 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
       
   }, [])
 
- 
+  // These functions implement the currently unused feature that sets the comment author's username to the color of the
+  // option they voted for. It's not being used due to how many fetch requests it requires per poll card - we did not
+  // have time to change the endpoint and make it more optimized
+
+  // const GetVotes = useEffect(()=>{
+  //   if (optionVotes.length == 0){
+  //   fetch(`${process.env.BACKEND_URL}/polls/vote/${pollId}`, {
+  //     method: 'GET',
+  //     credentials: 'include',
+  //     headers: { 'Content-Type': 'application/json' }
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         return response.text().then((text) => {
+  //           throw new Error(text);
+  //         });
+  //       } else {
+  //         response.json().then((re)=>{
+  //           // alert(re)
+  //           setOptionVotes(re.map((obj: any)=>(obj.option_id)))
+  //         });
+  //       }
+  //     })
+  //     .catch((error) => {});}
+    
+  // })
+
+
+  //  const OptionsToColors: any = useEffect(()=>{
+  //   let voters: any[][] = [];
+  //   optionVotes?.map(async (opt: number, ind: number)=>{
+  //     await fetch(`${process.env.BACKEND_URL}/polls/vote/${opt}/users`, {
+  //       method: 'GET',
+  //       credentials: 'include',
+  //       headers: { 'Content-Type': 'application/json' }
+  //     })
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           return response.text().then((text) => {
+  //             throw new Error(text);
+  //           });
+  //         } else {
+  //           response.json().then((re)=>{
+  //             // alert(re)
+              
+  //             let start: any[] = []
+  //             let ret = re.reduce((acc: number[], curr: any)=>{curr.user_id!=null ? acc.push(curr.user_id): 1; return acc}, start)
+  //             for(let j = 0; j<ret.length; j++){
+  //                 colorPairs.set(ret[j], optionColors[ind]);
+                
+  //             }
+  //             voters.push(ret);
+  //           });
+  //         }
+  //       })
+  //       .catch((error) => {});
   
+  //   })
+  // })
+
+
   function Comment(data: any, color: any) {
     //need to save the current comment id
     return (
@@ -194,7 +253,6 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     );
   }
 
-  
   function AddComment(this: any, cmts: any){
     //this function allows a user to write their own comment
     let [currComment, setCurrComment] = React.useState("") // default comment is empty string
@@ -262,9 +320,6 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
           </Paper>
           </React.Fragment>
       );}
-
-
-    
   }
   
   function CommentsWPoll({setDataChange}:any, pollData: any, pollId:number, voted:any, followedTags: string[]){
@@ -274,23 +329,14 @@ function Parent ({setDataChange}:any, pollData: any, voted: any, followedTags: s
     //load until comments is not empty
     return (
       <div>
-      {/* <Divider variant="fullWidth" style={{ margin: '5px 0' }}/> */}
-      {/* <Paper style={{ 
-        minWidth: width, overflow:"auto", display:"flex", flexDirection:"column", justifyContent:"center"}}> */}
             {PollCard({setDataChange}, pollData, voted, followedTags, true)}
             {Comments(pollId, cmts)}
-            {AddComment(cmts)}
-            
-        {/* </Paper> */}
+            {AddComment(cmts)}            
         </div>
     );
   }
   
-
-  
   return CommentsWPoll({setDataChange}, pollData, pollId, voted, followedTags);
-
-
 }
 
 function NoComments(){
@@ -309,10 +355,5 @@ function NoComments(){
     </Paper>
   );
 }
-
-
-//first  get votes by  poll id, then 
-// for each option get hte users who voted on that
-
 
 

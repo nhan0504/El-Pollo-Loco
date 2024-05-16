@@ -13,10 +13,8 @@ import Stack from '@mui/material/Stack';
 import Fade from '@mui/material/Fade';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-
-// Should cache some info in localStorage potentially, can share across components
-// and maybe decrease fetches
-
+// Here we assemble the feed buttons and general poll feed and switch out the polls
+// depending on the current feed style
 export default function Feed({ pollData, setPollData }: any) {
 
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -27,26 +25,26 @@ export default function Feed({ pollData, setPollData }: any) {
   const [dataChange, setDataChange] = useState<boolean>(false);
   const [page, setPage] = React.useState(1);
   
-  // const [tagSelected, setTagSelected] = useState<string>("");
-  // const [tagDialogOpen, setTagDialogOpen] = useState<{open:boolean, followed:boolean}>({open: false, followed: false});
+  // Both of these actually run on page load - a little wasteful
 
-  // Passing an empty array to useEffect means that it'll only be called on page load when the component is first rendered
+  // Runs when the user advances the page or goes to a previous one
   useEffect(() => {
     localStorage.setItem("feed", String(currFeed));
     getPolls(String(currFeed));
-    // getFollowedTags();
   },[page]);
   
+  // Used both by feed.tsx and child components to trigger a "soft" poll reset
   useEffect(() => {
     getPolls(String(currFeed));
-    // getFollowedTags();
     setDataChange(false);
   }, [dataChange]);
 
   async function getPolls(feedType: string) {
     setLoading(true);
+    
     await getFollowedTags();
 
+    // Determine which polls to retrieve from database depending on the feed type
     let requestType: string = ""
 
     if(feedType === 'discover')
@@ -77,13 +75,13 @@ export default function Feed({ pollData, setPollData }: any) {
           return poll.poll_id;
         }));
 
-        // Wait until we have the list that tells us which polls on
-        // the page have been voted on before continuing
+        // Finally set poll data and stop loading once we have polls, followed tags,
+        // and polls that the user has voted for
         setPollData(data);    
         setLoading(false);
       }
     }
-
+    // If there are no polls, set the corresponding state
     catch (error) {
       setPollData([]);
       setNoPolls(true);
@@ -91,6 +89,7 @@ export default function Feed({ pollData, setPollData }: any) {
     }
   }
 
+  // Get tags followed by the user
   async function getFollowedTags(){
     try{
       let response = await fetch(`${process.env.BACKEND_URL}/tags`, {
@@ -100,6 +99,8 @@ export default function Feed({ pollData, setPollData }: any) {
       let data = await response.json();
       if (response.ok) {
         setFollowedTags(data);
+        // Tags retrieved and stored in localStorage to be more easily accessed by the profile
+        // without having to do another fetch request
         localStorage.setItem("tags", data);
       }
       else{
@@ -112,8 +113,11 @@ export default function Feed({ pollData, setPollData }: any) {
     }
   }
 
-  // Pass it the list of poll ids of 6 polls that were just fetched
+  // Get polls that the user has voted  on in the form of a list containing objects of the form:
+  // {poll_id: number, option_id: number}
   async function getVoted(polls: any) {
+  // getPolls() is passing it the list of poll ids of 6 polls that were just fetched
+    
     try{
       let response = await fetch(`${process.env.BACKEND_URL}/polls/vote/voted`, {
         method: 'GET',
@@ -122,11 +126,11 @@ export default function Feed({ pollData, setPollData }: any) {
       let data = await response.json();
       if (response.ok) {
         
-        // Set total list of polls voted on
+        // Set total list of polls voted on to local storage to be accessed by the profile for poll stats
         localStorage.setItem('pollsVoted', JSON.stringify(data));
-        // alert(JSON.stringify(data))
-        // Filter out any polls that the user voted on that aren't in this batch of
-        // polls
+
+        // Filter out any polls that the user voted on that aren't in this batch of polls to make checking the
+        // list more efficient
         setPollsVoted(data.filter((poll: any) => polls.includes(poll.poll_id)));
       }
       else{
@@ -134,12 +138,11 @@ export default function Feed({ pollData, setPollData }: any) {
       }
     }
     catch (error) {
-
       setPollsVoted([{poll_id: -1, option_id: -1}]);
     }
   }
 
-  // Needed a way to directly pass the "voted" state into PollCard
+  // Needed a way to evaluate and pass the "voted" state into the PollCard constructor
   function wasVotedOn(poll_id: number){
     // See if the poll with poll_id was voted on by comparing to pollsVoted list
     let index = pollsVoted.findIndex((poll) => poll.poll_id === poll_id);
@@ -147,18 +150,24 @@ export default function Feed({ pollData, setPollData }: any) {
     return voted;
   }
 
-  // Switch the feed type, refetch polls
+  // Switch the feed type, refetch polls from database
   const switchFeed = (currFeed: string) => {
-    setNoPolls(false);    
+    setNoPolls(false);   
+    // Feed type in local storage so poll cards can access it, and so we can remember
+    // it if the user goes to another page
     localStorage.setItem("feed", currFeed);
     setCurrentFeed(currFeed);
+
+    // Reset page back to 1 on feed switch
     if(page != 1)
       setPage(1);
     else
       getPolls(currFeed);
   };
   
+  // Buttons for the user to switch feed types
   function FeedButtons() {
+    // Different styles depending on which button was pressed/which feed is active
     const styles = () => ({
       currFeed: {
         style:{
@@ -167,7 +176,6 @@ export default function Feed({ pollData, setPollData }: any) {
          } ,
          sx:{
           ':hover': {
-            // theme.palette.primary.main
             color: "white",
             bgcolor:"black"
           },
@@ -184,7 +192,6 @@ export default function Feed({ pollData, setPollData }: any) {
          } ,
          sx:{
           ':hover': {
-            // theme.palette.primary.main
             color: "white",
             bgcolor:"black",
           },
@@ -200,7 +207,9 @@ export default function Feed({ pollData, setPollData }: any) {
     let discoverStyle = styles().notCurrFeed;
     let friendsStyle = styles().notCurrFeed;
     let followingStyle = styles().notCurrFeed;
-    followingStyle = styles().notCurrFeed;
+    
+    // The else is necessary since the feed buttons may load on page refresh
+    // before the current feed is set
     if (currFeed == 'discover')
       discoverStyle = styles().currFeed;
     else if (currFeed == 'friends')
@@ -212,7 +221,6 @@ export default function Feed({ pollData, setPollData }: any) {
 
 
     return (
-      /* Buttons to switch feeds */
       <Box
         component="section"
         sx={{
@@ -225,8 +233,6 @@ export default function Feed({ pollData, setPollData }: any) {
           left:"20px",
           p: 1,
           m: 2,
-          // border: '2px solid black',
-          // borderRadius: '30px',
           dropShadow:3,
         }}
       >
@@ -245,7 +251,6 @@ export default function Feed({ pollData, setPollData }: any) {
           onClick={(event) => switchFeed("friends")}
           style={friendsStyle?.style}
           sx={friendsStyle?.sx}
-          //onClick={switchFeed}
         >
           Friends
         </Button>
@@ -262,14 +267,17 @@ export default function Feed({ pollData, setPollData }: any) {
     );
   }
   
+  // List of tags for the Following feed (not the poll cards)
   const tagList = () => {
-    
+  // Note: currently these buttons cannot be interacted with, and you can only follow/unfollow tags on poll cards
     if(followedTags?.length != 0 && currFeed == "following"){
       return(
+        // Stack to align the text and the tag list
         <Stack direction="row" sx={{ mb:0.5, pt:7, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
 
         <Typography noWrap style={{}} variant="h6" sx={{width:"min-content", color: "black"}}>You are following</Typography>
-        {/* border:"1px solid black",  */}
+        
+        {/* Separate box to neatly align the tag list */}
         <Box sx={{ ml: 1.5, mb:0.5, width:"550px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
           {followedTags?.map((tag) => {
@@ -288,7 +296,9 @@ export default function Feed({ pollData, setPollData }: any) {
       return(<Box display='none'></Box>)
   };
 
+  // Friend list for the Friend feed
   const friendList = () => {
+    // Friends are retrieved at login and stored in local storage
     let friends = getStorageFriends();
 
     if(friends?.length != 0 && currFeed == "friends"){
@@ -296,7 +306,7 @@ export default function Feed({ pollData, setPollData }: any) {
         <Stack direction="row" sx={{ mb:0.5, pt:7, width:"1000px", color: 'blue',alignItems:"baseline", alignContent:"baseline", display: 'flex',justifyContent:"center"}}>
 
         <Typography noWrap style={{}} variant="h6" sx={{width:"min-content", color: "black"}}>You are friends with</Typography>
-        {/* border:"1px solid black",  */}
+
         <Box sx={{ ml: 1.5, mb:0.5, width:"550px", height:"min-content", color: 'blue', display: 'flex', alignItems:"center", alignContent:"center", flexWrap:"wrap"}}>
 
           {friends?.map((friend) => {
@@ -312,26 +322,24 @@ export default function Feed({ pollData, setPollData }: any) {
       return(<Box display='none'></Box>)
   }
 
-
-  
-
+  // Form row of poll cards (length decided in CardsTogether)
   function FormRow(pollData: any) {
-    // Not the state pollData, but a parameter that contains 1 or 2 polls
+  // Note: Not the state pollData, but a list that contains 1 - n polls (there may be a final row with fewer than n)
 
     let row = [];
 
-
     for (let i = 0; i < pollData.length; i++) {
 
-      // We can't pop off polls from the list since they need to stay in memory to rerender
-      // If we needed to remove a poll for any reason, we would use setPollData with pollData.filter
+      // Note: we can't pop off polls from the list since they need to stay in memory to rerender
+      // If we needed to remove a poll here from the feed, we would use setPollData with pollData.filter
+      
       let currCard = pollData[i];
-      let loaded = true;
 
-      let date = new Date(Date.parse(currCard?.created_at));
       row.push(
         <Grid item xs={4} style={{ padding: 50 }} sx={{}} key={i}>
-          
+          {/* We pass poll card a way to trigger the feed soft reset, an object that indicates whether the poll was
+          voted on and if so, which option, a list of the followed tags, and a boolean that indicates whether the
+          poll is in the comment box or not (affects whether the "comments" button on the poll card shows up) */}
           {PollCard(
             {setDataChange},
             currCard,
@@ -339,24 +347,28 @@ export default function Feed({ pollData, setPollData }: any) {
             followedTags,
             false
           )}
-          
+          {/* Note: it's important that PollCard is passed the followed tag list here rather than getting the list
+          from local storage, because this way every poll card uses the same reference to the list and they are
+          synced when the list is changed */}
         </Grid>,
       );
     }
-
     return <React.Fragment>{row}</React.Fragment>;
   }
 
+  // Get friends from local storage
   function getStorageFriends(){
     let value = localStorage.getItem("friends")
     return value != null ? value.split(",") : []
   }
 
+  // Get tags from local storage
   function getStorageTags(){
     let value = localStorage.getItem("tags")
     return value != null ? value.split(",") : []
   }
 
+  // Bar at the bottom of the page that allows the user to access more pages
   function PageBar() {
     const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
       setPage(value);
@@ -384,7 +396,7 @@ export default function Feed({ pollData, setPollData }: any) {
     }
   }
 
-
+  // Puts rows of cards into one grid, specifies number of rows and columns
   function CardsTogether() {
     const rows = 3;
     const cols = 2;
@@ -402,6 +414,7 @@ export default function Feed({ pollData, setPollData }: any) {
       }
     }
 
+    // Else display a message tailored to the specific no-poll situation
     else if(noPolls){
       let message: string = ""
       if(currFeed == "friends"){

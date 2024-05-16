@@ -14,10 +14,11 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 
-// To do in this file - remove any of my hardcoded width/height 
-// values and make it fully responsive
+// This file holds the code for the poll form that allows poll creation. 
+// It is currently implemented in a dialog connected to a button on the nav bar.
 
 function PollForm() {
+  // Poll data state to hold options, title, tags
   const [pollData, setPollData] = useState<{
     title: string;
     options: {
@@ -27,7 +28,6 @@ function PollForm() {
     tags: string[];
   }>
   ({
-    // Need to get current logged in user
     title: '',
     options: [
       {
@@ -41,12 +41,10 @@ function PollForm() {
     ],
     tags: []
   });
-
-  //const pollRef = useRef(pollData);
-
   
-  //const [tags, setTags] = useState<string[]>([]);
+  // The current tag that the user is typing in the tag input box
   const [currTag, setTag] = useState<string>("");
+  // Tracks key presses to sense when the user inputs a comma in tag input has been pressed in tag input
   const [pressed, setPressed] = useState<KeyboardEvent>();
 
   // Update all pollData values every time an input box changes
@@ -62,8 +60,8 @@ function PollForm() {
     }
   };
 
-  const { push } = useRouter();
-
+  // On form submit, POST request to put poll info in database
+  // and refresh page
   const handleSubmit = (event: any) => {
     fetch(`${process.env.BACKEND_URL}/polls/`, {
       method: 'POST',
@@ -88,11 +86,10 @@ function PollForm() {
       })
       .catch((error) => error.message);
 
-    // push('/discover');
     window.location.reload();
-    //POST
   };
 
+  // Don't allow form submission with blank title or options
   function validateForm() {
     if (pollData.title.length === 0) {
       alert('Your title cannot be blank.');
@@ -111,6 +108,7 @@ function PollForm() {
     return !missingOption;
   }
 
+  // Adds new poll option on button press
   const addOption = () => {
     pollData.options.length < 6
       ? setPollData((pollData) => ({
@@ -121,9 +119,10 @@ function PollForm() {
       : alert('You cannot add more than 6 options.');
   };
 
-  // Not great naming for variables here but ind = index of the option being removed, match to
-  // map index to find the right option
+  // Remove option on button press
   function removeOption(ind: number) {
+    // Not great naming for variables here but ind = index of the option 
+    // being removed, match to map index to find the right option
     const newOptions =
       pollData.options.length > 2
         ? pollData.options.filter(function (option, index) {
@@ -140,15 +139,13 @@ function PollForm() {
     }));
   }
 
+  // Create list of option inputs
   const optionList = pollData.options?.map((option, index) => (
     <React.Fragment key={1}>
       <Box
         alignItems="center"
         sx={{ flexDirection: "row", justifyContent: "center", color: 'black', display: 'flex' }}
       >
-        {/* <Typography variant="body1" sx={{}}>
-          Option
-        </Typography> */}
         <ListItemText primary="Option" />
         <TextField
           type="text"
@@ -175,8 +172,11 @@ function PollForm() {
     </React.Fragment>
   ));
 
+  // On change in tag input, check whether Enter or comma has been pressed
+  // and make a new tag if so
   const handleTagChange = (newTag: string) => {
-    //need this to be split by whitespace for now, should prolly make it more robust?
+    // Note: 'Enter' currently submits the form, so users are instructed to
+    // use a comma to separate tags
     if (pressed?.key === 'Enter' || pressed?.key === ",") {
 
       pollData.tags.length < 20
@@ -185,21 +185,21 @@ function PollForm() {
           tags: [...pollData.tags,  newTag.substring(0, newTag.length-1)],
         }))
       : alert('You cannot add more than 20 tags.');
-      
+      // Reset tag input box value
       setTag("");
     }
 
     else{
-
       setTag(newTag);
     }
   }
 
+  // Set key pressed to state
   const handleKeyDown = (event: any) => {
-
     setPressed(event);
   }
 
+  // Display any created tags as chips below tag input
   function tagChips(pollData: any){
     
     return(
@@ -225,6 +225,7 @@ function PollForm() {
     )
   }
 
+  // Remove tag on button press
   function removeTag(ind: number){
     const newTags =
     pollData.tags.filter(function (tag, index) {
@@ -283,6 +284,7 @@ function PollForm() {
             <FormGroup>{optionList}</FormGroup>
             
             <br />
+            
             <Typography variant="body2" color="textSecondary" sx={{}}>
               Tags
             </Typography>
